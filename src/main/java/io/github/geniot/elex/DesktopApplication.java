@@ -8,7 +8,6 @@ import java.awt.event.WindowEvent;
 
 public abstract class DesktopApplication extends JFrame {
     public static final Image ICON = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/favicon_io/favicon-32x32.png")).getImage();
-    Logger logger;
 
     public DesktopApplication() {
         super();
@@ -42,7 +41,7 @@ public abstract class DesktopApplication extends JFrame {
                     ElexPreferences.putInt(Prop.POS_Y.name(), (int) e.getWindow().getLocation().getY());
                     e.getWindow().dispose();
                 } catch (Exception ex) {
-                    logger.log(ex);
+                    Logger.getInstance().log(ex);
                 } finally {
                     System.exit(0);
                 }

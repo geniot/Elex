@@ -2,18 +2,29 @@ package io.github.geniot.elex;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-public class Logger {
-    ElexApplication frame;
+import javax.swing.text.JTextComponent;
 
-    public Logger(ElexApplication f) {
-        this.frame = f;
+public class Logger {
+    JTextComponent jTextComponent;
+    private static Logger INSTANCE;
+
+    public static Logger getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Logger();
+        }
+        return INSTANCE;
+    }
+
+    public void setTextComponent(JTextComponent tc) {
+        this.jTextComponent = tc;
     }
 
     public void log(String msg) {
         try {
-            if (frame.mainPanel != null && frame.mainPanel.textArea != null) {
-                frame.mainPanel.textArea.append(msg);
-                frame.mainPanel.textArea.append("\n");
+            if (jTextComponent != null) {
+                jTextComponent.getDocument().insertString(jTextComponent.getDocument().getLength(), msg + "\n", null);
+            } else {
+                System.out.println(msg);
             }
         } catch (Exception ex) {
             System.out.println(msg);

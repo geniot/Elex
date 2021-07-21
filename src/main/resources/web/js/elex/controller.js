@@ -91,9 +91,8 @@ Controller.prototype = {
     },
     getLangs: function () {
         $.ajax({
-            url: 'info?'
-                + 'a=langs' +
-                '&ts=' + Date.now(),
+            url: 'langs?' +
+                'ts=' + Date.now(),
             contentType: "text/plain;charset=utf-8"
         }).done(function (data) {
             if (!$.isEmptyObject(data)) {
@@ -106,8 +105,8 @@ Controller.prototype = {
     getDictionaries: function () {
         var sourceLang = langSelectors.getSourceLang();
         var targetLang = langSelectors.getTargetLang();
-        if (sourceLang != null && targetLang != null) {
 
+        if (sourceLang != null && targetLang != null) {
             $.ajax({
                 url: 'info?' +
                     'a=dics'

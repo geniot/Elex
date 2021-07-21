@@ -21,7 +21,6 @@ public class MainPanel implements Observer {
     public JToggleButton connectButton;
 
     private ElexApplication frame;
-    private Logger logger;
     private ElexServer server;
 
     private static final String UNPIN_MSG = "Unpin this window from top";
@@ -47,9 +46,8 @@ public class MainPanel implements Observer {
         HOST, PORT, PIN
     }
 
-    public MainPanel(ElexApplication f, Logger l, ElexServer s) {
+    public MainPanel(ElexApplication f, ElexServer s) {
         this.frame = f;
-        this.logger = l;
         this.server = s;
 
         int margin = 5;
@@ -65,7 +63,7 @@ public class MainPanel implements Observer {
 
                     Desktop.getDesktop().browse(URI.create("http://" + host + ":" + port));
                 } catch (IOException ioException) {
-                    logger.log(ioException);
+                    Logger.getInstance().log(ioException);
                 }
             }
         });

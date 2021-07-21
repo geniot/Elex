@@ -12,10 +12,10 @@ public class ElexApplication extends DesktopApplication {
 
     public ElexApplication() {
         setTitle("Elex");
-        logger = new Logger(this);
-        server = new ElexServer(logger);
+        server = new ElexServer();
 
-        mainPanel = new MainPanel(this, logger, server);
+        mainPanel = new MainPanel(this, server);
+        Logger.getInstance().setTextComponent(mainPanel.textArea);
         server.addObserver(mainPanel);
 
 

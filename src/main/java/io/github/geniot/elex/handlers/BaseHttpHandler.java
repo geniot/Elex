@@ -3,22 +3,45 @@ package io.github.geniot.elex.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import io.github.geniot.elex.Logger;
-import io.github.geniot.elex.model.CompressedDictionary;
-import io.github.geniot.elex.model.DictionariesPool;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class BaseHttpHandler implements HttpHandler {
     public static final String EXCEPTION_EMPTY = "EXCEPTION_EMPTY";
     public static final String EXCEPTION_NOT_EXISTS = "EXCEPTION_NOT_EXISTS";
-    Logger logger;
 
-    public BaseHttpHandler(Logger f) {
-        this.logger = f;
+    public static final Map<String, String> textTypes = getTextTypes();
+    public static final Map<String, String> binaryTypes = getBinaryTypes();
+
+    public enum ContentType {
+        JSON("json");
+        public final String label;
+
+        private ContentType(String label) {
+            this.label = label;
+        }
+    }
+
+    private static Map<String, String> getTextTypes() {
+        Map<String, String> map = new HashMap<>();
+        map.put("html", "text/html");
+        map.put("css", "text/css");
+        map.put("js", "text/javascript");
+        map.put("json", "application/json");
+        return map;
+    }
+
+    private static Map<String, String> getBinaryTypes() {
+        Map<String, String> map = new HashMap<>();
+        map.put("png", "image/png");
+        map.put("ico", "image/x-icon");
+        return map;
     }
 
     public Map<String, String> queryToMap(String query) {
@@ -46,7 +69,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
             out.write(str);
             out.close();
         } catch (Exception ex) {
-            logger.log(ex);
+            Logger.getInstance().log(ex);
         }
     }
 
@@ -58,26 +81,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
             out.write(str);
             out.close();
         } catch (Exception ex) {
-            logger.log(ex);
+            Logger.getInstance().log(ex);
         }
     }
 
-    protected Set<CompressedDictionary> getDics(Map<String, String> paramsMap) {
-        if (paramsMap.get("dics") == null) {
-            Set<CompressedDictionary> set = new HashSet<CompressedDictionary>();
-            set.addAll(DictionariesPool.DICTIONARIES.values());
-            return set;
-        }
-        Set<CompressedDictionary> set = new HashSet<CompressedDictionary>();
-        String[] dicIdsStr = paramsMap.get("dics").split("_");
-        for (String di : dicIdsStr) {
-            if (!di.equals("")) {
-                int id = Integer.parseInt(di);
-                CompressedDictionary cd = DictionariesPool.DICTIONARIES.get(id);
-                set.add(cd);
-            }
-        }
-        return set;
-    }
 
 }
