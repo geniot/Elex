@@ -108,9 +108,8 @@ Controller.prototype = {
 
         if (sourceLang != null && targetLang != null) {
             $.ajax({
-                url: 'info?' +
-                    'a=dics'
-                    + '&sl=' + sourceLang +
+                url: 'dics?' +
+                    'sl=' + sourceLang +
                     '&tl=' + targetLang +
                     '&ts=' + Date.now(),
                 contentType: "text/plain;charset=utf-8"
@@ -150,7 +149,7 @@ Controller.prototype = {
             callback();
             return;
         }
-        var path = 'res?a=css&dics=' + dicIdsStr + '&ts=' + Date.now();
+        var path = 'styles?dics=' + dicIdsStr + '&ts=' + Date.now();
         $('#userTheme').remove();
         $.get(path, function (response) {
             //Check if the user theme element is in place - if not, create it.
@@ -161,7 +160,7 @@ Controller.prototype = {
         });
     },
     updateDictionaryScripts: function (callback) {
-        $.getScript('res?a=js&ts=' + Date.now(), function () {
+        $.getScript("scripts", function () {
             callback();
         });
     },
@@ -172,12 +171,12 @@ Controller.prototype = {
         if (viewOffset >= pageSize) viewOffset = pageSize - 1;
 
         if (model.getDicIds().length == 0) {
-            $.History.go('/' +
-                '/' + encodeURIComponent(model.getDicIdsStr()) +
-                '/' + encodeURIComponent(model.getDisabledDicIdsStr()) +
-                '/' + encodeURIComponent(langSelectors.getSelectedLanguagePair()) +
-                '/' + indexView.getViewOffset()
-            );
+            // $.History.go('/' +
+            //     '/' + encodeURIComponent(model.getDicIdsStr()) +
+            //     '/' + encodeURIComponent(model.getDisabledDicIdsStr()) +
+            //     '/' + encodeURIComponent(langSelectors.getSelectedLanguagePair()) +
+            //     '/' + indexView.getViewOffset()
+            // );
             controller.onIndexLoaded(null, viewOffset);
             return;
         }

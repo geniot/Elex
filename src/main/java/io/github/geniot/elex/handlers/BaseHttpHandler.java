@@ -2,15 +2,16 @@ package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import io.github.geniot.dictiographer.model.IDictionary;
+import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BaseHttpHandler implements HttpHandler {
     public static final String EXCEPTION_EMPTY = "EXCEPTION_EMPTY";
@@ -20,7 +21,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
     public static final Map<String, String> binaryTypes = getBinaryTypes();
 
     public enum ContentType {
-        JSON("json");
+        JSON("json"),
+        PNG("png"),
+        CSS("css");
         public final String label;
 
         private ContentType(String label) {
@@ -31,15 +34,15 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private static Map<String, String> getTextTypes() {
         Map<String, String> map = new HashMap<>();
         map.put("html", "text/html");
-        map.put("css", "text/css");
+        map.put(ContentType.CSS.label, "text/css");
         map.put("js", "text/javascript");
-        map.put("json", "application/json");
+        map.put(ContentType.JSON.label, "application/json");
         return map;
     }
 
     private static Map<String, String> getBinaryTypes() {
         Map<String, String> map = new HashMap<>();
-        map.put("png", "image/png");
+        map.put(ContentType.PNG.label, "image/png");
         map.put("ico", "image/x-icon");
         return map;
     }
@@ -85,5 +88,21 @@ public abstract class BaseHttpHandler implements HttpHandler {
         }
     }
 
+    protected Set<IDictionary> getDics(String dics) {
+        if (dics == null) {
+            Set<IDictionary> set = new HashSet<>();
+            set.addAll(DictionariesPool.getInstance().getDictionaries());
+            return set;
+        }
+        Set<IDictionary> set = new HashSet<>();
+        String[] dicIdsStr = dics.split("_");
+        for (String id : dicIdsStr) {
+            if (StringUtils.isNotEmpty(id)) {
+                IDictionary cd = DictionariesPool.getInstance().getDictionaryById(id);
+                set.add(cd);
+            }
+        }
+        return set;
+    }
 
 }

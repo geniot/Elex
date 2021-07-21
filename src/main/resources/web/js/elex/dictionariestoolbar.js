@@ -19,7 +19,7 @@ DictionariesToolbar.prototype = {
             var name = model.dics[i]['name'];
             $('#dictionariesToolbar').append('<div id="dictionaryButton_' + id + '" class="toolbar_button">' +
                 '<a>' +
-                '<img style="padding-left: 1px" class="localizable" alt="" title="' + name + '" src="/res?a=icon&id=' + id + '"/>' +
+                '<img style="padding-left: 1px" class="localizable" alt="" title="' + name + '" src="/icon?id=' + id + '"/>' +
                 '</a>' +
                 '</div>');
 
