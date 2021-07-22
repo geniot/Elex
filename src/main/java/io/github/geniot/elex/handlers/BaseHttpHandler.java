@@ -2,16 +2,15 @@ package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import io.github.geniot.dictiographer.model.IDictionary;
-import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class BaseHttpHandler implements HttpHandler {
     public static final String EXCEPTION_EMPTY = "EXCEPTION_EMPTY";
@@ -68,6 +67,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
             Writer out = new OutputStreamWriter(httpExchange.getResponseBody(), StandardCharsets.UTF_8);
             String value = contentType + "; charset=" + StandardCharsets.UTF_8;
             httpExchange.getResponseHeaders().put("Content-type", Collections.singletonList(value));
+            httpExchange.getResponseHeaders().put("Access-Control-Allow-Origin", Collections.singletonList("*"));
             httpExchange.sendResponseHeaders(200, str.getBytes(StandardCharsets.UTF_8).length);
             out.write(str);
             out.close();
@@ -86,23 +86,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }
-    }
-
-    protected Set<IDictionary> getDics(String dics) {
-        if (dics == null) {
-            Set<IDictionary> set = new HashSet<>();
-            set.addAll(DictionariesPool.getInstance().getDictionaries());
-            return set;
-        }
-        Set<IDictionary> set = new HashSet<>();
-        String[] dicIdsStr = dics.split("_");
-        for (String id : dicIdsStr) {
-            if (StringUtils.isNotEmpty(id)) {
-                IDictionary cd = DictionariesPool.getInstance().getDictionaryById(id);
-                set.add(cd);
-            }
-        }
-        return set;
     }
 
 }
