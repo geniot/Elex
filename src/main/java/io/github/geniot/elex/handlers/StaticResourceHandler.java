@@ -33,18 +33,18 @@ public class StaticResourceHandler extends BaseHttpHandler {
             }
             bbs = IOUtils.toByteArray(is);
 
-            String fileExtension = path.substring(path.lastIndexOf(".") + 1);
-            if (textTypes.containsKey(fileExtension)) {
-                String str = new String(bbs, StandardCharsets.UTF_8);
-                writeTxt(httpExchange, str, textTypes.get(fileExtension));
-            } else if (binaryTypes.containsKey(fileExtension)) {
-                writeBinary(httpExchange, bbs, binaryTypes.get(fileExtension));
+            String fileExtension = path.substring(path.lastIndexOf(".") + 1).toUpperCase();
+
+            String contentType = contentTypesMap.get(fileExtension);
+            if (contentType.startsWith("image/")) {
+                writeBinary(httpExchange, bbs, contentType);
             } else {
-                throw new Exception("Couldn't find a content type for: " + path);
+                String str = new String(bbs, StandardCharsets.UTF_8);
+                writeTxt(httpExchange, str, contentType);
             }
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
-            writeTxt(httpExchange, ExceptionUtils.getStackTrace(ex), ContentType.TEXT.label);
+            writeTxt(httpExchange, ExceptionUtils.getStackTrace(ex), contentTypesMap.get(ContentType.TEXT));
         }
     }
 }

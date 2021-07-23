@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
-import io.github.geniot.elex.model.Language;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +23,8 @@ public class DictionariesHandler extends BaseHttpHandler {
             dictionaries.add(genDictionary("Explanatory dictionary"));
             dictionaries.add(genDictionary("French dictionary"));
 
-            String s = gson.toJson(dictionaries.toArray(new Language[dictionaries.size()]));
-            writeTxt(httpExchange, s, textTypes.get(ContentType.JSON.label));
+            String s = gson.toJson(dictionaries.toArray(new Dictionary[dictionaries.size()]));
+            writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }

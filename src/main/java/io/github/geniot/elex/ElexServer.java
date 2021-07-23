@@ -2,6 +2,7 @@ package io.github.geniot.elex;
 
 import com.sun.net.httpserver.HttpServer;
 import io.github.geniot.elex.handlers.DictionariesHandler;
+import io.github.geniot.elex.handlers.IconHandler;
 import io.github.geniot.elex.handlers.LanguagesHandler;
 import io.github.geniot.elex.handlers.StaticResourceHandler;
 
@@ -30,6 +31,7 @@ public class ElexServer extends Observable {
             server.createContext("/", new StaticResourceHandler());
             server.createContext("/languages", new LanguagesHandler());
             server.createContext("/dictionaries", new DictionariesHandler());
+            server.createContext("/icon", new IconHandler());
             server.setExecutor(null);
             server.start();
 

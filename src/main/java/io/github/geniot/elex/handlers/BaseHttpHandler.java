@@ -9,42 +9,31 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseHttpHandler implements HttpHandler {
 
-    public static final Map<String, String> textTypes = getTextTypes();
-    public static final Map<String, String> binaryTypes = getBinaryTypes();
-
     public enum ContentType {
-        JSON("json"),
-        PNG("png"),
-        CSS("css"),
-        TEXT("text");
-        public final String label;
-
-        private ContentType(String label) {
-            this.label = label;
-        }
+        JSON, PNG, CSS, TEXT, HTML, JS, ICO
     }
 
-    private static Map<String, String> getTextTypes() {
-        Map<String, String> map = new HashMap<>();
-        map.put("html", "text/html");
-        map.put(ContentType.TEXT.label, "text/plain");
-        map.put(ContentType.CSS.label, "text/css");
-        map.put("js", "text/javascript");
-        map.put(ContentType.JSON.label, "application/json");
-        return map;
+
+    public static EnumMap<ContentType, String> contentTypesMap = getContentTypes();
+
+    private static EnumMap<ContentType, String> getContentTypes() {
+        EnumMap<ContentType, String> cTypes = new EnumMap<>(ContentType.class);
+        cTypes.put(ContentType.JSON, "application/json");
+        cTypes.put(ContentType.PNG, "image/png");
+        cTypes.put(ContentType.ICO, "image/x-icon");
+        cTypes.put(ContentType.CSS, "text/css");
+        cTypes.put(ContentType.TEXT, "text/plain");
+        cTypes.put(ContentType.HTML, "text/html");
+        cTypes.put(ContentType.JS, "text/javascript");
+        return cTypes;
     }
 
-    private static Map<String, String> getBinaryTypes() {
-        Map<String, String> map = new HashMap<>();
-        map.put(ContentType.PNG.label, "image/png");
-        map.put("ico", "image/x-icon");
-        return map;
-    }
 
     public Map<String, String> queryToMap(String query) {
         if (query == null) {
