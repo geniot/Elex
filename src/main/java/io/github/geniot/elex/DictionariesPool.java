@@ -40,9 +40,9 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     }
 
 
-
     private void update() {
         try {
+            long t1 = System.currentTimeMillis();
             dictionaries.clear();
             File[] dicFiles = new File(DATA_FOLDER_NAME).listFiles();
             //installing
@@ -59,6 +59,8 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                     }
                 }
             }
+            long t2 = System.currentTimeMillis();
+            Logger.getInstance().log("Reloaded dictionaries in: " + (t2 - t1) + " ms");
         } catch (Exception e) {
             Logger.getInstance().log("Couldn't update state");
             Logger.getInstance().log(e);

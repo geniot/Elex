@@ -1,7 +1,8 @@
 package io.github.geniot.elex;
 
 import com.sun.net.httpserver.HttpServer;
-import io.github.geniot.elex.handlers.InfoHandler;
+import io.github.geniot.elex.handlers.DictionariesHandler;
+import io.github.geniot.elex.handlers.LanguagesHandler;
 import io.github.geniot.elex.handlers.StaticResourceHandler;
 
 import java.net.InetSocketAddress;
@@ -27,7 +28,8 @@ public class ElexServer extends Observable {
 
             server = HttpServer.create(new InetSocketAddress(host, port), 0);
             server.createContext("/", new StaticResourceHandler());
-            server.createContext("/info", new InfoHandler());
+            server.createContext("/languages", new LanguagesHandler());
+            server.createContext("/dictionaries", new DictionariesHandler());
             server.setExecutor(null);
             server.start();
 

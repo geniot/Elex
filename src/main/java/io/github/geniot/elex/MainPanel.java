@@ -3,8 +3,6 @@ package io.github.geniot.elex;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Observable;
@@ -19,6 +17,7 @@ public class MainPanel implements Observer {
     public JTextArea textArea;
     private JToggleButton pinButton;
     public JToggleButton connectButton;
+    private JButton clearButton;
 
     private ElexApplication frame;
     private ElexServer server;
@@ -54,17 +53,14 @@ public class MainPanel implements Observer {
         textArea.setMargin(new Insets(margin, margin, margin, margin));
 
         openButton.setToolTipText(OPEN_MSG);
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String host = ElexPreferences.get(Prop.HOST.name(), "localhost");
-                    int port = ElexPreferences.getInt(Prop.PORT.name(), 8000);
+        openButton.addActionListener(e -> {
+            try {
+                String host = ElexPreferences.get(Prop.HOST.name(), "localhost");
+                int port = ElexPreferences.getInt(Prop.PORT.name(), 8000);
 
-                    Desktop.getDesktop().browse(URI.create("http://" + host + ":" + port));
-                } catch (IOException ioException) {
-                    Logger.getInstance().log(ioException);
-                }
+                Desktop.getDesktop().browse(URI.create("http://" + host + ":" + port));
+            } catch (IOException ioException) {
+                Logger.getInstance().log(ioException);
             }
         });
 
@@ -73,24 +69,22 @@ public class MainPanel implements Observer {
 
 
         pinButton.setToolTipText(pinButton.isSelected() ? UNPIN_MSG : PIN_MSG);
-        pinButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ElexPreferences.pubBoolean(Prop.PIN.name(), pinButton.isSelected());
-                frame.setAlwaysOnTop(pinButton.isSelected());
-                pinButton.setToolTipText(pinButton.isSelected() ? UNPIN_MSG : PIN_MSG);
+        pinButton.addActionListener(e -> {
+            ElexPreferences.pubBoolean(Prop.PIN.name(), pinButton.isSelected());
+            frame.setAlwaysOnTop(pinButton.isSelected());
+            pinButton.setToolTipText(pinButton.isSelected() ? UNPIN_MSG : PIN_MSG);
+        });
+
+        connectButton.addActionListener(e -> {
+            if (connectButton.isSelected()) {
+                server.start();
+            } else {
+                server.stop();
             }
         });
 
-        connectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (connectButton.isSelected()) {
-                    server.start();
-                } else {
-                    server.stop();
-                }
-            }
+        clearButton.addActionListener(e -> {
+            textArea.setText("");
         });
 
     }

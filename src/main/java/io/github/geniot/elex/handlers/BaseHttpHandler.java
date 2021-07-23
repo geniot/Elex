@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseHttpHandler implements HttpHandler {
-    public static final String EXCEPTION_EMPTY = "EXCEPTION_EMPTY";
-    public static final String EXCEPTION_NOT_EXISTS = "EXCEPTION_NOT_EXISTS";
 
     public static final Map<String, String> textTypes = getTextTypes();
     public static final Map<String, String> binaryTypes = getBinaryTypes();
@@ -22,7 +20,8 @@ public abstract class BaseHttpHandler implements HttpHandler {
     public enum ContentType {
         JSON("json"),
         PNG("png"),
-        CSS("css");
+        CSS("css"),
+        TEXT("text");
         public final String label;
 
         private ContentType(String label) {
@@ -33,6 +32,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private static Map<String, String> getTextTypes() {
         Map<String, String> map = new HashMap<>();
         map.put("html", "text/html");
+        map.put(ContentType.TEXT.label, "text/plain");
         map.put(ContentType.CSS.label, "text/css");
         map.put("js", "text/javascript");
         map.put(ContentType.JSON.label, "application/json");
