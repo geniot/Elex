@@ -137,6 +137,15 @@ public class MainPanel implements Observer {
         connectButton.setPreferredSize(new Dimension(40, 40));
         connectButton.setText("");
         panel1.add(connectButton);
+        clearButton = new JButton();
+        clearButton.setFocusPainted(false);
+        clearButton.setFocusable(false);
+        clearButton.setIcon(new ImageIcon(getClass().getResource("/images/document_empty.png")));
+        clearButton.setMaximumSize(new Dimension(40, 40));
+        clearButton.setMinimumSize(new Dimension(40, 40));
+        clearButton.setPreferredSize(new Dimension(40, 40));
+        clearButton.setText("");
+        panel1.add(clearButton);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panel2, BorderLayout.CENTER);
