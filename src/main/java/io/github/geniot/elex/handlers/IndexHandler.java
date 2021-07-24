@@ -15,7 +15,7 @@ public class IndexHandler extends BaseHttpHandler {
         try {
             Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
             int size = Integer.parseInt(map.get("size"));
-//            Logger.getInstance().log(String.valueOf(size));
+            Logger.getInstance().log(String.valueOf(map.get("dics")));
             //todo use other parameters
             Gson gson = new Gson();
             List<Headword> headwords = new ArrayList<>();
