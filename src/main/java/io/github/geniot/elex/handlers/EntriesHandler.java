@@ -31,7 +31,7 @@ public class EntriesHandler extends BaseHttpHandler {
         entry.setHeadword(hwd);
         StringBuffer stringBuffer = new StringBuffer();
         for (int i=0;i<100;i++){
-            stringBuffer.append("<p>hello <b>html</b><i>" + hwd + "</i></p>");
+            stringBuffer.append("<p class=\"test\">hello <b>html</b><i>" + hwd + "</i></p>");
         }
         entry.setBody(stringBuffer.toString());
         return entry;
