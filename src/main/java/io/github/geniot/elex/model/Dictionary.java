@@ -5,6 +5,10 @@ public class Dictionary {
     private String name;
     private boolean selected = true;
 
+    public static int idFromName(String name) {
+        return name.hashCode() & 0xfffffff;
+    }
+
     public boolean getSelected() {
         return selected;
     }
@@ -27,5 +31,6 @@ public class Dictionary {
 
     public void setName(String name) {
         this.name = name;
+        this.id = idFromName(name);
     }
 }

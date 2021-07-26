@@ -1,8 +1,24 @@
 package io.github.geniot.elex.model;
 
-public class Language {
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+public class Language implements Comparable<Language> {
     private String sourceCode;
-    private String[] targetCodes = new String[]{};
+    private boolean selected = false;
+    private SortedSet<Language> targetLanguages = new TreeSet();
+
+    public Language(String sc) {
+        this.sourceCode = sc;
+    }
+
+    public boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
     public String getSourceCode() {
         return sourceCode;
@@ -12,11 +28,16 @@ public class Language {
         this.sourceCode = sourceCode;
     }
 
-    public String[] getTargetCodes() {
-        return targetCodes;
+    public SortedSet<Language> getTargetLanguages() {
+        return targetLanguages;
     }
 
-    public void setTargetCodes(String[] targetCodes) {
-        this.targetCodes = targetCodes;
+    public void setTargetLanguages(SortedSet<Language> targetLanguages) {
+        this.targetLanguages = targetLanguages;
+    }
+
+    @Override
+    public int compareTo(Language o) {
+        return this.sourceCode.compareTo(o.sourceCode);
     }
 }

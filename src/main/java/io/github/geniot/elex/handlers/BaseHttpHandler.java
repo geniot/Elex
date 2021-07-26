@@ -37,7 +37,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
     public Map<String, String> queryToMap(String query) {
         if (query == null) {
-            return null;
+            return new HashMap<>();
         }
         Map<String, String> result = new HashMap<>();
         for (String param : query.split("&")) {

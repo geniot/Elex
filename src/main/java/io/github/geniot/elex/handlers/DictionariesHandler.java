@@ -17,6 +17,11 @@ public class DictionariesHandler extends BaseHttpHandler {
             String sl = map.get("sl");
             String tl = map.get("tl");
 
+            Set<String> inputIds = new HashSet();
+            if (map.get("deselected") != null) {
+                inputIds.addAll(Arrays.asList(map.get("deselected").replaceAll("\\[|\\]", "").split(",")));
+            }
+
             List<Dictionary> dictionaries = new ArrayList<>();
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
             for (IDictionary dictionary : dictionarySet) {
@@ -27,7 +32,7 @@ public class DictionariesHandler extends BaseHttpHandler {
                     String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
                     Dictionary uiDictionary = new Dictionary();
                     uiDictionary.setName(name);
-                    uiDictionary.setId(name.hashCode() & 0xfffffff);
+                    uiDictionary.setSelected(!inputIds.contains(String.valueOf(uiDictionary.getId())));
                     dictionaries.add(uiDictionary);
                 }
             }

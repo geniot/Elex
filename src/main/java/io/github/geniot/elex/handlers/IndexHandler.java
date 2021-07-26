@@ -2,39 +2,52 @@ package io.github.geniot.elex.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import io.github.geniot.dictiographer.model.IDictionary;
+import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
-import io.github.geniot.elex.model.SearchResult;
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 public class IndexHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) {
         try {
             Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
-            int size = Integer.parseInt(map.get("size"));
-            String search = map.get("search");
-            Logger.getInstance().log(String.valueOf(map.get("dics")));
-            //todo use other parameters
+//            Set<String> inputIds = new HashSet(Arrays.asList(map.get("dics").split(",")));
+            int page = Integer.parseInt(map.get("page"));
+            int pageSize = Integer.parseInt(map.get("pageSize"));
+
+            Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
+            IndexedTreeSet<String> index = dictionarySet.iterator().next().getIndex();
+            String exact = index.exact(page * pageSize);
+            SortedSet<String> tailSet = index.tailSet(exact);
+            SortedSet<String> pageSet = new TreeSet<>();
+            Iterator<String> iterator = tailSet.iterator();
+            while (iterator.hasNext() && pageSet.size() < pageSize) {
+                pageSet.add(iterator.next());
+            }
+
+//            for (IDictionary dictionary : dictionarySet) {
+//                Properties properties = dictionary.getProperties();
+//                String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
+//                int id = Dictionary.idFromName(name);
+//                if (inputIds.contains(String.valueOf(id))) {
+//                    index.addAll(dictionary.getIndex());
+//                }
+//            }
             Gson gson = new Gson();
-            SearchResult searchResult = new SearchResult();
-            List<Headword> headwords = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                headwords.add(genHeadword(String.valueOf(i)));
-            }
-            searchResult.setHeadwords(headwords.toArray(new Headword[headwords.size()]));
 
-            List<FullTextHit> hits = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                hits.add(genHit(String.valueOf(i)));
-            }
-            searchResult.setHits(hits.toArray(new FullTextHit[hits.size()]));
+//            List<FullTextHit> hits = new ArrayList<>();
+//            for (int i = 0; i < size; i++) {
+//                hits.add(genHit(String.valueOf(i)));
+//            }
+//            searchResult.setHits(hits.toArray(new FullTextHit[hits.size()]));
 
-            String s = gson.toJson(searchResult);
+            String s = gson.toJson(pageSet);
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);

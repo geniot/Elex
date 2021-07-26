@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.model.Dictionary;
 import org.apache.commons.io.IOUtils;
 
 import java.util.Map;
@@ -32,8 +33,7 @@ public class IconHandler extends BaseHttpHandler {
             for (IDictionary dictionary : dictionarySet) {
                 Properties properties = dictionary.getProperties();
                 String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
-                int dicId = name.hashCode() & 0xfffffff;
-                if (id == dicId) {
+                if (id == Dictionary.idFromName(name)) {
                     iconBytes = dictionary.getIcon();
                 }
             }
