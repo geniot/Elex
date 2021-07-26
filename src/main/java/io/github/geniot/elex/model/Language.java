@@ -2,7 +2,7 @@ package io.github.geniot.elex.model;
 
 public class Language {
     private String sourceCode;
-    private String[] targetCodes;
+    private String[] targetCodes = new String[]{};
 
     public String getSourceCode() {
         return sourceCode;

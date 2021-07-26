@@ -27,6 +27,5 @@ public class Dictionary {
 
     public void setName(String name) {
         this.name = name;
-        this.id = (this.name.hashCode() & 0xfffffff);
     }
 }

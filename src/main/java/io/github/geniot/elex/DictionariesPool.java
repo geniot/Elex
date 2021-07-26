@@ -1,7 +1,7 @@
 package io.github.geniot.elex;
 
+import io.github.geniot.dictiographer.model.CachedZipDictionary;
 import io.github.geniot.dictiographer.model.IDictionary;
-import io.github.geniot.dictiographer.model.ZipDictionary;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -52,7 +52,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                 } else if (dicFile.isFile() && dicFile.getName().endsWith(".zip")) {
                     try {
                         Logger.getInstance().log("Installing: " + dicFile);
-                        dictionaries.add(new ZipDictionary(dicFile));
+                        dictionaries.add(new CachedZipDictionary(dicFile));
                     } catch (Exception ex) {
                         Logger.getInstance().log("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
                         Logger.getInstance().log(ex);
@@ -65,6 +65,10 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             Logger.getInstance().log("Couldn't update state");
             Logger.getInstance().log(e);
         }
+    }
+
+    public Set<IDictionary> getDictionaries() {
+        return dictionaries;
     }
 
     @Override
