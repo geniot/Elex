@@ -2,6 +2,7 @@ package io.github.geniot.elex.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import io.github.geniot.dictiographer.model.HtmlUtils;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Language;
 
@@ -14,7 +15,7 @@ public class CssHandler extends BaseHttpHandler {
     public void handle(HttpExchange httpExchange) {
         try {
             Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
-            String s = ".test{color:red;}";
+            String s = HtmlUtils.DSL_STYLE;
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.CSS));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
