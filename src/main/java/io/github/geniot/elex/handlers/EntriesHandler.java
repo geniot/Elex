@@ -6,22 +6,32 @@ import io.github.geniot.dictiographer.model.HtmlUtils;
 import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Entry;
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class EntriesHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) {
         try {
-            Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
-            String headword = map.get("hwd");
+            Map<String, String> map = queryToMap(httpExchange.getRequestURI().getRawQuery());
+            String headword = URLDecoder.decode(map.get("hwd"), StandardCharsets.UTF_8.name());
+            Set<String> inputIds = new HashSet(Arrays.asList(map.get("dics").split(",")));
 
+            String article = "";
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
-            String article = dictionarySet.iterator().next().read(headword);
+            for (IDictionary dictionary : dictionarySet) {
+                Properties properties = dictionary.getProperties();
+                String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
+                if (inputIds.contains(String.valueOf(Dictionary.idFromName(name)))) {
+                    article = dictionary.read(headword);
+                    break;
+                }
+            }
             article = HtmlUtils.toHtml(article);
 
             Gson gson = new Gson();

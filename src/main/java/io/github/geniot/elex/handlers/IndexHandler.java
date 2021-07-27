@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.indexedtreemap.IndexedTreeSet;
@@ -17,12 +18,22 @@ public class IndexHandler extends BaseHttpHandler {
     public void handle(HttpExchange httpExchange) {
         try {
             Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
-//            Set<String> inputIds = new HashSet(Arrays.asList(map.get("dics").split(",")));
+            Set<String> inputIds = new HashSet(Arrays.asList(map.get("dics").split(",")));
             int page = Integer.parseInt(map.get("page"));
             int pageSize = Integer.parseInt(map.get("pageSize"));
+            Logger.getInstance().log(inputIds.iterator().next());
 
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
-            IndexedTreeSet<String> index = dictionarySet.iterator().next().getIndex();
+            IndexedTreeSet<String> index = new IndexedTreeSet<>();
+            for (IDictionary dictionary : dictionarySet) {
+                Properties properties = dictionary.getProperties();
+                String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
+                if (inputIds.contains(String.valueOf(Dictionary.idFromName(name)))) {
+                    index = dictionary.getIndex();
+                    break;
+                }
+            }
+
             String exact = index.exact(page * pageSize);
             SortedSet<String> tailSet = index.tailSet(exact);
             SortedSet<String> pageSet = new TreeSet<>();

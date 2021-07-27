@@ -18,7 +18,7 @@ public class LanguagesHandler extends BaseHttpHandler {
             String sl = map.get("sl");
             String tl = map.get("tl");
 
-            SortedSet<Language> resultLanguagesSet = new TreeSet<>();
+            SortedMap<String, Language> resultLanguagesMap = new TreeMap<>();
 
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
             for (IDictionary dictionary : dictionarySet) {
@@ -27,7 +27,10 @@ public class LanguagesHandler extends BaseHttpHandler {
                 String dictionarySourceLanguage = properties.getProperty(IDictionary.DictionaryProperty.INDEX_LANGUAGE.name()).toUpperCase();
                 String dictionaryTargetLanguage = properties.getProperty(IDictionary.DictionaryProperty.CONTENTS_LANGUAGE.name()).toUpperCase();
 
-                Language sourceLanguage = new Language(dictionarySourceLanguage);
+                Language sourceLanguage = resultLanguagesMap.get(dictionarySourceLanguage);
+                if (sourceLanguage == null) {
+                    sourceLanguage = new Language(dictionarySourceLanguage);
+                }
                 if (dictionarySourceLanguage.equals(sl)) {
                     sourceLanguage.setSelected(true);
                 }
@@ -38,13 +41,13 @@ public class LanguagesHandler extends BaseHttpHandler {
                 }
                 sourceLanguage.getTargetLanguages().add(targetLanguage);
 
-                resultLanguagesSet.add(sourceLanguage);
+                resultLanguagesMap.put(dictionarySourceLanguage, sourceLanguage);
             }
 
             //todo: maybe set en-en here
             if (StringUtils.isEmpty(sl) || StringUtils.isEmpty(tl)) {
-                if (!resultLanguagesSet.isEmpty()) {
-                    Language lang = resultLanguagesSet.first();
+                if (!resultLanguagesMap.isEmpty()) {
+                    Language lang = resultLanguagesMap.values().iterator().next();
                     lang.setSelected(true);
                     if (!lang.getTargetLanguages().isEmpty()) {
                         lang.getTargetLanguages().first().setSelected(true);
@@ -53,7 +56,7 @@ public class LanguagesHandler extends BaseHttpHandler {
             }
 
             Gson gson = new Gson();
-            String s = gson.toJson(resultLanguagesSet);
+            String s = gson.toJson(resultLanguagesMap.values());
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
 
         } catch (Exception ex) {
