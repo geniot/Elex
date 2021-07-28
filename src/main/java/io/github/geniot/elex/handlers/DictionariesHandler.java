@@ -6,6 +6,8 @@ import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
+import io.github.geniot.elex.model.Shelf;
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
 
 import java.util.*;
 
@@ -23,6 +25,7 @@ public class DictionariesHandler extends BaseHttpHandler {
             }
 
             List<Dictionary> dictionaries = new ArrayList<>();
+            IndexedTreeSet<String> index = new IndexedTreeSet<>();
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
             for (IDictionary dictionary : dictionarySet) {
                 Properties properties = dictionary.getProperties();
@@ -32,13 +35,22 @@ public class DictionariesHandler extends BaseHttpHandler {
                     String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
                     Dictionary uiDictionary = new Dictionary();
                     uiDictionary.setName(name);
-                    uiDictionary.setSelected(!inputIds.contains(String.valueOf(uiDictionary.getId())));
+                    boolean isSelected = !inputIds.contains(String.valueOf(uiDictionary.getId()));
+                    if (isSelected) {
+                        index = dictionary.getIndex();
+                    }
+                    uiDictionary.setSelected(isSelected);
                     dictionaries.add(uiDictionary);
                 }
             }
 
+            Shelf shelf = new Shelf();
+            Dictionary[] dictionariesArray = dictionaries.toArray(new Dictionary[dictionaries.size()]);
+            shelf.setDictionaries(dictionariesArray);
+            shelf.setLength(index.size());
+
             Gson gson = new Gson();
-            String s = gson.toJson(dictionaries.toArray(new Dictionary[dictionaries.size()]));
+            String s = gson.toJson(shelf);
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
