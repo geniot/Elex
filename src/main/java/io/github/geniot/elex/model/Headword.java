@@ -4,6 +4,10 @@ public class Headword {
     private String text;
     private boolean selected = false;
 
+    public Headword(String t) {
+        this.text = t;
+    }
+
     public boolean getSelected() {
         return selected;
     }

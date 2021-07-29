@@ -8,7 +8,9 @@ import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
+import io.github.geniot.elex.model.Index;
 import io.github.geniot.indexedtreemap.IndexedTreeSet;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -19,63 +21,74 @@ public class IndexHandler extends BaseHttpHandler {
         try {
             Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
             Set<String> inputIds = new HashSet(Arrays.asList(map.get("dics").split(",")));
-            int page = Integer.parseInt(map.get("page"));
-            int pageSize = Integer.parseInt(map.get("pageSize"));
-            Logger.getInstance().log(inputIds.iterator().next());
+            int visibleSize = Integer.parseInt(map.get("visibleSize"));
+            int selectedIndex = visibleSize / 2;
+            if (map.containsKey("selectedIndex")) {
+                selectedIndex = Integer.parseInt(map.get("selectedIndex"));
+            }
+            if (selectedIndex > visibleSize - 1) {
+                selectedIndex = visibleSize - 1;
+            }
+            String selectedHeadword = map.get("selectedHeadword");
+            if (StringUtils.isEmpty(selectedHeadword)) {
+                selectedHeadword = "welcome";
+            }
+
+            Index index = new Index();
 
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
-            IndexedTreeSet<String> index = new IndexedTreeSet<>();
+            IndexedTreeSet<String> combinedIndex = new IndexedTreeSet<>();
+
             for (IDictionary dictionary : dictionarySet) {
                 Properties properties = dictionary.getProperties();
                 String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
                 if (inputIds.contains(String.valueOf(Dictionary.idFromName(name)))) {
-                    index = dictionary.getIndex();
+                    combinedIndex.addAll(dictionary.getIndex());
                     break;
                 }
             }
 
-            String exact = index.exact(page * pageSize);
-            SortedSet<String> tailSet = index.tailSet(exact);
-            SortedSet<String> pageSet = new TreeSet<>();
-            Iterator<String> iterator = tailSet.iterator();
-            while (iterator.hasNext() && pageSet.size() < pageSize) {
-                pageSet.add(iterator.next());
+            SortedSet<String> headwords = new TreeSet<>();
+            if (combinedIndex.size() <= visibleSize) {
+                for (String s : combinedIndex) {
+                    headwords.add(s);
+                }
+                index.setNeedsPagination(false);
+            } else {
+                index.setNeedsPagination(true);
+                Iterator<String> tailIterator = combinedIndex.tailSet(selectedHeadword).iterator();
+                Iterator<String> headIterator = combinedIndex.headSet(selectedHeadword).iterator();
+                for (int i = 0; i < selectedIndex; i++) {
+                    if (headIterator.hasNext()) {
+                        headwords.add(headIterator.next());
+                    }
+                }
+                for (int i = selectedIndex; i < visibleSize; i++) {
+                    if (tailIterator.hasNext()) {
+                        headwords.add(tailIterator.next());
+                    }
+                }
+            }
+            Headword[] headwordsArray = new Headword[headwords.size()];
+            int counter = 0;
+            for (String s : headwords) {
+                headwordsArray[counter++] = new Headword(s);
             }
 
-//            for (IDictionary dictionary : dictionarySet) {
-//                Properties properties = dictionary.getProperties();
-//                String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
-//                int id = Dictionary.idFromName(name);
-//                if (inputIds.contains(String.valueOf(id))) {
-//                    index.addAll(dictionary.getIndex());
-//                }
-//            }
+            index.setHeadwords(headwordsArray);
+
             Gson gson = new Gson();
-
-//            List<FullTextHit> hits = new ArrayList<>();
-//            for (int i = 0; i < size; i++) {
-//                hits.add(genHit(String.valueOf(i)));
-//            }
-//            searchResult.setHits(hits.toArray(new FullTextHit[hits.size()]));
-
-            String s = gson.toJson(pageSet);
+            String s = gson.toJson(index);
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }
     }
 
-    private Headword genHeadword(String name) {
-        Headword en = new Headword();
-        en.setText(String.valueOf(name.hashCode()));
-        return en;
-    }
-
     private FullTextHit genHit(String name) {
         FullTextHit en = new FullTextHit();
         en.setDictionaryId("Some fancy dictionary".hashCode());
-        Headword hw = new Headword();
-        hw.setText(name);
+        Headword hw = new Headword(name);
         en.setHeadword(hw);
         en.setExtract("some text and then comes <b>bold</b>" + System.currentTimeMillis());
         return en;
