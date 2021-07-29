@@ -10,7 +10,6 @@ import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Index;
 import io.github.geniot.indexedtreemap.IndexedTreeSet;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -30,7 +29,7 @@ public class IndexHandler extends BaseHttpHandler {
                 selectedIndex = visibleSize - 1;
             }
             String selectedHeadword = map.get("selectedHeadword");
-            if (StringUtils.isEmpty(selectedHeadword)) {
+            if (selectedHeadword == null) {
                 selectedHeadword = "welcome";
             }
 
@@ -68,11 +67,23 @@ public class IndexHandler extends BaseHttpHandler {
                         headwords.add(tailIterator.next());
                     }
                 }
+                while (headwords.size() < visibleSize && (headIterator.hasNext() || tailIterator.hasNext())) {
+                    if (headIterator.hasNext()) {
+                        headwords.add(headIterator.next());
+                    }
+                    if (tailIterator.hasNext()) {
+                        headwords.add(tailIterator.next());
+                    }
+                }
             }
             Headword[] headwordsArray = new Headword[headwords.size()];
             int counter = 0;
             for (String s : headwords) {
-                headwordsArray[counter++] = new Headword(s);
+                Headword hw = new Headword(s);
+                if (s.equals(selectedHeadword)) {
+                    hw.setSelected(true);
+                }
+                headwordsArray[counter++] = hw;
             }
 
             index.setHeadwords(headwordsArray);

@@ -8,7 +8,6 @@ import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Entry;
-import io.github.geniot.indexedtreemap.IndexedTreeSet;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -32,12 +31,13 @@ public class EntriesHandler extends BaseHttpHandler {
                     break;
                 }
             }
-            article = HtmlUtils.toHtml(article);
 
             Gson gson = new Gson();
             List<Entry> entries = new ArrayList<>();
-            entries.add(genEntry(headword, article));
-
+            if (article != null) {
+                article = HtmlUtils.toHtml(article);
+                entries.add(genEntry(headword, article));
+            }
             String s = gson.toJson(entries.toArray(new Entry[entries.size()]));
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
         } catch (Exception ex) {
