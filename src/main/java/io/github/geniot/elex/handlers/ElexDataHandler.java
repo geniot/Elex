@@ -79,6 +79,10 @@ public class ElexDataHandler extends BaseHttpHandler {
 
     private void updateHeadwords(Model model) {
         TreeSet<String> combinedIndex = DictionariesPool.getInstance().getCombinedIndex(model);
+        if (combinedIndex.isEmpty()) {
+            model.setHeadwords(new Headword[]{});
+            return;
+        }
 
         SortedSet<String> headwords = new TreeSet<>();
         String selectedHeadword = model.getCurrentSelectedHeadword();
