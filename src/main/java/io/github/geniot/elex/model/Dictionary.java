@@ -4,6 +4,15 @@ public class Dictionary {
     private int id;
     private String name;
     private boolean selected = true;
+    private boolean current = true;
+
+    public boolean getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(boolean current) {
+        this.current = current;
+    }
 
     public static int idFromName(String name) {
         return name.hashCode() & 0xfffffff;

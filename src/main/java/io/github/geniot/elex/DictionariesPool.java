@@ -2,20 +2,20 @@ package io.github.geniot.elex;
 
 import io.github.geniot.dictiographer.model.CachedZipDictionary;
 import io.github.geniot.dictiographer.model.IDictionary;
+import io.github.geniot.elex.model.Model;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class DictionariesPool extends FileAlterationListenerAdaptor {
     private Set<IDictionary> dictionaries = Collections.synchronizedSet(new HashSet<>());
     private FileAlterationObserver observer;
     private static DictionariesPool INSTANCE;
     private static String DATA_FOLDER_NAME = "data";
+    private Map<String, TreeSet<String>> combinedIndexesMap = new HashMap<>();
 
     public static DictionariesPool getInstance() {
         if (INSTANCE == null) {
@@ -52,7 +52,10 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                 } else if (dicFile.isFile() && dicFile.getName().endsWith(".zip")) {
                     try {
                         Logger.getInstance().log("Installing: " + dicFile);
-                        dictionaries.add(new CachedZipDictionary(dicFile));
+                        CachedZipDictionary cachedZipDictionary = new CachedZipDictionary(dicFile);
+//                        cachedZipDictionary.getProperties();
+//                        cachedZipDictionary.getIndex();
+                        dictionaries.add(cachedZipDictionary);
                     } catch (Exception ex) {
                         Logger.getInstance().log("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
                         Logger.getInstance().log(ex);
@@ -85,4 +88,37 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     public void onFileDelete(final File file) {
         update();
     }
+
+    public TreeSet<String> getCombinedIndex(Model model) {
+        String key = getActiveShelfKey(model);
+        TreeSet<String> combinedIndex = combinedIndexesMap.get(key);
+
+        if (combinedIndex == null) {
+            combinedIndex = new TreeSet<>();
+            for (IDictionary dictionary : dictionaries) {
+                Properties properties = dictionary.getProperties();
+                String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
+                if (model.isDictionaryCurrentSelected(name)) {
+                    combinedIndex.addAll(dictionary.getIndex());
+                }
+            }
+        }
+        combinedIndexesMap.put(key, combinedIndex);
+
+        return combinedIndex;
+    }
+
+    private String getActiveShelfKey(Model model) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (IDictionary dictionary : dictionaries) {
+            Properties properties = dictionary.getProperties();
+            String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
+            if (model.isDictionaryCurrentSelected(name)) {
+                stringBuffer.append(name);
+                stringBuffer.append("\n");
+            }
+        }
+        return stringBuffer.toString();
+    }
+
 }

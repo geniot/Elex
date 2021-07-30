@@ -26,10 +26,8 @@ public class ElexServer extends Observable {
 
             server = HttpServer.create(new InetSocketAddress(host, port), 0);
             server.createContext("/", new StaticResourceHandler());
-            server.createContext("/languages", new LanguagesHandler());
-            server.createContext("/dictionaries", new DictionariesHandler());
-            server.createContext("/index", new IndexHandler());
-            server.createContext("/entries", new EntriesHandler());
+            server.createContext("/data", new ElexDataHandler());
+
             server.createContext("/css", new CssHandler());
             server.createContext("/icon", new IconHandler());
             server.setExecutor(null);
