@@ -14,6 +14,8 @@ public class Model {
     private Map<String, String> userInputs = new HashMap<>();
     private int visibleSize = 0;
     private int selectedIndex = 0;
+    private boolean startReached = false;
+    private boolean endReached = false;
 
     private Action action = Action.INDEX;
 
@@ -185,5 +187,21 @@ public class Model {
 
     public void setSelectedIndex(int selectedIndex) {
         this.selectedIndex = selectedIndex;
+    }
+
+    public boolean getStartReached() {
+        return startReached;
+    }
+
+    public void setStartReached(boolean startReached) {
+        this.startReached = startReached;
+    }
+
+    public boolean getEndReached() {
+        return endReached;
+    }
+
+    public void setEndReached(boolean endReached) {
+        this.endReached = endReached;
     }
 }

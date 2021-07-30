@@ -173,6 +173,18 @@ public class ElexDataHandler extends BaseHttpHandler {
             }
         }
 
+        if (headwords.first().equals(combinedIndex.first())) {
+            model.setStartReached(true);
+        } else {
+            model.setStartReached(false);
+        }
+
+        if (headwords.last().equals(combinedIndex.last())) {
+            model.setEndReached(true);
+        } else {
+            model.setEndReached(false);
+        }
+
         model.setAction(Action.INDEX);
         model.setCurrentSelectedHeadword(selectedHeadword);
         model.setHeadwords(headwordsArray);
