@@ -85,6 +85,8 @@ public class ElexDataHandler extends BaseHttpHandler {
         TreeSet<String> combinedIndex = DictionariesPool.getInstance().getCombinedIndex(model);
         if (combinedIndex.isEmpty()) {
             model.setHeadwords(new Headword[]{});
+            model.setStartReached(true);
+            model.setEndReached(true);
             return;
         }
 
