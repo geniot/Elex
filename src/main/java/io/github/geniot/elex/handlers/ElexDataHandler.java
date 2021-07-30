@@ -48,7 +48,7 @@ public class ElexDataHandler extends BaseHttpHandler {
 
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
             long t7 = System.currentTimeMillis();
-//            Logger.getInstance().log((t2 - t1) + "-" + (t3 - t2) + "-" + (t4 - t3) + "-" + (t5 - t4) + "-" + (t6 - t5) + "-" + (t7 - t6));
+            Logger.getInstance().log((t2 - t1) + "-" + (t3 - t2) + "-" + (t4 - t3) + "-" + (t5 - t4) + "-" + (t6 - t5) + "-" + (t7 - t6));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }
@@ -116,6 +116,13 @@ public class ElexDataHandler extends BaseHttpHandler {
             selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.FORWARD);
         } else if (model.getAction().equals(Action.PREVIOUS_TEN_PAGES)) {
             selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.BACKWARD);
+        } else if (model.getAction().equals(Action.SEARCH)) {
+            String userInput = model.getUserInput();
+            if (combinedIndex.contains(userInput)) {
+                selectedHeadword = userInput;
+            } else {
+                selectedHeadword = combinedIndex.higher(userInput);
+            }
         }
 
         HeadwordIterator<String> tailIterator = new HeadwordIterator(combinedIndex, selectedHeadword, -1);

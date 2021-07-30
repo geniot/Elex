@@ -13,6 +13,7 @@ public class Model {
     private Map<String, String> selectedHeadwords = new HashMap<>();
     private Map<String, String> userInputs = new HashMap<>();
     private int visibleSize = 0;
+    private int selectedIndex = 0;
 
     private Action action = Action.INDEX;
 
@@ -155,7 +156,7 @@ public class Model {
                 return i;
             }
         }
-        return 0;
+        return selectedIndex;
     }
 
     public void selectNext() {
@@ -176,5 +177,13 @@ public class Model {
                 return;
             }
         }
+    }
+
+    public String getUserInput() {
+        return userInputs.get(getSelectedSourceLanguage());
+    }
+
+    public void setSelectedIndex(int selectedIndex) {
+        this.selectedIndex = selectedIndex;
     }
 }
