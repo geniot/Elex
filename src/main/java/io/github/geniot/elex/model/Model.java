@@ -12,7 +12,6 @@ public class Model {
 
     private Map<String, String> selectedHeadwords = new HashMap<>();
     private Map<String, String> userInputs = new HashMap<>();
-    private int selectedIndex = 0;
     private int visibleSize = 0;
 
     private Action action = Action.INDEX;
@@ -77,10 +76,6 @@ public class Model {
         selectedHeadwords.put(currentKey, hw);
     }
 
-    enum Action {
-        INDEX, NEXT_WORD, NEXT_PAGE, NEXT_TEN_PAGES, TO_END,
-        SEARCH, PREVIOUS_WORD, PREVIOUS_PAGE, PREVIOUS_TEN_PAGES, TO_START
-    }
 
     public Language[] getSourceLanguages() {
         return sourceLanguages;
@@ -138,14 +133,6 @@ public class Model {
         this.userInputs = userInputs;
     }
 
-    public int getSelectedIndex() {
-        return selectedIndex;
-    }
-
-    public void setSelectedIndex(int selectedIndex) {
-        this.selectedIndex = selectedIndex;
-    }
-
     public int getVisibleSize() {
         return visibleSize;
     }
@@ -160,5 +147,34 @@ public class Model {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public int getSelectedIndex() {
+        for (int i = 0; i < headwords.length; i++) {
+            if (headwords[i].getSelected()) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public void selectNext() {
+        for (int i = 0; i < headwords.length - 1; i++) {
+            if (headwords[i].getSelected()) {
+                headwords[i].setSelected(false);
+                headwords[i + 1].setSelected(true);
+                return;
+            }
+        }
+    }
+
+    public void selectPrevious() {
+        for (int i = headwords.length - 1; i > 0; i--) {
+            if (headwords[i].getSelected()) {
+                headwords[i].setSelected(false);
+                headwords[i - 1].setSelected(true);
+                return;
+            }
+        }
     }
 }

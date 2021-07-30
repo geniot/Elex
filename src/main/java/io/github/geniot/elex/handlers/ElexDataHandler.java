@@ -16,7 +16,11 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class ElexDataHandler extends BaseHttpHandler {
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
+
+    enum Direction {
+        FORWARD, BACKWARD
+    }
 
     @Override
     public void handle(HttpExchange httpExchange) {
@@ -44,7 +48,7 @@ public class ElexDataHandler extends BaseHttpHandler {
 
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
             long t7 = System.currentTimeMillis();
-            Logger.getInstance().log((t2 - t1) + "-" + (t3 - t2) + "-" + (t4 - t3) + "-" + (t5 - t4) + "-" + (t6 - t5) + "-" + (t7 - t6));
+//            Logger.getInstance().log((t2 - t1) + "-" + (t3 - t2) + "-" + (t4 - t3) + "-" + (t5 - t4) + "-" + (t6 - t5) + "-" + (t7 - t6));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }
@@ -94,6 +98,26 @@ public class ElexDataHandler extends BaseHttpHandler {
             selectedHeadword = bestMatch;
         }
 
+        if (model.getAction().equals(Action.TO_START)) {
+            selectedHeadword = combinedIndex.first();
+        } else if (model.getAction().equals(Action.TO_END)) {
+            selectedHeadword = combinedIndex.last();
+        } else if (model.getAction().equals(Action.NEXT_WORD)) {
+            selectedHeadword = scroll(combinedIndex, selectedHeadword, 1, Direction.FORWARD);
+            model.selectNext();
+        } else if (model.getAction().equals(Action.PREVIOUS_WORD)) {
+            selectedHeadword = scroll(combinedIndex, selectedHeadword, 1, Direction.BACKWARD);
+            model.selectPrevious();
+        } else if (model.getAction().equals(Action.NEXT_PAGE)) {
+            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize(), Direction.FORWARD);
+        } else if (model.getAction().equals(Action.PREVIOUS_PAGE)) {
+            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize(), Direction.BACKWARD);
+        } else if (model.getAction().equals(Action.NEXT_TEN_PAGES)) {
+            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.FORWARD);
+        } else if (model.getAction().equals(Action.PREVIOUS_TEN_PAGES)) {
+            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.BACKWARD);
+        }
+
         HeadwordIterator<String> tailIterator = new HeadwordIterator(combinedIndex, selectedHeadword, -1);
         HeadwordIterator<String> headIterator = new HeadwordIterator(combinedIndex, selectedHeadword, 1);
 
@@ -141,8 +165,22 @@ public class ElexDataHandler extends BaseHttpHandler {
                 hw.setSelected(false);
             }
         }
+
+        model.setAction(Action.INDEX);
         model.setCurrentSelectedHeadword(selectedHeadword);
         model.setHeadwords(headwordsArray);
+    }
+
+    private String scroll(TreeSet<String> combinedIndex, String from, int amount, Direction direction) {
+        String next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(from) : combinedIndex.lower(from);
+        --amount;
+        while (next != null && amount-- > 0) {
+            next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(next) : combinedIndex.lower(next);
+            if (next != null) {
+                from = next;
+            }
+        }
+        return next == null ? from : next;
     }
 
     private void updateDictionaries(Model model) {
