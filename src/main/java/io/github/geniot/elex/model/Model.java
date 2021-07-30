@@ -58,22 +58,22 @@ public class Model {
     }
 
     public String getCurrentSelectedHeadword() {
-        for (Headword hw : headwords) {
-            if (hw.getSelected()) {
-                return hw.getText();
-            }
-        }
-        String currentKey = getSelectedSourceLanguage() + "-" + getSelectedTargetLanguage();
+        String currentKey = getSelectedSourceLanguage();// + "-" + getSelectedTargetLanguage();
         for (String key : selectedHeadwords.keySet()) {
             if (key.equals(currentKey)) {
                 return selectedHeadwords.get(key);
+            }
+        }
+        for (Headword hw : headwords) {
+            if (hw.getSelected()) {
+                return hw.getText();
             }
         }
         return "welcome";
     }
 
     public void setCurrentSelectedHeadword(String hw) {
-        String currentKey = getSelectedSourceLanguage() + "-" + getSelectedTargetLanguage();
+        String currentKey = getSelectedSourceLanguage();// + "-" + getSelectedTargetLanguage();
         selectedHeadwords.put(currentKey, hw);
     }
 

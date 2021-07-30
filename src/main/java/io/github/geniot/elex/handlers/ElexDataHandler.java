@@ -1,6 +1,5 @@
 package io.github.geniot.elex.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.dictiographer.model.HtmlUtils;
@@ -40,7 +39,7 @@ public class ElexDataHandler extends BaseHttpHandler {
             long t6 = System.currentTimeMillis();
 //        Logger.getInstance().log(stringBuilder.toString());
 
-        String s = gson.toJson(model);
+            String s = gson.toJson(model);
 //            String s = new ObjectMapper().writeValueAsString(model);
 
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
@@ -83,6 +82,14 @@ public class ElexDataHandler extends BaseHttpHandler {
 
         SortedSet<String> headwords = new TreeSet<>();
         String selectedHeadword = model.getCurrentSelectedHeadword();
+        if (!combinedIndex.contains(selectedHeadword)) {
+            String bestMatch = combinedIndex.lower(selectedHeadword);
+            if (bestMatch == null) {
+                bestMatch = combinedIndex.higher(selectedHeadword);
+            }
+            selectedHeadword = bestMatch;
+        }
+
         HeadwordIterator<String> tailIterator = new HeadwordIterator(combinedIndex, selectedHeadword, -1);
         HeadwordIterator<String> headIterator = new HeadwordIterator(combinedIndex, selectedHeadword, 1);
 
