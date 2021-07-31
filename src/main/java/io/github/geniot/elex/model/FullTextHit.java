@@ -4,6 +4,15 @@ public class FullTextHit {
     private int dictionaryId;
     private Headword headword;
     private String extract;
+    private float score;
+
+    public float getScore() {
+        return score;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
+    }
 
     public int getDictionaryId() {
         return dictionaryId;

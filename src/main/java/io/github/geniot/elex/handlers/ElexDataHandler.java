@@ -4,15 +4,27 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.dictiographer.model.HtmlUtils;
 import io.github.geniot.dictiographer.model.IDictionary;
+import io.github.geniot.dictiographer.model.SearchResult;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.*;
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.TextFragment;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.*;
 
 public class ElexDataHandler extends BaseHttpHandler {
@@ -32,26 +44,76 @@ public class ElexDataHandler extends BaseHttpHandler {
             new BufferedReader(new InputStreamReader(input)).lines().forEach((String s) -> stringBuilder.append(s + "\n"));
 
             Model model = gson.fromJson(stringBuilder.toString(), Model.class);
-            long t2 = System.currentTimeMillis();
             updateLanguages(model);
-            long t3 = System.currentTimeMillis();
             updateDictionaries(model);
-            long t4 = System.currentTimeMillis();
             updateHeadwords(model);
-            long t5 = System.currentTimeMillis();
             updateEntries(model);
-            long t6 = System.currentTimeMillis();
-//        Logger.getInstance().log(stringBuilder.toString());
+            updateFullTextHits(model);
 
             String s = gson.toJson(model);
-//            String s = new ObjectMapper().writeValueAsString(model);
-
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
-            long t7 = System.currentTimeMillis();
-            Logger.getInstance().log((t2 - t1) + "-" + (t3 - t2) + "-" + (t4 - t3) + "-" + (t5 - t4) + "-" + (t6 - t5) + "-" + (t7 - t6));
+            long t2 = System.currentTimeMillis();
+            Logger.getInstance().log((t2 - t1) + " ms");
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }
+    }
+
+    private void updateFullTextHits(Model model) {
+        try {
+            List<FullTextHit> hits = new ArrayList<>();
+            Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
+            for (IDictionary dictionary : dictionarySet) {
+                Properties properties = dictionary.getProperties();
+                String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());
+                if (model.isDictionaryCurrentSelected(name)) {
+                    IndexedTreeSet<SearchResult> results = dictionary.search(model.getUserInput());
+                    for (SearchResult sr : results) {
+                        FullTextHit hit = new FullTextHit();
+                        hit.setDictionaryId(Dictionary.idFromName(name));
+                        hit.setHeadword(new Headword(sr.getHeadword()));
+                        hit.setExtract(getAbstract(model.getUserInput(), sr.getText()));
+                        hit.setScore(sr.getScore());
+                        hits.add(hit);
+                    }
+                }
+            }
+            model.setSearchResults(hits.toArray(new FullTextHit[hits.size()]));
+        } catch (Exception ex) {
+            Logger.getInstance().log(ex);
+        }
+    }
+
+    private String getAbstract(String searchValue, String entry) throws Exception {
+        entry = stripTags(entry);
+        Analyzer analyzer = new EnglishAnalyzer();
+        SimpleHTMLFormatter formatter = new SimpleHTMLFormatter();
+        Query q = new QueryParser("content", analyzer).parse(searchValue);
+        Highlighter highlighter = new Highlighter(formatter, new QueryScorer(q));
+        TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(entry));
+        TextFragment[] fragments = highlighter.getBestTextFragments(tokenStream, entry, false, 5);
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for (TextFragment fragment : fragments) {
+            if (fragment.getScore() > 0) {
+                if (!isFirst) {
+                    sb.append(" ... ");
+                }
+                sb.append(fragment.toString());
+                isFirst = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    private String stripTags(String entry) {
+        entry = entry.replaceAll("\\[[^]]+\\]", "");
+        entry = entry.replaceAll("\t|\r|\n", "");
+        entry = entry.replaceAll("<[^>]+>", " ");
+        entry = entry.replaceAll("\\s\\s", " ");
+        entry = entry.replaceAll("  ", " ");
+        entry = entry.replaceAll("_", " ");
+        return entry;
     }
 
     private void updateEntries(Model model) {

@@ -1,5 +1,7 @@
 package io.github.geniot.elex.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -182,7 +184,11 @@ public class Model {
     }
 
     public String getUserInput() {
-        return userInputs.get(getSelectedSourceLanguage());
+        String input = userInputs.get(getSelectedSourceLanguage());
+        if (StringUtils.isEmpty(input)) {
+            input = getCurrentSelectedHeadword();
+        }
+        return input;
     }
 
     public void setSelectedIndex(int selectedIndex) {
