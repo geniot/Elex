@@ -18,6 +18,15 @@ public class Model {
     private int selectedIndex = 0;
     private boolean startReached = false;
     private boolean endReached = false;
+    private String searchResultsFor;
+
+    public String getSearchResultsFor() {
+        return searchResultsFor;
+    }
+
+    public void setSearchResultsFor(String searchResultsFor) {
+        this.searchResultsFor = searchResultsFor;
+    }
 
     private Action action = Action.INDEX;
 
