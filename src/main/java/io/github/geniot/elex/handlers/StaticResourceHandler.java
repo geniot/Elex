@@ -35,7 +35,7 @@ public class StaticResourceHandler extends BaseHttpHandler {
 
             String fileExtension = path.substring(path.lastIndexOf(".") + 1).toUpperCase();
 
-            String contentType = contentTypesMap.get(fileExtension);
+            String contentType = contentTypesMap.get(ContentType.valueOf(fileExtension));
             if (contentType.startsWith("image/")) {
                 writeBinary(httpExchange, bbs, contentType);
             } else {

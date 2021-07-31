@@ -18,6 +18,7 @@ public class MainPanel implements Observer {
     private JToggleButton pinButton;
     public JToggleButton connectButton;
     private JButton clearButton;
+    private JButton helpButton;
 
     private ElexApplication frame;
     private ElexServer server;
@@ -87,6 +88,14 @@ public class MainPanel implements Observer {
             textArea.setText("");
         });
 
+        helpButton.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(URI.create("https://github.com/geniot/elex"));
+            } catch (IOException ioException) {
+                Logger.getInstance().log(ioException);
+            }
+        });
+
     }
 
     {
@@ -146,6 +155,15 @@ public class MainPanel implements Observer {
         clearButton.setPreferredSize(new Dimension(40, 40));
         clearButton.setText("");
         panel1.add(clearButton);
+        helpButton = new JButton();
+        helpButton.setFocusPainted(false);
+        helpButton.setFocusable(false);
+        helpButton.setIcon(new ImageIcon(getClass().getResource("/images/help.png")));
+        helpButton.setMaximumSize(new Dimension(40, 40));
+        helpButton.setMinimumSize(new Dimension(40, 40));
+        helpButton.setPreferredSize(new Dimension(40, 40));
+        helpButton.setText("");
+        panel1.add(helpButton);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panel2, BorderLayout.CENTER);

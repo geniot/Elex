@@ -2,3 +2,4 @@
 target
 *.iml
 data
+src/main/resources/web
