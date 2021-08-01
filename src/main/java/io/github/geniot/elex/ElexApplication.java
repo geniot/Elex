@@ -16,6 +16,7 @@ public class ElexApplication extends DesktopApplication {
 
         mainPanel = new MainPanel(this, server);
         Logger.getInstance().setTextComponent(mainPanel.textArea);
+        Logger.getInstance().setScrollPane(mainPanel.scrollPane);
         server.addObserver(mainPanel);
 
 

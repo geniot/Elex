@@ -83,7 +83,7 @@
           <size top="0" left="5" bottom="5" right="5"/>
         </border>
         <children>
-          <scrollpane id="5e41d">
+          <scrollpane id="5e41d" binding="scrollPane">
             <constraints border-constraint="Center"/>
             <properties/>
             <border type="none"/>

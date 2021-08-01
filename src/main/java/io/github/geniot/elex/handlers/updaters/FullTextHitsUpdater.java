@@ -57,7 +57,7 @@ public class FullTextHitsUpdater {
         entry = stripTags(entry);
         Analyzer analyzer = new EnglishAnalyzer();
         SimpleHTMLFormatter formatter = new SimpleHTMLFormatter();
-        Query q = new QueryParser("content", analyzer).parse(searchValue);
+        Query q = new QueryParser("content", analyzer).parse(QueryParser.escape(searchValue));
         Highlighter highlighter = new Highlighter(formatter, new QueryScorer(q));
         TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(entry));
         TextFragment[] fragments = highlighter.getBestTextFragments(tokenStream, entry, false, 5);

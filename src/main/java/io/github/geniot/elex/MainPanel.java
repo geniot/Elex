@@ -19,6 +19,7 @@ public class MainPanel implements Observer {
     public JToggleButton connectButton;
     private JButton clearButton;
     private JButton helpButton;
+    public JScrollPane scrollPane;
 
     private ElexApplication frame;
     private ElexServer server;
@@ -168,13 +169,13 @@ public class MainPanel implements Observer {
         panel2.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panel2, BorderLayout.CENTER);
         panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        panel2.add(scrollPane1, BorderLayout.CENTER);
+        scrollPane = new JScrollPane();
+        panel2.add(scrollPane, BorderLayout.CENTER);
         textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        scrollPane1.setViewportView(textArea);
+        scrollPane.setViewportView(textArea);
     }
 
     /**

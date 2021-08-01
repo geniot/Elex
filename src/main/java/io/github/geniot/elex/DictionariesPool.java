@@ -37,6 +37,15 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             Logger.getInstance().log(e);
             e.printStackTrace();
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                for (IDictionary dictionary : dictionaries) {
+                    Logger.getInstance().log("Closing " + dictionary.getProperties().getProperty(IDictionary.DictionaryProperty.NAME.name()));
+                    dictionary.close();
+                }
+            }
+        });
     }
 
 
