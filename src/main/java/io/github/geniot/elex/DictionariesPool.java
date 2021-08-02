@@ -1,8 +1,10 @@
 package io.github.geniot.elex;
 
 import io.github.geniot.dictiographer.model.CachedZipDictionary;
+import io.github.geniot.dictiographer.model.Headword;
 import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.model.Model;
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -15,7 +17,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     private FileAlterationObserver observer;
     private static DictionariesPool INSTANCE;
     private static String DATA_FOLDER_NAME = "data";
-    private Map<String, TreeSet<String>> combinedIndexesMap = new HashMap<>();
+    private Map<String, IndexedTreeSet<Headword>> combinedIndexesMap = new HashMap<>();
 
     public static DictionariesPool getInstance() {
         if (INSTANCE == null) {
@@ -87,12 +89,12 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         update();
     }
 
-    public TreeSet<String> getCombinedIndex(Model model) {
+    public IndexedTreeSet<Headword> getCombinedIndex(Model model) {
         String key = getActiveShelfKey(model);
-        TreeSet<String> combinedIndex = combinedIndexesMap.get(key);
+        IndexedTreeSet<Headword> combinedIndex = combinedIndexesMap.get(key);
 
         if (combinedIndex == null) {
-            combinedIndex = new TreeSet<>();
+            combinedIndex = new IndexedTreeSet<>();
             for (IDictionary dictionary : dictionaries) {
                 Properties properties = dictionary.getProperties();
                 String name = properties.getProperty(IDictionary.DictionaryProperty.NAME.name());

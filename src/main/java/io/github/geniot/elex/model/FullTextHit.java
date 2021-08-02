@@ -1,5 +1,7 @@
 package io.github.geniot.elex.model;
 
+import io.github.geniot.dictiographer.model.Headword;
+
 public class FullTextHit {
     private int dictionaryId;
     private Headword headword;

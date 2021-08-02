@@ -1,10 +1,11 @@
 package io.github.geniot.elex.handlers.updaters;
 
+import io.github.geniot.dictiographer.model.Headword;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.handlers.HeadwordIterator;
 import io.github.geniot.elex.model.Action;
-import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -12,7 +13,7 @@ import java.util.TreeSet;
 public class HeadwordsUpdater {
 
     public void updateHeadwords(Model model) {
-        TreeSet<String> combinedIndex = DictionariesPool.getInstance().getCombinedIndex(model);
+        IndexedTreeSet<Headword> combinedIndex = DictionariesPool.getInstance().getCombinedIndex(model);
         if (combinedIndex.isEmpty()) {
             model.setHeadwords(new Headword[]{});
             model.setStartReached(true);
@@ -20,20 +21,20 @@ public class HeadwordsUpdater {
             return;
         }
 
-        SortedSet<String> headwords = new TreeSet<>();
+        SortedSet<Headword> headwords = new TreeSet<>();
         String selectedHeadword = model.getCurrentSelectedHeadword();
-        if (!combinedIndex.contains(selectedHeadword)) {
-            String bestMatch = combinedIndex.lower(selectedHeadword);
+        if (!combinedIndex.contains(new Headword(selectedHeadword))) {
+            Headword bestMatch = combinedIndex.lower(new Headword(selectedHeadword));
             if (bestMatch == null) {
-                bestMatch = combinedIndex.higher(selectedHeadword);
+                bestMatch = combinedIndex.higher(new Headword(selectedHeadword));
             }
-            selectedHeadword = bestMatch;
+            selectedHeadword = bestMatch.getName();
         }
 
         if (model.getAction().equals(Action.TO_START)) {
-            selectedHeadword = combinedIndex.first();
+            selectedHeadword = combinedIndex.first().getName();
         } else if (model.getAction().equals(Action.TO_END)) {
-            selectedHeadword = combinedIndex.last();
+            selectedHeadword = combinedIndex.last().getName();
         } else if (model.getAction().equals(Action.NEXT_WORD)) {
             selectedHeadword = scroll(combinedIndex, selectedHeadword, 1, Direction.FORWARD);
             model.selectNext();
@@ -53,18 +54,18 @@ public class HeadwordsUpdater {
             if (combinedIndex.contains(userInput)) {
                 selectedHeadword = userInput;
             } else {
-                String higher = combinedIndex.higher(userInput);
+                String higher = combinedIndex.higher(new Headword(userInput)).getName();
                 if (higher != null) {
                     selectedHeadword = higher;
                 }
             }
         }
 
-        HeadwordIterator<String> tailIterator = new HeadwordIterator(combinedIndex, selectedHeadword, -1);
-        HeadwordIterator<String> headIterator = new HeadwordIterator(combinedIndex, selectedHeadword, 1);
+        HeadwordIterator<Headword> tailIterator = new HeadwordIterator(combinedIndex, new Headword(selectedHeadword), -1);
+        HeadwordIterator<Headword> headIterator = new HeadwordIterator(combinedIndex, new Headword(selectedHeadword), 1);
 
-        if (combinedIndex.contains(selectedHeadword) && model.getVisibleSize() > 0) {
-            headwords.add(selectedHeadword);
+        if (combinedIndex.contains(new Headword(selectedHeadword)) && model.getVisibleSize() > 0) {
+            headwords.add(new Headword(selectedHeadword));
         }
 
         for (int i = model.getSelectedIndex(); i < model.getVisibleSize() - 1; i++) {
@@ -92,16 +93,15 @@ public class HeadwordsUpdater {
 
         Headword[] headwordsArray = new Headword[headwords.size()];
         int counter = 0;
-        for (String s : headwords) {
-            Headword hw = new Headword(s);
-            if (s.equals(selectedHeadword)) {
+        for (Headword hw : headwords) {
+            if (hw.getName().equals(selectedHeadword)) {
                 hw.setSelected(true);
             }
             headwordsArray[counter++] = hw;
         }
 
         for (Headword hw : headwordsArray) {
-            if (hw.getText().equals(selectedHeadword)) {
+            if (hw.getName().equals(selectedHeadword)) {
                 hw.setSelected(true);
             } else {
                 hw.setSelected(false);
@@ -125,11 +125,11 @@ public class HeadwordsUpdater {
         model.setHeadwords(headwordsArray);
     }
 
-    private String scroll(TreeSet<String> combinedIndex, String from, int amount, Direction direction) {
-        String next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(from) : combinedIndex.lower(from);
+    private String scroll(IndexedTreeSet<Headword> combinedIndex, String from, int amount, Direction direction) {
+        String next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(new Headword(from)).getName() : combinedIndex.lower(new Headword(from)).getName();
         --amount;
         while (next != null && amount-- > 0) {
-            next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(next) : combinedIndex.lower(next);
+            next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(new Headword(next)).getName() : combinedIndex.lower(new Headword(next)).getName();
             if (next != null) {
                 from = next;
             }

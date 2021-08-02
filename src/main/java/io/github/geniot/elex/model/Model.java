@@ -1,5 +1,6 @@
 package io.github.geniot.elex.model;
 
+import io.github.geniot.dictiographer.model.Headword;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class Model {
         }
         for (Headword hw : headwords) {
             if (hw.getSelected()) {
-                return hw.getText();
+                return hw.getName();
             }
         }
         return "welcome";

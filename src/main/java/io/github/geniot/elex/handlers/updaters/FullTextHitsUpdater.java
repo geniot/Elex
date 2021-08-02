@@ -1,12 +1,12 @@
 package io.github.geniot.elex.handlers.updaters;
 
+import io.github.geniot.dictiographer.model.Headword;
 import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.dictiographer.model.SearchResult;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.FullTextHit;
-import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.indexedtreemap.IndexedTreeSet;
 import org.apache.lucene.analysis.Analyzer;

@@ -1,15 +1,16 @@
 package io.github.geniot.elex.handlers;
 
+import io.github.geniot.indexedtreemap.IndexedTreeSet;
+
 import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 
-public class HeadwordIterator<String> implements Iterator<String> {
-    private TreeSet<String> index;
-    private String from;
+public class HeadwordIterator<Headword> implements Iterator<Headword> {
+    private IndexedTreeSet<Headword> index;
+    private Headword from;
     private int increment;
 
-    public HeadwordIterator(TreeSet<String> index, String from, int increment) {
+    public HeadwordIterator(IndexedTreeSet<Headword> index, Headword from, int increment) {
         this.index = index;
         this.from = from;
         this.increment = increment;
@@ -25,7 +26,7 @@ public class HeadwordIterator<String> implements Iterator<String> {
     }
 
     @Override
-    public String next() {
+    public Headword next() {
         if (increment > 0) {
             from = index.lower(from);
             return from;
@@ -41,7 +42,7 @@ public class HeadwordIterator<String> implements Iterator<String> {
     }
 
     @Override
-    public void forEachRemaining(Consumer<? super String> action) {
+    public void forEachRemaining(Consumer<? super Headword> action) {
         Iterator.super.forEachRemaining(action);
     }
 }
