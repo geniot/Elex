@@ -51,7 +51,7 @@ public class HeadwordsUpdater {
             selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.BACKWARD);
         } else if (model.getAction().equals(Action.SEARCH)) {
             String userInput = model.getUserInput();
-            if (combinedIndex.contains(userInput)) {
+            if (combinedIndex.contains(new Headword(userInput))) {
                 selectedHeadword = userInput;
             } else {
                 String higher = combinedIndex.higher(new Headword(userInput)).getName();
