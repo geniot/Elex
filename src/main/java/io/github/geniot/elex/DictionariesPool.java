@@ -45,6 +45,9 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     private void update() {
         try {
             long t1 = System.currentTimeMillis();
+            for (IDictionary dictionary : dictionaries) {
+                dictionary.close();
+            }
             dictionaries.clear();
             File[] dicFiles = new File(DATA_FOLDER_NAME).listFiles();
             //installing

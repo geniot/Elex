@@ -27,6 +27,9 @@ import java.util.Set;
 
 public class FullTextHitsUpdater {
     public void updateFullTextHits(Model model) {
+        if (model.getLockFullText()) {
+            return;
+        }
         try {
             List<FullTextHit> hits = new ArrayList<>();
             Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();

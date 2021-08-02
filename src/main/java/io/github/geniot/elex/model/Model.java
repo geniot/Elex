@@ -20,6 +20,15 @@ public class Model {
     private boolean startReached = false;
     private boolean endReached = false;
     private String searchResultsFor;
+    private boolean lockFullText;
+
+    public boolean getLockFullText() {
+        return lockFullText;
+    }
+
+    public void setLockFullText(boolean lockFullText) {
+        this.lockFullText = lockFullText;
+    }
 
     public String getSearchResultsFor() {
         return searchResultsFor;
