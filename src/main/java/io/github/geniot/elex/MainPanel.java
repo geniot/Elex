@@ -256,15 +256,6 @@ public class MainPanel implements Observer {
         helpButton.setPreferredSize(new Dimension(40, 40));
         helpButton.setText("");
         panel1.add(helpButton);
-        prefsButton = new JButton();
-        prefsButton.setFocusPainted(false);
-        prefsButton.setFocusable(false);
-        prefsButton.setIcon(new ImageIcon(getClass().getResource("/images/Style.png")));
-        prefsButton.setMaximumSize(new Dimension(40, 40));
-        prefsButton.setMinimumSize(new Dimension(40, 40));
-        prefsButton.setPreferredSize(new Dimension(40, 40));
-        prefsButton.setText("");
-        panel1.add(prefsButton);
         exitButton = new JButton();
         exitButton.setFocusPainted(false);
         exitButton.setFocusable(false);

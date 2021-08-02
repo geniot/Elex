@@ -39,7 +39,7 @@ public class ElexDataHandler extends BaseHttpHandler {
             String s = gson.toJson(model);
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));
             long t2 = System.currentTimeMillis();
-            Logger.getInstance().log((t2 - t1) + " ms");
+            Logger.getInstance().log((t2 - t1) + " ms " + model.getSearchResultsFor());
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }

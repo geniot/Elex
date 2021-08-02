@@ -30,8 +30,13 @@ public class Logger {
         try {
             if (jTextComponent != null) {
                 jTextComponent.getDocument().insertString(jTextComponent.getDocument().getLength(), msg + "\n", null);
-                JScrollBar vertical = scrollPane.getVerticalScrollBar();
-                vertical.setValue(vertical.getMaximum());
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+                        vertical.setValue(vertical.getMaximum());
+                    }
+                });
             } else {
                 System.out.println(msg);
             }
