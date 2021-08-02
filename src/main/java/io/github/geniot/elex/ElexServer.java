@@ -5,15 +5,17 @@ import io.github.geniot.elex.handlers.*;
 
 import java.net.InetSocketAddress;
 import java.util.Observable;
+import io.github.geniot.elex.ElexPreferences.Prop;
+
+import static io.github.geniot.elex.ElexPreferences.get;
+import static io.github.geniot.elex.ElexPreferences.getInt;
 
 public class ElexServer extends Observable {
 
     HttpServer server;
     Prop status;
 
-    enum Prop {
-        STARTING, STOPPING, STARTED, STOPPED, FAILED
-    }
+
 
 
     public void start() {
@@ -21,8 +23,8 @@ public class ElexServer extends Observable {
             setStatus(Prop.STARTING);
 
             DictionariesPool.getInstance();
-            String host = ElexPreferences.get(MainPanel.Prop.HOST.name(), "localhost");
-            int port = ElexPreferences.getInt(MainPanel.Prop.PORT.name(), 8000);
+            String host = get(Prop.HOST.name(), "localhost");
+            int port = getInt(Prop.PORT.name(), 8000);
 
             server = HttpServer.create(new InetSocketAddress(host, port), 0);
             server.createContext("/", new StaticResourceHandler());

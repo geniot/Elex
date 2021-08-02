@@ -37,15 +37,6 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             Logger.getInstance().log(e);
             e.printStackTrace();
         }
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                for (IDictionary dictionary : dictionaries) {
-                    Logger.getInstance().log("Closing " + dictionary.getProperties().getProperty(IDictionary.DictionaryProperty.NAME.name()));
-                    dictionary.close();
-                }
-            }
-        });
     }
 
 
@@ -62,8 +53,6 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                     try {
                         Logger.getInstance().log("Installing: " + dicFile);
                         CachedZipDictionary cachedZipDictionary = new CachedZipDictionary(dicFile);
-//                        cachedZipDictionary.getProperties();
-//                        cachedZipDictionary.getIndex();
                         dictionaries.add(cachedZipDictionary);
                     } catch (Exception ex) {
                         Logger.getInstance().log("Couldn't install the dictionary: " + dicFile.getAbsolutePath());

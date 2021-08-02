@@ -1,12 +1,21 @@
 package io.github.geniot.elex;
 
+import io.github.geniot.elex.ElexPreferences.Prop;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Observable;
 import java.util.Observer;
+
+import static io.github.geniot.elex.ElexLauncher.setLAF;
 
 public class MainPanel implements Observer {
     public static final ImageIcon CONNECT_ICON = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/connect.png"));
@@ -20,6 +29,12 @@ public class MainPanel implements Observer {
     private JButton clearButton;
     private JButton helpButton;
     public JScrollPane scrollPane;
+    private JTextField hostTextField;
+    private JButton resetButton;
+    private JButton exitButton;
+    private JComboBox themeComboBox;
+    private JPanel settingsPanel;
+    private JLabel spacerLabel;
 
     private ElexApplication frame;
     private ElexServer server;
@@ -32,7 +47,7 @@ public class MainPanel implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (server.status.equals(ElexServer.Prop.STARTED)) {
+        if (server.status.equals(Prop.STARTED)) {
             connectButton.setSelected(true);
             connectButton.setIcon(CONNECT_ICON);
             connectButton.setToolTipText(STOP_MSG);
@@ -43,9 +58,6 @@ public class MainPanel implements Observer {
         }
     }
 
-    enum Prop {
-        HOST, PORT, PIN
-    }
 
     public MainPanel(ElexApplication f, ElexServer s) {
         this.frame = f;
@@ -53,6 +65,8 @@ public class MainPanel implements Observer {
 
         int margin = 5;
         textArea.setMargin(new Insets(margin, margin, margin, margin));
+
+        settingsPanel.setLayout(new WrapLayout());
 
         openButton.setToolTipText(OPEN_MSG);
         openButton.addActionListener(e -> {
@@ -97,6 +111,83 @@ public class MainPanel implements Observer {
             }
         });
 
+        resetButton.addActionListener(e -> {
+            try {
+                ElexPreferences.put(Prop.HOST.name(), "localhost");
+                ElexPreferences.putInt(Prop.PORT.name(), 8000);
+                reset();
+            } catch (Exception ioException) {
+                Logger.getInstance().log(ioException);
+            }
+        });
+
+        exitButton.addActionListener(e -> {
+            try {
+                frame.dispose();
+                System.exit(0);
+            } catch (Exception ioException) {
+                Logger.getInstance().log(ioException);
+            }
+        });
+
+        //host
+        hostTextField.setBorder(BorderFactory.createCompoundBorder(
+                hostTextField.getBorder(),
+                BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+        hostTextField.getCaret().setBlinkRate(0);
+
+        // Listen for changes in the text
+        hostTextField.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                save();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                save();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                save();
+            }
+
+            public void save() {
+                try {
+                    if (!StringUtils.isEmpty(hostTextField.getText())) {
+                        String[] splits = hostTextField.getText().split(":");
+                        ElexPreferences.put(Prop.HOST.name(), splits[0]);
+                        ElexPreferences.putInt(Prop.PORT.name(), Integer.parseInt(splits[1]));
+                    }
+                } catch (Exception ex) {
+                    Logger.getInstance().log(ex);
+                }
+            }
+        });
+
+        themeComboBox.setSelectedItem(ElexPreferences.get(Prop.LAF.name(), "Luna"));
+        themeComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String newLaf = themeComboBox.getSelectedItem().toString();
+                ElexPreferences.put(Prop.LAF.name(), newLaf);
+                setLAF(newLaf, frame);
+            }
+        });
+
+        reset();
+
+
+    }
+
+    private void reset() {
+        String host = ElexPreferences.get(Prop.HOST.name(), "localhost");
+        int port = ElexPreferences.getInt(Prop.PORT.name(), 8000);
+        hostTextField.setText(host + ":" + port);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                textArea.requestFocus();
+            }
+        });
     }
 
     {
@@ -165,6 +256,24 @@ public class MainPanel implements Observer {
         helpButton.setPreferredSize(new Dimension(40, 40));
         helpButton.setText("");
         panel1.add(helpButton);
+        prefsButton = new JButton();
+        prefsButton.setFocusPainted(false);
+        prefsButton.setFocusable(false);
+        prefsButton.setIcon(new ImageIcon(getClass().getResource("/images/Style.png")));
+        prefsButton.setMaximumSize(new Dimension(40, 40));
+        prefsButton.setMinimumSize(new Dimension(40, 40));
+        prefsButton.setPreferredSize(new Dimension(40, 40));
+        prefsButton.setText("");
+        panel1.add(prefsButton);
+        exitButton = new JButton();
+        exitButton.setFocusPainted(false);
+        exitButton.setFocusable(false);
+        exitButton.setIcon(new ImageIcon(getClass().getResource("/images/door_in.png")));
+        exitButton.setMaximumSize(new Dimension(40, 40));
+        exitButton.setMinimumSize(new Dimension(40, 40));
+        exitButton.setPreferredSize(new Dimension(40, 40));
+        exitButton.setText("");
+        panel1.add(exitButton);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panel2, BorderLayout.CENTER);
@@ -176,6 +285,48 @@ public class MainPanel implements Observer {
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         scrollPane.setViewportView(textArea);
+        settingsPanel = new JPanel();
+        settingsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        panel2.add(settingsPanel, BorderLayout.NORTH);
+        settingsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        final JLabel label1 = new JLabel();
+        label1.setHorizontalAlignment(10);
+        label1.setHorizontalTextPosition(10);
+        label1.setText("Bind address: http://");
+        settingsPanel.add(label1);
+        hostTextField = new JTextField();
+        settingsPanel.add(hostTextField);
+        resetButton = new JButton();
+        resetButton.setFocusPainted(false);
+        resetButton.setFocusable(false);
+        resetButton.setText("Reset");
+        settingsPanel.add(resetButton);
+        spacerLabel = new JLabel();
+        spacerLabel.setMaximumSize(new Dimension(30, 0));
+        spacerLabel.setMinimumSize(new Dimension(30, 0));
+        spacerLabel.setPreferredSize(new Dimension(30, 0));
+        spacerLabel.setText("");
+        settingsPanel.add(spacerLabel);
+        final JLabel label2 = new JLabel();
+        label2.setText("Look-and-feel:");
+        settingsPanel.add(label2);
+        themeComboBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("Acryl");
+        defaultComboBoxModel1.addElement("Aero");
+        defaultComboBoxModel1.addElement("Aluminium");
+        defaultComboBoxModel1.addElement("Bernstein");
+        defaultComboBoxModel1.addElement("Fast");
+        defaultComboBoxModel1.addElement("Graphite");
+        defaultComboBoxModel1.addElement("HiFi");
+        defaultComboBoxModel1.addElement("Luna");
+        defaultComboBoxModel1.addElement("McWin");
+        defaultComboBoxModel1.addElement("Mint");
+        defaultComboBoxModel1.addElement("Noire");
+        defaultComboBoxModel1.addElement("Smart");
+        defaultComboBoxModel1.addElement("Texture");
+        themeComboBox.setModel(defaultComboBoxModel1);
+        settingsPanel.add(themeComboBox);
     }
 
     /**

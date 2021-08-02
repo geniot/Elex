@@ -19,7 +19,6 @@ public class ElexApplication extends DesktopApplication {
         Logger.getInstance().setScrollPane(mainPanel.scrollPane);
         server.addObserver(mainPanel);
 
-
         getContentPane().add(mainPanel.contentPanel, BorderLayout.CENTER);
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -30,11 +29,6 @@ public class ElexApplication extends DesktopApplication {
         });
 
         pack();
-    }
-
-    @Override
-    public void onWindowClosing() {
-        server.stop();
     }
 
 }

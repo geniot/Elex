@@ -5,6 +5,10 @@ import java.util.prefs.Preferences;
 
 public class ElexPreferences {
 
+    public enum Prop {
+        WIDTH, HEIGHT, POS_X, POS_Y, LAF, HOST, PORT, PIN, STARTING, STOPPING, STARTED, STOPPED, FAILED
+    }
+
     public static String get(String name, String s) {
         return Preferences.userRoot().node(ElexApplication.class.getName()).get(name, s);
     }
