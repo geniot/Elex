@@ -1,7 +1,7 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
+import io.github.geniot.elex.model.IDictionary;
 import io.github.geniot.elex.model.Language;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 public class LanguagesUpdater {
 
-    public void updateLanguages(Model model) {
+    public void updateLanguages(Model model) throws Exception {
         SortedMap<String, Language> resultLanguagesMap = new TreeMap<>();
         Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
         for (IDictionary dictionary : dictionarySet) {

@@ -1,8 +1,8 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.model.Dictionary;
+import io.github.geniot.elex.model.IDictionary;
 import io.github.geniot.elex.model.Model;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.Set;
 
 public class DictionariesUpdater {
-    public void updateDictionaries(Model model) {
+    public void updateDictionaries(Model model) throws Exception {
         List<Dictionary> dictionaries = new ArrayList<>();
         Set<IDictionary> dictionarySet = DictionariesPool.getInstance().getDictionaries();
         for (IDictionary dictionary : dictionarySet) {

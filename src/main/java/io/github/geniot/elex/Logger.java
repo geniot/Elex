@@ -46,7 +46,7 @@ public class Logger {
         }
     }
 
-    public void log(Exception ex) {
+    public void log(Throwable ex) {
         log(ExceptionUtils.getStackTrace(ex));
     }
 }

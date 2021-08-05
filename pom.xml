@@ -18,8 +18,8 @@
     <dependencies>
         <dependency>
             <groupId>io.github.geniot</groupId>
-            <artifactId>dictionarycompiler</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>indexedtreemap</artifactId>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

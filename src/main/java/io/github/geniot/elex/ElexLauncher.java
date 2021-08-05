@@ -1,7 +1,7 @@
 package io.github.geniot.elex;
 
-import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.ElexPreferences.Prop;
+import io.github.geniot.elex.model.IDictionary;
 
 import javax.swing.*;
 import java.awt.*;

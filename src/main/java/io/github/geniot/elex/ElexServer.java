@@ -1,11 +1,14 @@
 package io.github.geniot.elex;
 
 import com.sun.net.httpserver.HttpServer;
-import io.github.geniot.elex.handlers.*;
+import io.github.geniot.elex.ElexPreferences.Prop;
+import io.github.geniot.elex.handlers.CssHandler;
+import io.github.geniot.elex.handlers.ElexDataHandler;
+import io.github.geniot.elex.handlers.IconHandler;
+import io.github.geniot.elex.handlers.StaticResourceHandler;
 
 import java.net.InetSocketAddress;
 import java.util.Observable;
-import io.github.geniot.elex.ElexPreferences.Prop;
 
 import static io.github.geniot.elex.ElexPreferences.get;
 import static io.github.geniot.elex.ElexPreferences.getInt;

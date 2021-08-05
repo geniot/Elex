@@ -1,6 +1,5 @@
 package io.github.geniot.elex.model;
 
-import io.github.geniot.dictiographer.model.Headword;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -80,7 +79,7 @@ public class Model {
         return false;
     }
 
-    public String getCurrentSelectedHeadword() {
+    public String getSelectedHeadword() {
         String currentKey = getSelectedSourceLanguage();// + "-" + getSelectedTargetLanguage();
         for (String key : selectedHeadwords.keySet()) {
             if (key.equals(currentKey)) {
@@ -95,7 +94,7 @@ public class Model {
         return "welcome";
     }
 
-    public void setCurrentSelectedHeadword(String hw) {
+    public void setSelectedHeadword(String hw) {
         String currentKey = getSelectedSourceLanguage();// + "-" + getSelectedTargetLanguage();
         selectedHeadwords.put(currentKey, hw);
     }
@@ -205,7 +204,7 @@ public class Model {
     public String getUserInput() {
         String input = userInputs.get(getSelectedSourceLanguage());
         if (StringUtils.isEmpty(input)) {
-            input = getCurrentSelectedHeadword();
+            input = getSelectedHeadword();
         }
         return input;
     }

@@ -1,7 +1,6 @@
 package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import io.github.geniot.dictiographer.model.HtmlUtils;
 import io.github.geniot.elex.Logger;
 import org.apache.commons.io.IOUtils;
 

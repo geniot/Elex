@@ -5,8 +5,6 @@ import io.github.geniot.elex.ElexPreferences.Prop;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public abstract class DesktopApplication extends JFrame {
 

@@ -1,10 +1,10 @@
 package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import io.github.geniot.dictiographer.model.IDictionary;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.Logger;
 import io.github.geniot.elex.model.Dictionary;
+import io.github.geniot.elex.model.IDictionary;
 import org.apache.commons.io.IOUtils;
 
 import java.util.Map;

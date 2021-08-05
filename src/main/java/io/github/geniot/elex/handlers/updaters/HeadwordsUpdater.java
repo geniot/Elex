@@ -1,9 +1,9 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.dictiographer.model.Headword;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.handlers.HeadwordIterator;
 import io.github.geniot.elex.model.Action;
+import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.indexedtreemap.IndexedTreeSet;
 
@@ -12,7 +12,7 @@ import java.util.TreeSet;
 
 public class HeadwordsUpdater {
 
-    public void updateHeadwords(Model model) {
+    public void updateHeadwords(Model model) throws Exception {
         IndexedTreeSet<Headword> combinedIndex = DictionariesPool.getInstance().getCombinedIndex(model);
         if (combinedIndex.isEmpty()) {
             model.setHeadwords(new Headword[]{});
@@ -22,7 +22,7 @@ public class HeadwordsUpdater {
         }
 
         SortedSet<Headword> headwords = new TreeSet<>();
-        String selectedHeadword = model.getCurrentSelectedHeadword();
+        String selectedHeadword = model.getSelectedHeadword();
         if (!combinedIndex.contains(new Headword(selectedHeadword))) {
             Headword bestMatch = combinedIndex.lower(new Headword(selectedHeadword));
             if (bestMatch == null) {
@@ -121,7 +121,7 @@ public class HeadwordsUpdater {
         }
 
         model.setAction(Action.INDEX);
-        model.setCurrentSelectedHeadword(selectedHeadword);
+        model.setSelectedHeadword(selectedHeadword);
         model.setHeadwords(headwordsArray);
     }
 

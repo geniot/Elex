@@ -1,8 +1,8 @@
 package io.github.geniot.elex;
 
-import io.github.geniot.dictiographer.model.CachedZipDictionary;
-import io.github.geniot.dictiographer.model.Headword;
-import io.github.geniot.dictiographer.model.IDictionary;
+import io.github.geniot.elex.model.CachedZipDictionary;
+import io.github.geniot.elex.model.Headword;
+import io.github.geniot.elex.model.IDictionary;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.indexedtreemap.IndexedTreeSet;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
@@ -46,10 +46,18 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         try {
             long t1 = System.currentTimeMillis();
             for (IDictionary dictionary : dictionaries) {
-                dictionary.close();
+                try {
+                    dictionary.close();
+                } catch (Throwable ex) {
+                    Logger.getInstance().log(ex.getMessage());
+                }
             }
             dictionaries.clear();
-            File[] dicFiles = new File(DATA_FOLDER_NAME).listFiles();
+            File directory = new File(DATA_FOLDER_NAME);
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+            File[] dicFiles = directory.listFiles();
             //installing
             for (File dicFile : dicFiles) {
                 if (dicFile.isDirectory()) {
@@ -59,7 +67,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                         Logger.getInstance().log("Installing: " + dicFile);
                         CachedZipDictionary cachedZipDictionary = new CachedZipDictionary(dicFile);
                         dictionaries.add(cachedZipDictionary);
-                    } catch (Exception ex) {
+                    } catch (Throwable ex) {
                         Logger.getInstance().log("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
                         Logger.getInstance().log(ex);
                     }
@@ -92,7 +100,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         update();
     }
 
-    public IndexedTreeSet<Headword> getCombinedIndex(Model model) {
+    public IndexedTreeSet<Headword> getCombinedIndex(Model model) throws Exception {
         String key = getActiveShelfKey(model);
         IndexedTreeSet<Headword> combinedIndex = combinedIndexesMap.get(key);
 
@@ -111,7 +119,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return combinedIndex;
     }
 
-    private String getActiveShelfKey(Model model) {
+    private String getActiveShelfKey(Model model) throws Exception {
         StringBuffer stringBuffer = new StringBuffer();
         for (IDictionary dictionary : dictionaries) {
             Properties properties = dictionary.getProperties();
