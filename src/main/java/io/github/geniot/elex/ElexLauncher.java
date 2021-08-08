@@ -1,11 +1,12 @@
 package io.github.geniot.elex;
 
 import io.github.geniot.elex.ElexPreferences.Prop;
-import io.github.geniot.elex.model.IDictionary;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Set;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 public class ElexLauncher {
     static ElexApplication application;
@@ -27,16 +28,6 @@ public class ElexLauncher {
 
             try {
                 application.server.stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                Set<IDictionary> dictionaries = DictionariesPool.getInstance().getDictionaries();
-                for (IDictionary dictionary : dictionaries) {
-                    Logger.getInstance().log("Closing " + dictionary.getProperties().getProperty(IDictionary.DictionaryProperty.NAME.name()));
-                    dictionary.close();
-                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -37,9 +37,8 @@ public class Logger {
                         vertical.setValue(vertical.getMaximum());
                     }
                 });
-            } else {
-                System.out.println(msg);
             }
+            System.out.println(msg);
         } catch (Exception ex) {
             System.out.println(msg);
             ex.printStackTrace();

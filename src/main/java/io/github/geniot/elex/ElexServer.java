@@ -25,7 +25,6 @@ public class ElexServer extends Observable {
         try {
             setStatus(Prop.STARTING);
 
-            DictionariesPool.getInstance();
             String host = get(Prop.HOST.name(), "localhost");
             int port = getInt(Prop.PORT.name(), 8000);
 
