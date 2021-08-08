@@ -1,21 +1,14 @@
 package io.github.geniot.elex;
 
 import io.github.geniot.elex.ElexPreferences.Prop;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Observable;
 import java.util.Observer;
-
-import static io.github.geniot.elex.ElexLauncher.setLAF;
 
 public class MainPanel implements Observer {
     public static final ImageIcon CONNECT_ICON = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("images/connect.png"));
@@ -32,7 +25,7 @@ public class MainPanel implements Observer {
     private JButton exitButton;
 
     private ElexApplication frame;
-    private ElexServer server;
+    private ElexHttpServer server;
 
     private static final String UNPIN_MSG = "Unpin this window from top";
     private static final String PIN_MSG = "Pin this window on top";
@@ -54,7 +47,7 @@ public class MainPanel implements Observer {
     }
 
 
-    public MainPanel(ElexApplication f, ElexServer s) {
+    public MainPanel(ElexApplication f, ElexHttpServer s) {
         this.frame = f;
         this.server = s;
 

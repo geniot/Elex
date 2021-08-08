@@ -13,9 +13,9 @@ import java.util.Observable;
 import static io.github.geniot.elex.ElexPreferences.get;
 import static io.github.geniot.elex.ElexPreferences.getInt;
 
-public class ElexServer extends Observable {
+public class ElexHttpServer extends Observable {
 
-    HttpServer server;
+    com.sun.net.httpserver.HttpServer server;
     Prop status;
 
 
@@ -28,7 +28,7 @@ public class ElexServer extends Observable {
             String host = get(Prop.HOST.name(), "localhost");
             int port = getInt(Prop.PORT.name(), 8000);
 
-            server = HttpServer.create(new InetSocketAddress(host, port), 0);
+            server = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(host, port), 0);
             server.createContext("/", new StaticResourceHandler());
             server.createContext("/data", new ElexDataHandler());
 

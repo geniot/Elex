@@ -1,5 +1,7 @@
 package io.github.geniot.elex;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,27 +9,39 @@ public class ElexApplication extends DesktopApplication {
 
     MainPanel mainPanel;
 
-    ElexServer server;
+    ElexHttpServer elexHttpServer;
+    DatabaseServer databaseServer;
 
 
     public ElexApplication() {
         setTitle("Elex");
-        server = new ElexServer();
 
-        mainPanel = new MainPanel(this, server);
+        elexHttpServer = new ElexHttpServer();
+        databaseServer = new DatabaseServer();
+
+        mainPanel = new MainPanel(this, elexHttpServer);
         Logger.getInstance().setTextComponent(mainPanel.textArea);
         Logger.getInstance().setScrollPane(mainPanel.scrollPane);
-        server.addObserver(mainPanel);
+        elexHttpServer.addObserver(mainPanel);
 
         getContentPane().add(mainPanel.contentPanel, BorderLayout.CENTER);
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                server.start();
+                elexHttpServer.start();
             }
         });
 
+        String mode = System.getProperty("mode");
+        if (StringUtils.isEmpty(mode)) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    databaseServer.start();
+                }
+            });
+        }
         pack();
     }
 

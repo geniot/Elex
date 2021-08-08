@@ -3,18 +3,23 @@ package io.github.geniot.elex.handlers;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.dao.DictionaryDAO;
 import io.github.geniot.elex.handlers.updaters.*;
+import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class ElexDataHandler extends BaseHttpHandler {
     private Gson gson = new Gson();
 
-    LanguagesUpdater languagesUpdater = new LanguagesUpdater();
+    DictionaryDAO dictionaryDAO = new DictionaryDAO();
+
     DictionariesUpdater dictionariesUpdater = new DictionariesUpdater();
+    LanguagesUpdater languagesUpdater = new LanguagesUpdater();
     HeadwordsUpdater headwordsUpdater = new HeadwordsUpdater();
     EntriesUpdater entriesUpdater = new EntriesUpdater();
     FullTextHitsUpdater fullTextHitsUpdater = new FullTextHitsUpdater();
@@ -30,8 +35,11 @@ public class ElexDataHandler extends BaseHttpHandler {
             new BufferedReader(new InputStreamReader(input)).lines().forEach((String s) -> stringBuilder.append(s + "\n"));
 
             Model model = gson.fromJson(stringBuilder.toString(), Model.class);
-            languagesUpdater.updateLanguages(model);
-            dictionariesUpdater.updateDictionaries(model);
+            List<Dictionary> dictionaryList = dictionaryDAO.getDictionaries(model);
+
+            languagesUpdater.updateLanguages(model, dictionaryList);
+            dictionariesUpdater.updateDictionaries(model, dictionaryList);
+
             headwordsUpdater.updateHeadwords(model);
             entriesUpdater.updateEntries(model);
             fullTextHitsUpdater.updateFullTextHits(model);

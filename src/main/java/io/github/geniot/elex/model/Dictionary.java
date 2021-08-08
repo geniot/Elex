@@ -3,6 +3,8 @@ package io.github.geniot.elex.model;
 public class Dictionary {
     private int id;
     private String name;
+    private String indexLanguageCode;
+    private String contentsLanguageCode;
     private boolean selected = true;
     private boolean current = true;
 
@@ -12,10 +14,6 @@ public class Dictionary {
 
     public void setCurrent(boolean current) {
         this.current = current;
-    }
-
-    public static int idFromName(String name) {
-        return name.hashCode() & 0xfffffff;
     }
 
     public boolean getSelected() {
@@ -40,6 +38,21 @@ public class Dictionary {
 
     public void setName(String name) {
         this.name = name;
-        this.id = idFromName(name);
+    }
+
+    public String getIndexLanguageCode() {
+        return indexLanguageCode;
+    }
+
+    public void setIndexLanguageCode(String indexLanguageCode) {
+        this.indexLanguageCode = indexLanguageCode;
+    }
+
+    public String getContentsLanguageCode() {
+        return contentsLanguageCode;
+    }
+
+    public void setContentsLanguageCode(String contentsLanguageCode) {
+        this.contentsLanguageCode = contentsLanguageCode;
     }
 }

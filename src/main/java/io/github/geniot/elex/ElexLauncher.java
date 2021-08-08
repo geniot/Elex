@@ -4,9 +4,6 @@ import io.github.geniot.elex.ElexPreferences.Prop;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 public class ElexLauncher {
     static ElexApplication application;
@@ -27,7 +24,13 @@ public class ElexLauncher {
             }
 
             try {
-                application.server.stop();
+                application.elexHttpServer.stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                application.databaseServer.stop();
             } catch (Exception e) {
                 e.printStackTrace();
             }
