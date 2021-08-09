@@ -2,7 +2,7 @@ package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.util.Logger;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;

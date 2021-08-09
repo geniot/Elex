@@ -1,8 +1,9 @@
-package io.github.geniot.elex;
+package io.github.geniot.elex.ui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import io.github.geniot.elex.util.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;

@@ -1,15 +1,13 @@
 package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.util.Logger;
 import io.github.geniot.elex.dao.DictionaryDAO;
 import org.apache.commons.io.IOUtils;
 
 import java.util.Map;
 
 public class IconHandler extends BaseHttpHandler {
-
-    DictionaryDAO dictionaryDAO = new DictionaryDAO();
 
     private static byte[] DEFAULT_ICON = getDefaultIcon();
 
@@ -28,7 +26,7 @@ public class IconHandler extends BaseHttpHandler {
             Map<String, String> map = queryToMap(httpExchange.getRequestURI().getQuery());
             int id = Integer.parseInt(map.get("id"));
             byte[] iconBytes = DEFAULT_ICON;
-            byte[] bbs = dictionaryDAO.getIcon(id);
+            byte[] bbs = DictionaryDAO.getInstance().getIcon(id);
             if (bbs != null) {
                 iconBytes = bbs;
             }

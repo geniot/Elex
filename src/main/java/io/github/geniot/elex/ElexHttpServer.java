@@ -1,24 +1,38 @@
 package io.github.geniot.elex;
 
 import com.sun.net.httpserver.HttpServer;
-import io.github.geniot.elex.ElexPreferences.Prop;
+import io.github.geniot.elex.ui.ElexPreferences.Prop;
 import io.github.geniot.elex.handlers.CssHandler;
 import io.github.geniot.elex.handlers.ElexDataHandler;
 import io.github.geniot.elex.handlers.IconHandler;
 import io.github.geniot.elex.handlers.StaticResourceHandler;
+import io.github.geniot.elex.util.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.Observable;
 
-import static io.github.geniot.elex.ElexPreferences.get;
-import static io.github.geniot.elex.ElexPreferences.getInt;
+import static io.github.geniot.elex.ui.ElexPreferences.get;
+import static io.github.geniot.elex.ui.ElexPreferences.getInt;
 
 public class ElexHttpServer extends Observable {
 
-    com.sun.net.httpserver.HttpServer server;
-    Prop status;
+    private static ElexHttpServer instance;
+    private HttpServer server;
+    private Prop status;
 
+    public static ElexHttpServer getInstance() {
+        if (instance == null) {
+            instance = new ElexHttpServer();
+        }
+        return instance;
+    }
 
+    private ElexHttpServer() {
+    }
+
+    public Prop getStatus() {
+        return status;
+    }
 
 
     public void start() {

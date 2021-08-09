@@ -3,7 +3,7 @@ package io.github.geniot.elex.model;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.geniot.elex.HtmlUtils.tagName;
+import static io.github.geniot.elex.util.HtmlUtils.tagName;
 
 
 public class Tag implements Comparable<Tag> {

@@ -1,7 +1,8 @@
-package io.github.geniot.elex;
+package io.github.geniot.elex.ui;
 
 
-import io.github.geniot.elex.ElexPreferences.Prop;
+import io.github.geniot.elex.ui.ElexPreferences;
+import io.github.geniot.elex.ui.ElexPreferences.Prop;
 
 import javax.swing.*;
 import java.awt.*;

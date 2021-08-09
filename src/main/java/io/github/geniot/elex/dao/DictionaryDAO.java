@@ -1,7 +1,7 @@
 package io.github.geniot.elex.dao;
 
 import io.github.geniot.elex.DatabaseServer;
-import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.util.Logger;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 
@@ -10,6 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DictionaryDAO {
+    private static DictionaryDAO instance;
+
+    public static DictionaryDAO getInstance() {
+        if (instance == null) {
+            instance = new DictionaryDAO();
+        }
+        return instance;
+    }
+
+    private DictionaryDAO() {
+    }
+
 
     private final String iconSelect = "SELECT icon FROM dictionaries WHERE dictionaries.id=?;";
 
@@ -22,7 +34,7 @@ public class DictionaryDAO {
 
     public List<Dictionary> getDictionaries(Model model) throws Exception {
         List<Dictionary> dictionaries = new ArrayList<>();
-        Connection connection = DatabaseServer.getConnection();
+        Connection connection = DatabaseServer.getInstance().getConnection();
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(dictionariesSelect);
@@ -50,7 +62,7 @@ public class DictionaryDAO {
     }
 
     public byte[] getIcon(int id) throws Exception {
-        Connection connection = DatabaseServer.getConnection();
+        Connection connection = DatabaseServer.getInstance().getConnection();
         try {
             PreparedStatement ps = connection.prepareStatement(iconSelect);
             ps.setInt(1, id);

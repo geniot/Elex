@@ -1,4 +1,4 @@
-package io.github.geniot.elex;
+package io.github.geniot.elex.util;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

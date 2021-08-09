@@ -3,6 +3,7 @@ package io.github.geniot.elex;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+import io.github.geniot.elex.util.Logger;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 
 import java.io.File;
@@ -11,12 +12,23 @@ import java.sql.SQLException;
 
 public class DatabaseServer {
 
-    DB db;
+    private DB db;
+    private MariaDbPoolDataSource pool;
 
-    static MariaDbPoolDataSource pool;
+    private static DatabaseServer instance;
+
+    public static DatabaseServer getInstance() {
+        if (instance == null) {
+            instance = new DatabaseServer();
+        }
+        return instance;
+    }
+
+    private DatabaseServer() {
+    }
 
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (pool == null) {
             try {
                 pool = new MariaDbPoolDataSource("jdbc:mariadb://localhost:3306/elex?user=root&maxPoolSize=10&pool");
@@ -59,6 +71,6 @@ public class DatabaseServer {
      * @param args
      */
     public static void main(String[] args) {
-        new DatabaseServer().start();
+        DatabaseServer.getInstance().start();
     }
 }

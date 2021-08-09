@@ -3,7 +3,9 @@ package io.github.geniot.elex.model;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Model {
     private Language[] sourceLanguages = new Language[]{};
@@ -76,13 +78,25 @@ public class Model {
         return false;
     }
 
-    public boolean isDictionaryCurrentSelected(String name) {
-        for (Dictionary dictionary : dictionaries) {
-            if (dictionary.getName().equals(name) && dictionary.getSelected() && dictionary.getCurrent()) {
-                return true;
+    public Set<Dictionary> getShelfSelected() {
+        Set<Dictionary> activeShelf = new HashSet<>();
+        for (Dictionary d : dictionaries) {
+            if (d.getSelected() && d.getCurrent()) {
+                activeShelf.add(d);
             }
         }
-        return false;
+        return activeShelf;
+    }
+
+    public String getShelfSelectedKey() {
+        StringBuffer activeShelfKey = new StringBuffer();
+        for (Dictionary d : dictionaries) {
+            if (d.getSelected() && d.getCurrent()) {
+                activeShelfKey.append(d.getId());
+                activeShelfKey.append(":");
+            }
+        }
+        return activeShelfKey.toString();
     }
 
     public String getSelectedHeadword() {

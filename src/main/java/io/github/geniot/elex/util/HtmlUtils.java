@@ -1,4 +1,4 @@
-package io.github.geniot.elex;
+package io.github.geniot.elex.util;
 
 import io.github.geniot.elex.model.Tag;
 import org.apache.commons.io.IOUtils;

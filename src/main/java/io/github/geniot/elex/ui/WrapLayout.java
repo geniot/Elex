@@ -1,4 +1,4 @@
-package io.github.geniot.elex;
+package io.github.geniot.elex.ui;
 
 
 import javax.swing.*;

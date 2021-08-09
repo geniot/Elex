@@ -1,6 +1,8 @@
-package io.github.geniot.elex;
+package io.github.geniot.elex.ui;
 
-import io.github.geniot.elex.ElexPreferences.Prop;
+import io.github.geniot.elex.ElexHttpServer;
+import io.github.geniot.elex.ui.ElexPreferences.Prop;
+import io.github.geniot.elex.util.Logger;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -25,7 +27,6 @@ public class MainPanel implements Observer {
     private JButton exitButton;
 
     private ElexApplication frame;
-    private ElexHttpServer server;
 
     private static final String UNPIN_MSG = "Unpin this window from top";
     private static final String PIN_MSG = "Pin this window on top";
@@ -35,7 +36,7 @@ public class MainPanel implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (server.status.equals(Prop.STARTED)) {
+        if (ElexHttpServer.getInstance().getStatus().equals(Prop.STARTED)) {
             connectButton.setSelected(true);
             connectButton.setIcon(CONNECT_ICON);
             connectButton.setToolTipText(STOP_MSG);
@@ -47,9 +48,8 @@ public class MainPanel implements Observer {
     }
 
 
-    public MainPanel(ElexApplication f, ElexHttpServer s) {
+    public MainPanel(ElexApplication f) {
         this.frame = f;
-        this.server = s;
 
         int margin = 5;
         textArea.setMargin(new Insets(margin, margin, margin, margin));
@@ -79,9 +79,9 @@ public class MainPanel implements Observer {
 
         connectButton.addActionListener(e -> {
             if (connectButton.isSelected()) {
-                server.start();
+                ElexHttpServer.getInstance().start();
             } else {
-                server.stop();
+                ElexHttpServer.getInstance().stop();
             }
         });
 

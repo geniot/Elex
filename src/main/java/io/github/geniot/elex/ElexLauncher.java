@@ -1,6 +1,8 @@
 package io.github.geniot.elex;
 
-import io.github.geniot.elex.ElexPreferences.Prop;
+import io.github.geniot.elex.ui.ElexApplication;
+import io.github.geniot.elex.ui.ElexPreferences;
+import io.github.geniot.elex.ui.ElexPreferences.Prop;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,13 +26,13 @@ public class ElexLauncher {
             }
 
             try {
-                application.elexHttpServer.stop();
+                ElexHttpServer.getInstance().stop();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                application.databaseServer.stop();
+                DatabaseServer.getInstance().stop();
             } catch (Exception e) {
                 e.printStackTrace();
             }

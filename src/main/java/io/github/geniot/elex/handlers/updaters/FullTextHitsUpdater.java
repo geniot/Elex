@@ -1,6 +1,6 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.elex.Logger;
+import io.github.geniot.elex.util.Logger;
 import io.github.geniot.elex.model.Model;
 
 public class FullTextHitsUpdater {
