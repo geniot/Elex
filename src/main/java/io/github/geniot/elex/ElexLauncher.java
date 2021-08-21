@@ -30,12 +30,6 @@ public class ElexLauncher {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            try {
-                DatabaseServer.getInstance().stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }));
 
         SwingUtilities.invokeLater(() -> {

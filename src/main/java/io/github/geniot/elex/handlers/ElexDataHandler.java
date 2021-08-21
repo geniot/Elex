@@ -2,8 +2,8 @@ package io.github.geniot.elex.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import io.github.geniot.elex.util.Logger;
 import io.github.geniot.elex.dao.DictionaryDAO;
+import io.github.geniot.elex.util.Logger;
 import io.github.geniot.elex.handlers.updaters.*;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;

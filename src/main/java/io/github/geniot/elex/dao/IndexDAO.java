@@ -7,8 +7,6 @@ import java.util.TreeSet;
 
 public class IndexDAO {
 
-    private final String selectIndex = "SELECT id,dictionary_id,header FROM entries;";
-
     private static IndexDAO instance;
 
     public static IndexDAO getInstance() {
