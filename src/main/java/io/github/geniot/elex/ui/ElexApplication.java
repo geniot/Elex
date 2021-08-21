@@ -40,13 +40,6 @@ public class ElexApplication extends DesktopApplication {
             });
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                IndexDAO.getInstance().reindex();
-            }
-        });
-
         pack();
     }
 

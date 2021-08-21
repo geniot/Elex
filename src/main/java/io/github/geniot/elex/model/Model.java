@@ -78,27 +78,6 @@ public class Model {
         return false;
     }
 
-    public Set<Dictionary> getShelfSelected() {
-        Set<Dictionary> activeShelf = new HashSet<>();
-        for (Dictionary d : dictionaries) {
-            if (d.getSelected() && d.getCurrent()) {
-                activeShelf.add(d);
-            }
-        }
-        return activeShelf;
-    }
-
-    public String getShelfSelectedKey() {
-        StringBuffer activeShelfKey = new StringBuffer();
-        for (Dictionary d : dictionaries) {
-            if (d.getSelected() && d.getCurrent()) {
-                activeShelfKey.append(d.getId());
-                activeShelfKey.append(":");
-            }
-        }
-        return activeShelfKey.toString();
-    }
-
     public String getSelectedHeadword() {
         String currentKey = getSelectedSourceLanguage();// + "-" + getSelectedTargetLanguage();
         for (String key : selectedHeadwords.keySet()) {

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContentDAO {
-    private final String selectArticle = "SELECT article FROM entries WHERE header=?;";
-    private final String searchArticle = "SELECT * FROM entries WHERE MATCH(article)\n" +
+    private final String selectArticle = "SELECT article FROM articles WHERE header=?;";
+    private final String searchArticle = "SELECT * FROM articles WHERE MATCH(article)\n" +
             "AGAINST(? IN NATURAL LANGUAGE MODE) LIMIT 100;";
     private static ContentDAO instance;
 
