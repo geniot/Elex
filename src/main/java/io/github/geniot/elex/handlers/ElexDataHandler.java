@@ -2,7 +2,7 @@ package io.github.geniot.elex.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import io.github.geniot.elex.dao.DictionaryDAO;
+import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.util.Logger;
 import io.github.geniot.elex.handlers.updaters.*;
 import io.github.geniot.elex.model.Dictionary;
@@ -33,7 +33,7 @@ public class ElexDataHandler extends BaseHttpHandler {
             new BufferedReader(new InputStreamReader(input)).lines().forEach((String s) -> stringBuilder.append(s + "\n"));
 
             Model model = gson.fromJson(stringBuilder.toString(), Model.class);
-            List<Dictionary> dictionaryList = DictionaryDAO.getInstance().getDictionaries(model);
+            List<Dictionary> dictionaryList = DictionariesPool.getInstance().getDictionaries(model);
 
             languagesUpdater.updateLanguages(model, dictionaryList);
             dictionariesUpdater.updateDictionaries(model, dictionaryList);

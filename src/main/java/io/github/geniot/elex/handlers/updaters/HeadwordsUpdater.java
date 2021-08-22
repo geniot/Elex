@@ -1,122 +1,71 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.elex.dao.IndexDAO;
+import io.github.geniot.elex.DictionariesPool;
+import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
+import io.github.geniot.elex.ezip.model.ElexDictionary;
+import io.github.geniot.elex.handlers.index.Direction;
+import io.github.geniot.elex.handlers.index.HeadwordSelector;
+import io.github.geniot.elex.handlers.index.IteratorsWrapper;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class HeadwordsUpdater {
-
-    public enum Direction {
-        FORWARD, BACKWARD
-    }
+    HeadwordSelector headwordSelector = new HeadwordSelector();
+    CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
 
     public void updateHeadwords(Model model) throws Exception {
-        TreeSet<Headword> combinedIndex = IndexDAO.getInstance().getIndex(model);
-        if (combinedIndex.isEmpty()) {
+        Set<ElexDictionary> set = new HashSet<>(DictionariesPool.getInstance().getElexDictionaries(model).values());
+
+        SortedSet<String> index = new TreeSet<>(caseInsensitiveComparator);
+
+        IteratorsWrapper forwardIteratorsWrapper = new IteratorsWrapper(set, model.getSelectedHeadword(), Direction.FORWARD);
+        IteratorsWrapper backwardIteratorsWrapper = new IteratorsWrapper(set, model.getSelectedHeadword(), Direction.BACKWARD);
+
+        String selectedHeadword = headwordSelector.select(model, set, forwardIteratorsWrapper, backwardIteratorsWrapper);
+        int pageSize = model.getVisibleSize();
+        int viewOffset = model.getSelectedIndex();
+
+
+        int forwardCounter = pageSize - viewOffset;
+        while (index.size() < pageSize && forwardIteratorsWrapper.hasNext() && forwardCounter > 0) {
+            index.add(forwardIteratorsWrapper.next());
+            --forwardCounter;
+        }
+        while (index.size() < pageSize && backwardIteratorsWrapper.hasNext()) {
+            index.add(backwardIteratorsWrapper.next());
+        }
+        while (index.size() < pageSize && forwardIteratorsWrapper.hasNext()) {
+            index.add(forwardIteratorsWrapper.next());
+        }
+
+        if (index.isEmpty()) {
             model.setHeadwords(new Headword[]{});
             model.setStartReached(true);
             model.setEndReached(true);
             return;
         }
 
-        SortedSet<Headword> headwords = new TreeSet<>();
-        String selectedHeadword = model.getSelectedHeadword();
-        if (!combinedIndex.contains(new Headword(selectedHeadword))) {
-            Headword bestMatch = combinedIndex.lower(new Headword(selectedHeadword));
-            if (bestMatch == null) {
-                bestMatch = combinedIndex.higher(new Headword(selectedHeadword));
-            }
-            selectedHeadword = bestMatch.getName();
-        }
-
-        if (model.getAction().equals(Action.TO_START)) {
-            selectedHeadword = combinedIndex.first().getName();
-        } else if (model.getAction().equals(Action.TO_END)) {
-            selectedHeadword = combinedIndex.last().getName();
-        } else if (model.getAction().equals(Action.NEXT_WORD)) {
-            selectedHeadword = scroll(combinedIndex, selectedHeadword, 1, Direction.FORWARD);
-            model.selectNext();
-        } else if (model.getAction().equals(Action.PREVIOUS_WORD)) {
-            selectedHeadword = scroll(combinedIndex, selectedHeadword, 1, Direction.BACKWARD);
-            model.selectPrevious();
-        } else if (model.getAction().equals(Action.NEXT_PAGE)) {
-            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize(), Direction.FORWARD);
-        } else if (model.getAction().equals(Action.PREVIOUS_PAGE)) {
-            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize(), Direction.BACKWARD);
-        } else if (model.getAction().equals(Action.NEXT_TEN_PAGES)) {
-            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.FORWARD);
-        } else if (model.getAction().equals(Action.PREVIOUS_TEN_PAGES)) {
-            selectedHeadword = scroll(combinedIndex, selectedHeadword, model.getVisibleSize() * 10, Direction.BACKWARD);
-        } else if (model.getAction().equals(Action.SEARCH)) {
-            String userInput = model.getUserInput();
-            if (combinedIndex.contains(new Headword(userInput))) {
-                selectedHeadword = userInput;
-            } else {
-                String higher = combinedIndex.higher(new Headword(userInput)).getName();
-                if (higher != null) {
-                    selectedHeadword = higher;
-                }
-            }
-        }
-
-        HeadwordIterator<Headword> tailIterator = new HeadwordIterator(combinedIndex, new Headword(selectedHeadword), -1);
-        HeadwordIterator<Headword> headIterator = new HeadwordIterator(combinedIndex, new Headword(selectedHeadword), 1);
-
-        if (combinedIndex.contains(new Headword(selectedHeadword)) && model.getVisibleSize() > 0) {
-            headwords.add(new Headword(selectedHeadword));
-        }
-
-        for (int i = model.getSelectedIndex(); i < model.getVisibleSize() - 1; i++) {
-            if (tailIterator.hasNext() && headwords.size() < model.getVisibleSize()) {
-                headwords.add(tailIterator.next());
-            }
-        }
-
-        for (int i = 0; i < model.getSelectedIndex(); i++) {
-            if (headIterator.hasNext() && headwords.size() < model.getVisibleSize()) {
-                headwords.add(headIterator.next());
-            }
-        }
-
-        while (headwords.size() < model.getVisibleSize() &&
-                (headIterator.hasNext() || tailIterator.hasNext())) {
-
-            if (headIterator.hasNext() && headwords.size() < model.getVisibleSize()) {
-                headwords.add(headIterator.next());
-            }
-            if (tailIterator.hasNext() && headwords.size() < model.getVisibleSize()) {
-                headwords.add(tailIterator.next());
-            }
-        }
-
-        Headword[] headwordsArray = new Headword[headwords.size()];
-        int counter = 0;
-        for (Headword hw : headwords) {
-            if (hw.getName().equals(selectedHeadword)) {
-                hw.setSelected(true);
-            }
-            headwordsArray[counter++] = hw;
-        }
-
-        for (Headword hw : headwordsArray) {
+        List<Headword> headwords = new ArrayList<>();
+        for (String s : index) {
+            Headword hw = new Headword(s);
             if (hw.getName().equals(selectedHeadword)) {
                 hw.setSelected(true);
             } else {
                 hw.setSelected(false);
             }
+            headwords.add(hw);
         }
 
-        if (headwords.first().equals(combinedIndex.first())) {
+        if (headwords.get(0).equals(DictionariesPool.getInstance().getMinHeadword(set))) {
             model.setStartReached(true);
         } else {
             model.setStartReached(false);
         }
 
-        if (headwords.last().equals(combinedIndex.last())) {
+        if (headwords.get(headwords.size() - 1).equals(DictionariesPool.getInstance().getMaxHeadword(set))) {
             model.setEndReached(true);
         } else {
             model.setEndReached(false);
@@ -124,18 +73,7 @@ public class HeadwordsUpdater {
 
         model.setAction(Action.INDEX);
         model.setSelectedHeadword(selectedHeadword);
-        model.setHeadwords(headwordsArray);
+        model.setHeadwords(headwords.toArray(new Headword[headwords.size()]));
     }
 
-    private String scroll(TreeSet<Headword> combinedIndex, String from, int amount, Direction direction) {
-        String next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(new Headword(from)).getName() : combinedIndex.lower(new Headword(from)).getName();
-        --amount;
-        while (next != null && amount-- > 0) {
-            next = direction.equals(Direction.FORWARD) ? combinedIndex.higher(new Headword(next)).getName() : combinedIndex.lower(new Headword(next)).getName();
-            if (next != null) {
-                from = next;
-            }
-        }
-        return next == null ? from : next;
-    }
 }

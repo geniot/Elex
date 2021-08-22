@@ -37,6 +37,8 @@ public class ElexLauncher {
             setLAF(ElexPreferences.get(Prop.LAF.name(), "Luna"), application);
             application.setVisible(true);
         });
+
+        new Thread(() -> DictionariesPool.getInstance()).start();
     }
 
 

@@ -1,6 +1,6 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.elex.dao.ContentDAO;
+import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.util.Logger;
@@ -13,7 +13,7 @@ public class FullTextHitsUpdater {
             return;
         }
         try {
-            List<FullTextHit> hits = ContentDAO.getInstance().searchArticle(model);
+            List<FullTextHit> hits = DictionariesPool.getInstance().searchArticle(model);
             model.setSearchResultsFor(model.getUserInput());
             model.setSearchResults(hits.toArray(new FullTextHit[hits.size()]));
         } catch (Exception ex) {
