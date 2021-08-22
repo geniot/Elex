@@ -63,7 +63,12 @@ public class HeadwordSelector {
                           int amount) {
         iteratorsWrapper.setFrom(from);
         while (amount-- > 0) {
-            from = iteratorsWrapper.next();
+            String next = iteratorsWrapper.next();
+            if (next != null) {
+                from = next;
+            } else {
+                return from;
+            }
         }
         return from;
     }

@@ -25,6 +25,9 @@ public class IteratorsWrapper implements IPeekIterator {
 
     public void setFrom(String f) {
         this.searchValue = f;
+        for (IndexIterator ii : iterators) {
+            ii.setFrom(f);
+        }
     }
 
     @Override
@@ -37,13 +40,9 @@ public class IteratorsWrapper implements IPeekIterator {
         return false;
     }
 
-    /**
-     * @return
-     */
     @Override
     public String next() {
         String nextCandidate = peek();
-        //moving all required iterators
         for (IndexIterator ii : iterators) {
             String peek = ii.peek();
             if (peek == null) {

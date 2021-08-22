@@ -5,12 +5,13 @@ import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.util.HtmlUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntriesUpdater {
 
-    public void updateEntries(Model model) {
+    public void updateEntries(Model model) throws IOException {
         String article = DictionariesPool.getInstance().getArticle(model);
         List<Entry> entries = new ArrayList<>();
         if (article != null) {

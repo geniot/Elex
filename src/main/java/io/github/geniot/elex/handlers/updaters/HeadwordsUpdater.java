@@ -9,6 +9,7 @@ import io.github.geniot.elex.handlers.index.IteratorsWrapper;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -28,8 +29,19 @@ public class HeadwordsUpdater {
         int pageSize = model.getVisibleSize();
         int viewOffset = model.getSelectedIndex();
 
+        if (selectedHeadword == null || StringUtils.isEmpty(selectedHeadword)) {
+            System.out.println(selectedHeadword);
+        }
 
-        int forwardCounter = pageSize - viewOffset;
+        if (forwardIteratorsWrapper.contains(selectedHeadword)) {
+            index.add(selectedHeadword);
+        }
+
+
+        forwardIteratorsWrapper.setFrom(selectedHeadword);
+        backwardIteratorsWrapper.setFrom(selectedHeadword);
+
+        int forwardCounter = pageSize - viewOffset - 1;
         while (index.size() < pageSize && forwardIteratorsWrapper.hasNext() && forwardCounter > 0) {
             index.add(forwardIteratorsWrapper.next());
             --forwardCounter;
@@ -59,13 +71,13 @@ public class HeadwordsUpdater {
             headwords.add(hw);
         }
 
-        if (headwords.get(0).equals(DictionariesPool.getInstance().getMinHeadword(set))) {
+        if (headwords.get(0).getName().equals(DictionariesPool.getInstance().getMinHeadword(set))) {
             model.setStartReached(true);
         } else {
             model.setStartReached(false);
         }
 
-        if (headwords.get(headwords.size() - 1).equals(DictionariesPool.getInstance().getMaxHeadword(set))) {
+        if (headwords.get(headwords.size() - 1).getName().equals(DictionariesPool.getInstance().getMaxHeadword(set))) {
             model.setEndReached(true);
         } else {
             model.setEndReached(false);

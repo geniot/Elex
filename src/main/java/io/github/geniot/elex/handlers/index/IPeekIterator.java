@@ -7,4 +7,6 @@ public interface IPeekIterator extends Iterator {
     String peek();
 
     boolean contains(String headword) throws IOException;
+
+    void setFrom(String from);
 }

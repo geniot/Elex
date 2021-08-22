@@ -72,6 +72,11 @@ public class IndexIterator implements IPeekIterator {
     }
 
     @Override
+    public void setFrom(String f) {
+        this.from = f;
+    }
+
+    @Override
     public void remove() {
         throw new NotImplementedException();
     }

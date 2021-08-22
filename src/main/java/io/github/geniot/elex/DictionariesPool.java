@@ -89,9 +89,8 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
 
     public List<Dictionary> getDictionaries(Model model) throws IOException {
         List<Dictionary> result = new ArrayList<>();
-        Map<String, ElexDictionary> elexDictionaries = getElexDictionaries(model);
-        for (String fileName : elexDictionaries.keySet()) {
-            ElexDictionary elexDictionary = elexDictionaries.get(fileName);
+        for (String fileName : dictionaries.keySet()) {
+            ElexDictionary elexDictionary = dictionaries.get(fileName);
             Dictionary dictionary = new Dictionary();
             dictionary.setId(fileName.hashCode());
             dictionary.setName(elexDictionary.getProperties().getProperty(DslProperty.NAME.name()));
@@ -103,16 +102,28 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return result;
     }
 
-    public String getArticle(Model model) {
+    public String getArticle(Model model) throws IOException {
+        for (String fileName : dictionaries.keySet()) {
+            ElexDictionary elexDictionary = dictionaries.get(fileName);
+            String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
+            if (model.isDictionarySelected(name)) {
+                return elexDictionary.readArticle(model.getSelectedHeadword());
+            }
+        }
         return null;
     }
 
     public List<FullTextHit> searchArticle(Model model) {
-        return null;
+        return new ArrayList<>();
     }
 
-    public byte[] getIcon(int id) {
-        return new byte[0];
+    public byte[] getIcon(int id) throws IOException {
+        for (String fileName : dictionaries.keySet()) {
+            if (fileName.hashCode() == id) {
+                return dictionaries.get(fileName).getIcon();
+            }
+        }
+        return null;
     }
 
     @Override
