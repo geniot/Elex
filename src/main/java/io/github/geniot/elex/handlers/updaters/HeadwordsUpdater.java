@@ -9,7 +9,6 @@ import io.github.geniot.elex.handlers.index.IteratorsWrapper;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -28,10 +27,6 @@ public class HeadwordsUpdater {
         String selectedHeadword = headwordSelector.select(model, set, forwardIteratorsWrapper, backwardIteratorsWrapper);
         int pageSize = model.getVisibleSize();
         int viewOffset = model.getSelectedIndex();
-
-        if (selectedHeadword == null || StringUtils.isEmpty(selectedHeadword)) {
-            System.out.println(selectedHeadword);
-        }
 
         if (forwardIteratorsWrapper.contains(selectedHeadword)) {
             index.add(selectedHeadword);

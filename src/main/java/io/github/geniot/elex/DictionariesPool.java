@@ -80,7 +80,11 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             String tl1 = model.getSelectedTargetLanguage();
             String sl2 = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name());
             String tl2 = properties.getProperty(DslProperty.INDEX_LANGUAGE.name());
-            if (sl1.equalsIgnoreCase(sl2) && tl1.equalsIgnoreCase(tl2)) {
+            String name = properties.getProperty(DslProperty.NAME.name());
+            if (sl1.equalsIgnoreCase(sl2) &&
+                    tl1.equalsIgnoreCase(tl2) &&
+                    model.isDictionarySelected(name)
+            ) {
                 result.put(fileName, elexDictionary);
             }
         }
@@ -93,9 +97,11 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             Dictionary dictionary = new Dictionary();
             dictionary.setId(fileName.hashCode());
-            dictionary.setName(elexDictionary.getProperties().getProperty(DslProperty.NAME.name()));
+            String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
+            dictionary.setName(name);
             dictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
             dictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
+            dictionary.setSelected(model.isDictionarySelected(name));
             dictionary.setCurrent(true);
             result.add(dictionary);
         }
@@ -164,4 +170,15 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     }
 
 
+    public void close() {
+        for (String fileName : dictionaries.keySet()) {
+            try {
+                ElexDictionary elexDictionary = dictionaries.get(fileName);
+                elexDictionary.close();
+                Logger.getInstance().log("Closed " + fileName);
+            } catch (IOException e) {
+                Logger.getInstance().log(e);
+            }
+        }
+    }
 }

@@ -30,6 +30,8 @@ public class ElexLauncher {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            DictionariesPool.getInstance().close();
         }));
 
         SwingUtilities.invokeLater(() -> {
