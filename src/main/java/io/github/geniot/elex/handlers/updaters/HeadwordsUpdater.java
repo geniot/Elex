@@ -28,6 +28,11 @@ public class HeadwordsUpdater {
         int pageSize = model.getVisibleSize();
         int viewOffset = model.getSelectedIndex();
 
+        if (pageSize<=0){
+            empty(model);
+            return;
+        }
+
         if (forwardIteratorsWrapper.contains(selectedHeadword)) {
             index.add(selectedHeadword);
         }
@@ -49,9 +54,7 @@ public class HeadwordsUpdater {
         }
 
         if (index.isEmpty()) {
-            model.setHeadwords(new Headword[]{});
-            model.setStartReached(true);
-            model.setEndReached(true);
+            empty(model);
             return;
         }
 
@@ -81,6 +84,12 @@ public class HeadwordsUpdater {
         model.setAction(Action.INDEX);
         model.setSelectedHeadword(selectedHeadword);
         model.setHeadwords(headwords.toArray(new Headword[headwords.size()]));
+    }
+
+    private void empty(Model model){
+        model.setHeadwords(new Headword[]{});
+        model.setStartReached(true);
+        model.setEndReached(true);
     }
 
 }

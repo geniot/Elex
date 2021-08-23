@@ -12,11 +12,13 @@ import java.util.List;
 public class EntriesUpdater {
 
     public void updateEntries(Model model) throws IOException {
-        String article = DictionariesPool.getInstance().getArticle(model);
         List<Entry> entries = new ArrayList<>();
-        if (article != null) {
-            article = HtmlUtils.toHtml(article);
-            entries.add(genEntry(model.getSelectedHeadword(), article));
+        if (model.getHeadwords().length > 0) {
+            String article = DictionariesPool.getInstance().getArticle(model);
+            if (article != null) {
+                article = HtmlUtils.toHtml(article);
+                entries.add(genEntry(model.getSelectedHeadword(), article));
+            }
         }
         model.setEntries(entries.toArray(new Entry[entries.size()]));
     }
