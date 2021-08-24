@@ -40,8 +40,8 @@ public class ElexDataHandler extends BaseHttpHandler {
             dictionariesUpdater.updateDictionaries(model, dictionaryList);
 
             headwordsUpdater.updateHeadwords(model);
-            entriesUpdater.updateEntries(model);
             fullTextHitsUpdater.updateFullTextHits(model);
+            entriesUpdater.updateEntries(model);
 
             //default action
             model.setAction(Action.INDEX);

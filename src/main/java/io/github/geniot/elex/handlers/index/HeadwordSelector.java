@@ -37,8 +37,26 @@ public class HeadwordSelector {
         } else if (model.getAction().equals(Action.SEARCH)) {
             String userInput = model.getUserInput();
             selectedHeadword = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, userInput);
+        } else if (model.getAction().equals(Action.FT_LINK)) {
+            String exact = exact(forwardIteratorsWrapper, backwardIteratorsWrapper, model.getFtLink());
+            if (exact != null) {
+                selectedHeadword = exact;
+            }
         }
         return selectedHeadword;
+    }
+
+    private String exact(IteratorsWrapper forwardIteratorsWrapper,
+                         IteratorsWrapper backwardIteratorsWrapper,
+                         String selectedHeadword) throws IOException {
+        forwardIteratorsWrapper.setFrom(selectedHeadword);
+        backwardIteratorsWrapper.setFrom(selectedHeadword);
+        if (forwardIteratorsWrapper.contains(selectedHeadword) ||
+                backwardIteratorsWrapper.contains(selectedHeadword)) {
+            return selectedHeadword;
+        } else {
+            return null;
+        }
     }
 
     private String bestMatch(IteratorsWrapper forwardIteratorsWrapper,

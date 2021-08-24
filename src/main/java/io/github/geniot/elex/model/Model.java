@@ -14,6 +14,8 @@ public class Model {
 
     private Map<String, String> selectedHeadwords = new HashMap<>();
     private Map<String, String> userInputs = new HashMap<>();
+    private String ftLink;
+
     private int visibleSize = 0;
     private int selectedIndex = 0;
     private boolean startReached = false;
@@ -236,4 +238,13 @@ public class Model {
     public void setEndReached(boolean endReached) {
         this.endReached = endReached;
     }
+
+    public String getFtLink() {
+        return ftLink;
+    }
+
+    public void setFtLink(String ftLink) {
+        this.ftLink = ftLink;
+    }
+
 }

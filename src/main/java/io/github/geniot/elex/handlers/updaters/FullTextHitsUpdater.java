@@ -33,7 +33,7 @@ public class FullTextHitsUpdater {
                     for (Float score : results.keySet()) {
                         String[] value = results.get(score);
                         FullTextHit hit = new FullTextHit();
-                        hit.setDictionaryId(name.hashCode());
+                        hit.setDictionaryId(fileName.hashCode());
                         hit.setHeadword(new Headword(value[0]));
                         hit.setExtract(value[1]);
                         hit.setScore(score);
