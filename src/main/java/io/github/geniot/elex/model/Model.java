@@ -3,9 +3,7 @@ package io.github.geniot.elex.model;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class Model {
     private Language[] sourceLanguages = new Language[]{};
@@ -72,6 +70,17 @@ public class Model {
     public boolean isDictionarySelected(String name) {
         for (Dictionary dictionary : dictionaries) {
             if (dictionary.getName().equals(name) && dictionary.getSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isDictionaryCurrentSelected(String name) {
+        for (Dictionary dictionary : dictionaries) {
+            if (dictionary.getName().equals(name) &&
+                    dictionary.getSelected() &&
+                    dictionary.getCurrent()) {
                 return true;
             }
         }

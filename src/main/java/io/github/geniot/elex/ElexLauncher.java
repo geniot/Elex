@@ -1,5 +1,6 @@
 package io.github.geniot.elex;
 
+import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.ui.ElexApplication;
 import io.github.geniot.elex.ui.ElexPreferences;
 import io.github.geniot.elex.ui.ElexPreferences.Prop;
@@ -32,6 +33,7 @@ public class ElexLauncher {
             }
 
             DictionariesPool.getInstance().close();
+            FtServer.getInstance().stop();
         }));
 
         SwingUtilities.invokeLater(() -> {
@@ -41,6 +43,7 @@ public class ElexLauncher {
         });
 
         new Thread(() -> DictionariesPool.getInstance()).start();
+        new Thread(() -> FtServer.getInstance()).start();
     }
 
 

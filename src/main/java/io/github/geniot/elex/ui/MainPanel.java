@@ -1,8 +1,8 @@
 package io.github.geniot.elex.ui;
 
 import io.github.geniot.elex.ElexHttpServer;
+import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ui.ElexPreferences.Prop;
-import io.github.geniot.elex.util.Logger;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

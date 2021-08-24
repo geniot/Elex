@@ -1,7 +1,7 @@
 package io.github.geniot.elex.ui;
 
 import io.github.geniot.elex.ElexHttpServer;
-import io.github.geniot.elex.util.Logger;
+import io.github.geniot.elex.ezip.Logger;
 
 import javax.swing.*;
 import java.awt.*;

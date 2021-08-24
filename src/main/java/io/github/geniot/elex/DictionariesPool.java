@@ -1,12 +1,12 @@
 package io.github.geniot.elex;
 
+import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.DslProperty;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Model;
-import io.github.geniot.elex.util.Logger;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;

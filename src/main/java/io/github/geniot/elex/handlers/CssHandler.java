@@ -1,7 +1,7 @@
 package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import io.github.geniot.elex.util.Logger;
+import io.github.geniot.elex.ezip.Logger;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;

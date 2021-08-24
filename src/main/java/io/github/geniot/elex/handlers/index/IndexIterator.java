@@ -1,7 +1,7 @@
 package io.github.geniot.elex.handlers.index;
 
+import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
-import io.github.geniot.elex.util.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
