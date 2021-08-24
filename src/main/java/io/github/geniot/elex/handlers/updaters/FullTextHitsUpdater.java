@@ -9,18 +9,17 @@ import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class FullTextHitsUpdater {
+    private Comparator<Float> backwardFloatsComparator = Comparator.reverseOrder();
+
     public void updateFullTextHits(Model model) {
         if (model.getLockFullText()) {
             return;
         }
         try {
-            SortedMap<Float, FullTextHit> hits = new TreeMap<>();
+            SortedMap<Float, FullTextHit> hits = new TreeMap<>(backwardFloatsComparator);
             Map<String, ElexDictionary> dictionarySet = DictionariesPool.getInstance().getElexDictionaries(model);
             for (String fileName : dictionarySet.keySet()) {
                 ElexDictionary elexDictionary = dictionarySet.get(fileName);
@@ -28,7 +27,7 @@ public class FullTextHitsUpdater {
                 String name = properties.getProperty(DslProperty.NAME.name());
                 if (model.isDictionaryCurrentSelected(name)) {
                     String search = model.getUserInput();
-                    SortedMap<Float, String[]> results = FtServer.getInstance().search(fileName, search, 30);
+                    SortedMap<Float, String[]> results = FtServer.getInstance().search(fileName, search, 100);
                     model.setSearchResultsFor(search);
 
                     for (Float score : results.keySet()) {

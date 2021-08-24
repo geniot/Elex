@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.handlers.updaters.*;
+import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 
@@ -41,6 +42,9 @@ public class ElexDataHandler extends BaseHttpHandler {
             headwordsUpdater.updateHeadwords(model);
             entriesUpdater.updateEntries(model);
             fullTextHitsUpdater.updateFullTextHits(model);
+
+            //default action
+            model.setAction(Action.INDEX);
 
             String s = gson.toJson(model);
             writeTxt(httpExchange, s, contentTypesMap.get(ContentType.JSON));

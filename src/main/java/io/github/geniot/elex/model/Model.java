@@ -211,7 +211,7 @@ public class Model {
 
     public String getUserInput() {
         String input = userInputs.get(getSelectedSourceLanguage());
-        if (StringUtils.isEmpty(input)) {
+        if (StringUtils.isEmpty(input) || !action.equals(Action.SEARCH)) {
             input = getSelectedHeadword();
         }
         return input;

@@ -81,7 +81,6 @@ public class HeadwordsUpdater {
             model.setEndReached(false);
         }
 
-        model.setAction(Action.INDEX);
         model.setSelectedHeadword(selectedHeadword);
         model.setHeadwords(headwords.toArray(new Headword[headwords.size()]));
     }
