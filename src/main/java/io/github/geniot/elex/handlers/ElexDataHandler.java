@@ -12,6 +12,7 @@ import io.github.geniot.elex.model.Model;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ElexDataHandler extends BaseHttpHandler {
@@ -31,7 +32,7 @@ public class ElexDataHandler extends BaseHttpHandler {
             InputStream input = httpExchange.getRequestBody();
             StringBuffer stringBuilder = new StringBuffer();
 
-            new BufferedReader(new InputStreamReader(input)).lines().forEach((String s) -> stringBuilder.append(s + "\n"));
+            new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().forEach((String s) -> stringBuilder.append(s + "\n"));
 
             Model model = gson.fromJson(stringBuilder.toString(), Model.class);
             List<Dictionary> dictionaryList = DictionariesPool.getInstance().getDictionaries(model);
