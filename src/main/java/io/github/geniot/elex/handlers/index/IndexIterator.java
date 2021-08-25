@@ -2,7 +2,6 @@ package io.github.geniot.elex.handlers.index;
 
 import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 
@@ -78,7 +77,7 @@ public class IndexIterator implements IPeekIterator {
 
     @Override
     public void remove() {
-        throw new NotImplementedException();
+//        throw new NotImplementedException();
     }
 }
 
