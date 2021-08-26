@@ -32,7 +32,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     private DictionariesPool() {
         update();
         try {
-            observer = new FileAlterationObserver(DATA_FOLDER_NAME);
+            observer = new FileAlterationObserver(DATA_FOLDER_NAME, pathname -> pathname.getPath().endsWith(".ezp"));
             observer.addListener(this);
             long interval = 1000;
             FileAlterationMonitor monitor = new FileAlterationMonitor(interval);

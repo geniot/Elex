@@ -25,7 +25,7 @@
         <dependency>
             <groupId>io.github.geniot.elex</groupId>
             <artifactId>ft-indexer</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
