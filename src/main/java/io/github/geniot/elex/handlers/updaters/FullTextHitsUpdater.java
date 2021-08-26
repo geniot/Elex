@@ -8,6 +8,7 @@ import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -32,12 +33,14 @@ public class FullTextHitsUpdater {
 
                     for (Float score : results.keySet()) {
                         String[] value = results.get(score);
-                        FullTextHit hit = new FullTextHit();
-                        hit.setDictionaryId(fileName.hashCode());
-                        hit.setHeadword(new Headword(value[0]));
-                        hit.setExtract(value[1]);
-                        hit.setScore(score);
-                        hits.put(score, hit);
+                        if (StringUtils.isNotEmpty(value[1])) {
+                            FullTextHit hit = new FullTextHit();
+                            hit.setDictionaryId(fileName.hashCode());
+                            hit.setHeadword(new Headword(value[0]));
+                            hit.setExtract(value[1]);
+                            hit.setScore(score);
+                            hits.put(score, hit);
+                        }
                     }
                 }
             }
