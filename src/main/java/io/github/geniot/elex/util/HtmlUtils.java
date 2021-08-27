@@ -33,11 +33,11 @@ public class HtmlUtils {
         return entryStr.split("((?<=" + anyTag + ")|(?=" + anyTag + "))");
     }
 
-    public static String toHtml(String article) {
+    public static String toHtml(String dicId, String article) {
         String[] lines = article.split("\n");
         StringBuffer stringBuffer = new StringBuffer();
         for (int i = 0; i < lines.length; i++) {
-            stringBuffer.append(toHtml(tokenize(lines[i])));
+            stringBuffer.append(toHtml(dicId, tokenize(lines[i])));
             stringBuffer.append("<br/>\n");
         }
         return stringBuffer.toString();
@@ -67,7 +67,7 @@ public class HtmlUtils {
         return tag;
     }
 
-    public static String toHtml(String[] tokens) {
+    public static String toHtml(String dicId, String[] tokens) {
         StringBuffer stringBuffer = new StringBuffer();
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
@@ -75,11 +75,16 @@ public class HtmlUtils {
                 if (isOpening(token)) {
                     Tag openingTag = new Tag(token);
                     if (openingTag.name.equals("b")) {
-                        stringBuffer.append(    "<b>");
+                        stringBuffer.append("<b>");
                     } else if (openingTag.name.equals("i")) {
                         stringBuffer.append("<i>");
                     } else if (openingTag.name.equals("ref")) {
                         stringBuffer.append("<a data-link=\"" + tokens[i + 1] + "\">");
+                    } else if (openingTag.name.equals("s")) {
+                        stringBuffer.append("<span class=\"sound\" data-id=\"" + dicId + "\" " +
+                                "data-link=\"" + tokens[i + 1] + "\">" +
+                                "</span>");
+                        stringBuffer.append("<span style=\"display:none\">");
                     } else {
                         String classes = htmlName(openingTag.name);
                         if (StringUtils.isNotEmpty(openingTag.mValue)) {
@@ -102,6 +107,8 @@ public class HtmlUtils {
                         stringBuffer.append("</i>");
                     } else if (closing.name.equals("ref")) {
                         stringBuffer.append("</a>");
+                    } else if (closing.name.equals("s")) {
+                        stringBuffer.append("</span>");
                     } else {
                         stringBuffer.append("</span>");
                     }

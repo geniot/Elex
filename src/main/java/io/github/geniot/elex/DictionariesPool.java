@@ -108,15 +108,19 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return result;
     }
 
-    public String getArticle(Model model) throws IOException {
+    public Map<String, String> getArticles(Model model) throws IOException {
+        Map<String, String> articlesMap = new HashMap<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
-            if (model.isDictionarySelected(name)) {
-                return elexDictionary.readArticle(model.getSelectedHeadword());
+            if (model.isDictionaryCurrentSelected(name)) {
+                String article = elexDictionary.readArticle(model.getSelectedHeadword());
+                if (article != null) {
+                    articlesMap.put(String.valueOf(fileName.hashCode()), article);
+                }
             }
         }
-        return null;
+        return articlesMap;
     }
 
     public List<FullTextHit> searchArticle(Model model) {
@@ -180,5 +184,16 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                 Logger.getInstance().log(e);
             }
         }
+    }
+
+    /**
+     * Loads ogg from
+     *
+     * @param id
+     * @param link
+     * @return
+     */
+    public byte[] getOgg(int id, String link) {
+        return null;
     }
 }

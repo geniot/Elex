@@ -2,10 +2,7 @@ package io.github.geniot.elex;
 
 import com.sun.net.httpserver.HttpServer;
 import io.github.geniot.elex.ezip.Logger;
-import io.github.geniot.elex.handlers.CssHandler;
-import io.github.geniot.elex.handlers.ElexDataHandler;
-import io.github.geniot.elex.handlers.IconHandler;
-import io.github.geniot.elex.handlers.StaticResourceHandler;
+import io.github.geniot.elex.handlers.*;
 import io.github.geniot.elex.ui.ElexPreferences.Prop;
 
 import java.net.InetSocketAddress;
@@ -48,6 +45,7 @@ public class ElexHttpServer extends Observable {
 
             server.createContext("/css", new CssHandler());
             server.createContext("/icon", new IconHandler());
+            server.createContext("/wav", new WavHandler());
             server.setExecutor(null);
             server.start();
 

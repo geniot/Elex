@@ -16,7 +16,7 @@ import java.util.Map;
 public abstract class BaseHttpHandler implements HttpHandler {
 
     public enum ContentType {
-        JSON, PNG, CSS, TEXT, HTML, JS, ICO
+        JSON, PNG, OGG, CSS, TEXT, HTML, JS, ICO
     }
 
 
@@ -25,6 +25,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private static EnumMap<ContentType, String> getContentTypes() {
         EnumMap<ContentType, String> cTypes = new EnumMap<>(ContentType.class);
         cTypes.put(ContentType.JSON, "application/json");
+        cTypes.put(ContentType.OGG, "audio/ogg");
         cTypes.put(ContentType.PNG, "image/png");
         cTypes.put(ContentType.ICO, "image/x-icon");
         cTypes.put(ContentType.CSS, "text/css");

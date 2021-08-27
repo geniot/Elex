@@ -7,7 +7,6 @@ import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.util.HtmlUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -31,19 +30,21 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EntriesUpdater {
 
     public void updateEntries(Model model) throws Exception {
         List<Entry> entries = new ArrayList<>();
         if (model.getHeadwords().length > 0) {
-            String article = DictionariesPool.getInstance().getArticle(model);
-            if (article != null) {
-                article = HtmlUtils.toHtml(article);
+            Map<String, String> articlesMap = DictionariesPool.getInstance().getArticles(model);
+            for (String id : articlesMap.keySet()) {
+                String article = articlesMap.get(id);
+                article = HtmlUtils.toHtml(id, article);
                 if (model.getAction().equals(Action.FT_LINK)) {
                     article = highlight(model, article);
                 }
-                entries.add(genEntry(model.getSelectedHeadword(), article));
+                entries.add(genEntry(id, model.getSelectedHeadword(), article));
             }
         }
         model.setEntries(entries.toArray(new Entry[entries.size()]));
@@ -65,7 +66,7 @@ public class EntriesUpdater {
 
     private Document stringToDocument(String html) throws Exception {
         html = "<p>" + html + "</p>";
-        html = html.replaceAll("&","&amp;");
+        html = html.replaceAll("&", "&amp;");
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputSource is = new InputSource(new StringReader(html));
@@ -96,8 +97,9 @@ public class EntriesUpdater {
         }
     }
 
-    private Entry genEntry(String hwd, String article) {
+    private Entry genEntry(String dicId, String hwd, String article) {
         Entry entry = new Entry();
+        entry.setDicId(dicId);
         entry.setHeadword(hwd);
         entry.setBody(article);
         return entry;
