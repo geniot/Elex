@@ -5,6 +5,7 @@ import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.util.HtmlUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -16,6 +17,7 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.html.HTMLAnchorElement;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -40,6 +42,7 @@ public class EntriesUpdater {
             Map<String, String> articlesMap = DictionariesPool.getInstance().getArticles(model);
             for (String id : articlesMap.keySet()) {
                 String article = articlesMap.get(id);
+                article = StringEscapeUtils.escapeHtml4(article);
                 article = HtmlUtils.toHtml(id, article);
                 if (model.getAction().equals(Action.FT_LINK)) {
                     article = highlight(model, article);
@@ -66,7 +69,6 @@ public class EntriesUpdater {
 
     private Document stringToDocument(String html) throws Exception {
         html = "<p>" + html + "</p>";
-        html = html.replaceAll("&", "&amp;");
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputSource is = new InputSource(new StringReader(html));

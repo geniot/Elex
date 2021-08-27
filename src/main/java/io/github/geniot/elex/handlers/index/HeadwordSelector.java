@@ -48,7 +48,7 @@ public class HeadwordSelector {
 
     private String exact(IteratorsWrapper forwardIteratorsWrapper,
                          IteratorsWrapper backwardIteratorsWrapper,
-                         String selectedHeadword) throws IOException {
+                         String selectedHeadword) throws Exception {
         forwardIteratorsWrapper.setFrom(selectedHeadword);
         backwardIteratorsWrapper.setFrom(selectedHeadword);
         if (forwardIteratorsWrapper.contains(selectedHeadword) ||
@@ -61,7 +61,7 @@ public class HeadwordSelector {
 
     private String bestMatch(IteratorsWrapper forwardIteratorsWrapper,
                              IteratorsWrapper backwardIteratorsWrapper,
-                             String selectedHeadword) throws IOException {
+                             String selectedHeadword) throws Exception {
         forwardIteratorsWrapper.setFrom(selectedHeadword);
         backwardIteratorsWrapper.setFrom(selectedHeadword);
         if (forwardIteratorsWrapper.contains(selectedHeadword) ||

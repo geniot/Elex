@@ -26,7 +26,7 @@ public class IndexIterator implements IPeekIterator {
             } else {
                 return elexDictionary.previous(from) != null;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             Logger.getInstance().log(e);
             return false;
         }
@@ -42,7 +42,7 @@ public class IndexIterator implements IPeekIterator {
                 from = elexDictionary.previous(from);
             }
             return from;
-        } catch (IOException e) {
+        } catch (Exception e) {
             Logger.getInstance().log(e);
             return null;
         }
@@ -66,7 +66,7 @@ public class IndexIterator implements IPeekIterator {
     }
 
     @Override
-    public boolean contains(String headword) throws IOException {
+    public boolean contains(String headword) throws Exception {
         return elexDictionary.readArticle(headword) != null;
     }
 

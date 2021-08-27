@@ -6,7 +6,7 @@ import java.util.Iterator;
 public interface IPeekIterator extends Iterator {
     String peek();
 
-    boolean contains(String headword) throws IOException;
+    boolean contains(String headword) throws Exception;
 
     void setFrom(String from);
 }

@@ -92,7 +92,7 @@ public class IteratorsWrapper implements IPeekIterator {
     }
 
     @Override
-    public boolean contains(String headword) throws IOException {
+    public boolean contains(String headword) throws Exception {
         for (IndexIterator ii : iterators) {
             if (ii.contains(headword)) {
                 return true;

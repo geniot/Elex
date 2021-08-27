@@ -5,8 +5,8 @@ import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.DslProperty;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Dictionary;
-import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Model;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -18,6 +18,7 @@ import java.util.*;
 public class DictionariesPool extends FileAlterationListenerAdaptor {
     private static DictionariesPool instance;
     private Map<String, ElexDictionary> dictionaries = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
     private FileAlterationObserver observer;
     private static String DATA_FOLDER_NAME = "data";
     CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
@@ -52,8 +53,9 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             //installing
             for (File dicFile : dicFiles) {
                 if (dicFile.isDirectory()) {
-                    //skip
-                } else if (dicFile.isFile() && dicFile.getName().endsWith(".ezp")) {
+                    continue;
+                }
+                if (dicFile.getName().endsWith(".ezp")) {
                     try {
                         Logger.getInstance().log("Installing: " + dicFile);
                         dictionaries.put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
@@ -61,7 +63,16 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                         Logger.getInstance().log("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
                         Logger.getInstance().log(ex);
                     }
+                } else if (dicFile.getName().endsWith(".ezr")) {
+                    try {
+                        Logger.getInstance().log("Installing: " + dicFile);
+                        resources.put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
+                    } catch (Exception ex) {
+                        Logger.getInstance().log("Couldn't install the resources file: " + dicFile.getAbsolutePath());
+                        Logger.getInstance().log(ex);
+                    }
                 }
+
             }
             long t2 = System.currentTimeMillis();
             Logger.getInstance().log("Reloaded dictionaries in: " + (t2 - t1) + " ms");
@@ -108,7 +119,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return result;
     }
 
-    public Map<String, String> getArticles(Model model) throws IOException {
+    public Map<String, String> getArticles(Model model) throws Exception {
         Map<String, String> articlesMap = new HashMap<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
@@ -123,10 +134,6 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return articlesMap;
     }
 
-    public List<FullTextHit> searchArticle(Model model) {
-        return new ArrayList<>();
-    }
-
     public byte[] getIcon(int id) throws IOException {
         for (String fileName : dictionaries.keySet()) {
             if (fileName.hashCode() == id) {
@@ -134,6 +141,19 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             }
         }
         return null;
+    }
+
+    public byte[] getResource(int id, String link) throws Exception {
+        for (String fileName : dictionaries.keySet()) {
+            if (fileName.hashCode() == id) {
+                String resourceFileName = FilenameUtils.removeExtension(fileName) + ".ezr";
+                if (resources.containsKey(resourceFileName)) {
+                    return resources.get(resourceFileName).readResource(link);
+                }
+            }
+        }
+        Logger.getInstance().log("Couldn't find resource for: " + id + "; " + link);
+        return new byte[]{};
     }
 
     @Override
@@ -186,14 +206,4 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         }
     }
 
-    /**
-     * Loads ogg from
-     *
-     * @param id
-     * @param link
-     * @return
-     */
-    public byte[] getOgg(int id, String link) {
-        return null;
-    }
 }
