@@ -81,7 +81,8 @@ public class HtmlUtils {
                     } else if (openingTag.name.equals("i")) {
                         stringBuffer.append("<i>");
                     } else if (openingTag.name.equals("ref")) {
-                        stringBuffer.append("<a data-link=\"" + tokens[i + 1] + "\">");
+                        String dataLink = tokens[i + 1].equals("[highlight]") ? tokens[i + 2] : tokens[i + 1];
+                        stringBuffer.append("<a data-link=\"" + dataLink + "\">");
                     } else if (openingTag.name.equals("s")) {
                         String dataLink = tokens[i + 1];
                         if (dataLink.endsWith(".wav")) {
