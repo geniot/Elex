@@ -1,26 +1,30 @@
 package io.github.geniot.elex.model;
 
+import java.util.Comparator;
 
-public class FullTextHit {
-    private int dictionaryId;
+/**
+ * headword is unique key but sorting is done by the first highest score in the merged results
+ */
+public class FullTextHit implements Comparable<FullTextHit> {
     private Headword headword;
-    private String extract;
-    private float score;
+    private int[] dictionaryIds = new int[]{};
+    private String[] extracts = new String[]{};
+    private float[] scores = new float[]{};
 
-    public float getScore() {
-        return score;
+    public float[] getScores() {
+        return scores;
     }
 
-    public void setScore(float score) {
-        this.score = score;
+    public void setScores(float[] scores) {
+        this.scores = scores;
     }
 
-    public int getDictionaryId() {
-        return dictionaryId;
+    public int[] getDictionaryIds() {
+        return dictionaryIds;
     }
 
-    public void setDictionaryId(int dictionaryId) {
-        this.dictionaryId = dictionaryId;
+    public void setDictionaryIds(int[] dictionaryIds) {
+        this.dictionaryIds = dictionaryIds;
     }
 
     public Headword getHeadword() {
@@ -31,11 +35,22 @@ public class FullTextHit {
         this.headword = headword;
     }
 
-    public String getExtract() {
-        return extract;
+    public String[] getExtracts() {
+        return extracts;
     }
 
-    public void setExtract(String extract) {
-        this.extract = extract;
+    public void setExtracts(String[] extracts) {
+        this.extracts = extracts;
+    }
+
+    @Override
+    public boolean equals(Object anObject) {
+        FullTextHit fullTextHit = (FullTextHit) anObject;
+        return fullTextHit.getHeadword().getName().equals(this.headword.getName());
+    }
+
+    @Override
+    public int compareTo(FullTextHit o) {
+        return new Float(o.getScores()[0]).compareTo(this.scores[0]);
     }
 }

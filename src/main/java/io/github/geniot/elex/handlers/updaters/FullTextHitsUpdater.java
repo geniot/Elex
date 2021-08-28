@@ -8,19 +8,18 @@ import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 
 public class FullTextHitsUpdater {
-    private Comparator<Float> backwardFloatsComparator = Comparator.reverseOrder();
 
     public void updateFullTextHits(Model model) {
         if (model.getLockFullText()) {
             return;
         }
         try {
-            SortedMap<Float, FullTextHit> hits = new TreeMap<>(backwardFloatsComparator);
+            SortedSet<FullTextHit> hits = new TreeSet<>();
             Map<String, ElexDictionary> dictionarySet = DictionariesPool.getInstance().getElexDictionaries(model);
             for (String fileName : dictionarySet.keySet()) {
                 ElexDictionary elexDictionary = dictionarySet.get(fileName);
@@ -33,22 +32,33 @@ public class FullTextHitsUpdater {
 
                     for (Float score : results.keySet()) {
                         String[] value = results.get(score);
+                        String headword = value[0];
+                        String extract = value[1];
 //                        StringUtils.isNotEmpty(value[1]) &&
-                        if (!model.getSearchResultsFor().equals(value[0])) {
-                            FullTextHit hit = new FullTextHit();
-                            hit.setDictionaryId(fileName.hashCode());
-                            hit.setHeadword(new Headword(value[0]));
-                            hit.setExtract(value[1]);
-                            hit.setScore(score);
-                            hits.put(score, hit);
+                        if (!model.getSearchResultsFor().equals(headword)) {
+                            FullTextHit hit = getByHeadwordOrCreate(hits, headword);
+                            hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()));
+                            hit.setExtracts(ArrayUtils.add(hit.getExtracts(), extract));
+                            hit.setScores(ArrayUtils.add(hit.getScores(), score));
+                            hit.setHeadword(new Headword(headword));
+                            hits.add(hit);
                         }
                     }
                 }
             }
 
-            model.setSearchResults(hits.values().toArray(new FullTextHit[hits.size()]));
+            model.setSearchResults(hits.toArray(new FullTextHit[hits.size()]));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);
         }
+    }
+
+    private FullTextHit getByHeadwordOrCreate(Set<FullTextHit> hits, String s) {
+        for (FullTextHit hit : hits) {
+            if (hit.getHeadword().getName().equals(s)) {
+                return hit;
+            }
+        }
+        return new FullTextHit();
     }
 }
