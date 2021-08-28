@@ -22,6 +22,15 @@ public class Model {
     private boolean endReached = false;
     private String searchResultsFor;
     private boolean lockFullText;
+    private String baseApiUrl;
+
+    public String getBaseApiUrl() {
+        return baseApiUrl;
+    }
+
+    public void setBaseApiUrl(String baseApiUrl) {
+        this.baseApiUrl = baseApiUrl;
+    }
 
     public boolean getLockFullText() {
         return lockFullText;

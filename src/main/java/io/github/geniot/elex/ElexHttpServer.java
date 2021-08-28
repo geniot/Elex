@@ -46,6 +46,7 @@ public class ElexHttpServer extends Observable {
             server.createContext("/css", new CssHandler());
             server.createContext("/icon", new IconHandler());
             server.createContext("/wav", new WavHandler());
+            server.createContext("/img", new ImgHandler());
             server.setExecutor(null);
             server.start();
 

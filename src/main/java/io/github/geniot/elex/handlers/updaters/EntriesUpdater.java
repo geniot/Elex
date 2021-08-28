@@ -17,7 +17,6 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.html.HTMLAnchorElement;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -42,8 +41,13 @@ public class EntriesUpdater {
             Map<String, String> articlesMap = DictionariesPool.getInstance().getArticles(model);
             for (String id : articlesMap.keySet()) {
                 String article = articlesMap.get(id);
+
+                article = article.replaceAll("(<<)([^>]+)(>>)", "[ref]$2[/ref]");
+                article = article.replaceAll("\\{\\{Roman\\}\\}", "");
+                article = article.replaceAll("\\{\\{/Roman\\}\\}", "");
+
                 article = StringEscapeUtils.escapeHtml4(article);
-                article = HtmlUtils.toHtml(id, article);
+                article = HtmlUtils.toHtml(model.getBaseApiUrl(), id, article);
                 if (model.getAction().equals(Action.FT_LINK)) {
                     article = highlight(model, article);
                 }

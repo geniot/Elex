@@ -33,11 +33,11 @@ public class HtmlUtils {
         return entryStr.split("((?<=" + anyTag + ")|(?=" + anyTag + "))");
     }
 
-    public static String toHtml(String dicId, String article) {
+    public static String toHtml(String baseApiUrl, String dicId, String article) {
         String[] lines = article.split("\n");
         StringBuffer stringBuffer = new StringBuffer();
         for (int i = 0; i < lines.length; i++) {
-            stringBuffer.append(toHtml(dicId, tokenize(lines[i])));
+            stringBuffer.append(toHtml(baseApiUrl, dicId, tokenize(lines[i])));
             stringBuffer.append("<br/>\n");
         }
         return stringBuffer.toString();
@@ -67,7 +67,7 @@ public class HtmlUtils {
         return tag;
     }
 
-    public static String toHtml(String dicId, String[] tokens) {
+    public static String toHtml(String baseApiUrl, String dicId, String[] tokens) {
         StringBuffer stringBuffer = new StringBuffer();
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
@@ -76,14 +76,21 @@ public class HtmlUtils {
                     Tag openingTag = new Tag(token);
                     if (openingTag.name.equals("b")) {
                         stringBuffer.append("<b>");
+                    } else if (openingTag.name.equals("c")) {
+                        stringBuffer.append("<span style=\"color:" + (openingTag.attr == null ? "green" : openingTag.attr) + "\">");
                     } else if (openingTag.name.equals("i")) {
                         stringBuffer.append("<i>");
                     } else if (openingTag.name.equals("ref")) {
                         stringBuffer.append("<a data-link=\"" + tokens[i + 1] + "\">");
                     } else if (openingTag.name.equals("s")) {
-                        stringBuffer.append("<span class=\"sound\" data-id=\"" + dicId + "\" " +
-                                "data-link=\"" + tokens[i + 1] + "\">" +
-                                "</span>");
+                        String dataLink = tokens[i + 1];
+                        if (dataLink.endsWith(".wav")) {
+                            stringBuffer.append("<span class=\"sound\" data-id=\"" + dicId + "\" " +
+                                    "data-link=\"" + dataLink + "\">" +
+                                    "</span>");
+                        } else {//image?
+                            stringBuffer.append("<img src=\"" + baseApiUrl + "/img?id=" + dicId + "&link=" + dataLink + "\" />");
+                        }
                         stringBuffer.append("<span style=\"display:none\">");
                     } else {
                         String classes = htmlName(openingTag.name);
@@ -107,6 +114,8 @@ public class HtmlUtils {
                         stringBuffer.append("</i>");
                     } else if (closing.name.equals("ref")) {
                         stringBuffer.append("</a>");
+                    } else if (closing.name.equals("c")) {
+                        stringBuffer.append("</span>");
                     } else if (closing.name.equals("s")) {
                         stringBuffer.append("</span>");
                     } else {
