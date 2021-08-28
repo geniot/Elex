@@ -25,9 +25,9 @@ public class EntriesUpdater {
     public void updateEntries(Model model) throws Exception {
         List<Entry> entries = new ArrayList<>();
         if (model.getHeadwords().length > 0) {
-            Map<String, String> articlesMap = DictionariesPool.getInstance().getArticles(model);
-            for (String id : articlesMap.keySet()) {
-                String article = articlesMap.get(id);
+            entries = DictionariesPool.getInstance().getArticles(model);
+            for (Entry entry : entries) {
+                String article = entry.getBody();
 
                 if (model.getAction().equals(Action.FT_LINK)) {
                     article = highlight(model, article);
@@ -38,9 +38,9 @@ public class EntriesUpdater {
                 article = article.replaceAll("\\{\\{/Roman\\}\\}", "");
 
                 article = StringEscapeUtils.escapeHtml4(article);
-                article = HtmlUtils.toHtml(model.getBaseApiUrl(), id, article);
+                article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), article);
 
-                entries.add(genEntry(id, model.getSelectedHeadword(), article));
+                entry.setBody(article);
             }
         }
         model.setEntries(entries.toArray(new Entry[entries.size()]));
@@ -62,13 +62,5 @@ public class EntriesUpdater {
             }
         }
         return glue(tokens);
-    }
-
-    private Entry genEntry(String dicId, String hwd, String article) {
-        Entry entry = new Entry();
-        entry.setDicId(dicId);
-        entry.setHeadword(hwd);
-        entry.setBody(article);
-        return entry;
     }
 }

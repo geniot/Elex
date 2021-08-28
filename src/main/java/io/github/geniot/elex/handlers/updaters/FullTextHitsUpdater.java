@@ -33,7 +33,8 @@ public class FullTextHitsUpdater {
 
                     for (Float score : results.keySet()) {
                         String[] value = results.get(score);
-                        if (StringUtils.isNotEmpty(value[1])) {
+//                        StringUtils.isNotEmpty(value[1]) &&
+                        if (!model.getSearchResultsFor().equals(value[0])) {
                             FullTextHit hit = new FullTextHit();
                             hit.setDictionaryId(fileName.hashCode());
                             hit.setHeadword(new Headword(value[0]));
@@ -44,6 +45,7 @@ public class FullTextHitsUpdater {
                     }
                 }
             }
+
             model.setSearchResults(hits.values().toArray(new FullTextHit[hits.size()]));
         } catch (Exception ex) {
             Logger.getInstance().log(ex);

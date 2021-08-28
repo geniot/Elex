@@ -2,8 +2,17 @@ package io.github.geniot.elex.model;
 
 public class Entry {
     private String dicId;
+    private String dicName;
     private String headword;
     private String body;
+
+    public String getDicName() {
+        return dicName;
+    }
+
+    public void setDicName(String dicName) {
+        this.dicName = dicName;
+    }
 
     public String getDicId() {
         return dicId;

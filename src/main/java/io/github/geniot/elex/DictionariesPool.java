@@ -5,6 +5,7 @@ import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.DslProperty;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Dictionary;
+import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
@@ -119,19 +120,24 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return result;
     }
 
-    public Map<String, String> getArticles(Model model) throws Exception {
-        Map<String, String> articlesMap = new HashMap<>();
+    public List<Entry> getArticles(Model model) throws Exception {
+        List<Entry> entries =new ArrayList<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
             if (model.isDictionaryCurrentSelected(name)) {
                 String article = elexDictionary.readArticle(model.getSelectedHeadword());
                 if (article != null) {
-                    articlesMap.put(String.valueOf(fileName.hashCode()), article);
+                    Entry entry = new Entry();
+                    entry.setDicId(String.valueOf(fileName.hashCode()));
+                    entry.setDicName(name);
+                    entry.setHeadword(model.getSelectedHeadword());
+                    entry.setBody(article);
+                    entries.add(entry);
                 }
             }
         }
-        return articlesMap;
+        return entries;
     }
 
     public byte[] getIcon(int id) throws IOException {
