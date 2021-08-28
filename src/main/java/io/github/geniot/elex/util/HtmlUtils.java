@@ -86,10 +86,9 @@ public class HtmlUtils {
                         String dataLink = tokens[i + 1];
                         if (dataLink.endsWith(".wav")) {
                             stringBuffer.append("<span class=\"sound\" data-id=\"" + dicId + "\" " +
-                                    "data-link=\"" + dataLink + "\">" +
-                                    "</span>");
+                                    "data-link=\"" + dataLink + "\">");
                         } else {//image?
-                            stringBuffer.append("<img src=\"" + baseApiUrl + "/img?id=" + dicId + "&link=" + dataLink + "\" />");
+                            stringBuffer.append("<img class=\"dicImg\" src=\"" + baseApiUrl + "/img?id=" + dicId + "&link=" + dataLink + "\" />");
                         }
                         stringBuffer.append("<span style=\"display:none\">");
                     } else {
@@ -117,7 +116,7 @@ public class HtmlUtils {
                     } else if (closing.name.equals("c")) {
                         stringBuffer.append("</span>");
                     } else if (closing.name.equals("s")) {
-                        stringBuffer.append("</span>");
+                        stringBuffer.append("</span></span>");
                     } else {
                         stringBuffer.append("</span>");
                     }
