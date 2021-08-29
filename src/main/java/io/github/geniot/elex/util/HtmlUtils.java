@@ -81,7 +81,7 @@ public class HtmlUtils {
                     } else if (openingTag.name.equals("i")) {
                         stringBuffer.append("<i>");
                     } else if (openingTag.name.equals("ref")) {
-                        String dataLink = tokens[i + 1].equals("[highlight]") ? tokens[i + 2] : tokens[i + 1];
+                        String dataLink = collectRefValue(tokens, i + 1);
                         stringBuffer.append("<a data-link=\"" + dataLink + "\">");
                     } else if (openingTag.name.equals("s")) {
                         String dataLink = tokens[i + 1];
@@ -126,6 +126,18 @@ public class HtmlUtils {
             } else {
                 stringBuffer.append(token.replaceAll("\\\\", ""));
             }
+        }
+        return stringBuffer.toString();
+    }
+
+    private static String collectRefValue(String[] tokens, int i) {
+        StringBuffer stringBuffer = new StringBuffer();
+        String currentToken = tokens[i];
+        while (i < tokens.length-1 && !currentToken.equals("[/ref]")) {
+            if (!isTag(currentToken)) {
+                stringBuffer.append(currentToken);
+            }
+            currentToken = tokens[++i];
         }
         return stringBuffer.toString();
     }

@@ -28,14 +28,14 @@ public class EntriesUpdater {
             for (Entry entry : entries) {
                 String article = entry.getBody();
 
+                article = article.replaceAll("(<<)([^>]+)(>>)", "[ref]$2[/ref]");
+                article = article.replaceAll("\\{\\{Roman\\}\\}", "");
+                article = article.replaceAll("\\{\\{/Roman\\}\\}", "");
+
                 if (model.getAction().equals(Action.FT_LINK) &&
                         model.getLockFullText()) {
                     article = highlight(model, article);
                 }
-
-                article = article.replaceAll("(<<)([^>]+)(>>)", "[ref]$2[/ref]");
-                article = article.replaceAll("\\{\\{Roman\\}\\}", "");
-                article = article.replaceAll("\\{\\{/Roman\\}\\}", "");
 
                 article = StringEscapeUtils.escapeHtml4(article);
                 article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), article);
