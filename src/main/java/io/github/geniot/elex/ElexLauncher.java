@@ -17,23 +17,7 @@ public class ElexLauncher {
     public static void main(String[] args) {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                ElexPreferences.putInt(Prop.WIDTH.name(), application.getWidth());
-                ElexPreferences.putInt(Prop.HEIGHT.name(), application.getHeight());
-                ElexPreferences.putInt(Prop.POS_X.name(), (int) application.getLocation().getX());
-                ElexPreferences.putInt(Prop.POS_Y.name(), (int) application.getLocation().getY());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            try {
-                ElexHttpServer.getInstance().stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            DictionariesPool.getInstance().close();
-            FtServer.getInstance().stop();
+            onShutDown();
         }));
 
         SwingUtilities.invokeLater(() -> {
@@ -58,5 +42,44 @@ public class ElexLauncher {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * There is a 'better' way to check whether FileAlterationMonitor is running, described here:
+     * https://stackoverflow.com/questions/36673817/commons-io-2-4-how-control-the-state-of-filealterationlistener-and-restart
+     *
+     * Meanwhile I'll just use this boolean constant.
+     *
+     */
+    private static boolean isFtServerRunning = true;
+
+    /**
+     * On Linux onShutDown hook wasn't consistent (wasn't called every time the app got closed).
+     * So this method is called from onWindowCLosing, addShutdownHook and exitButton.addActionListener.
+     * As such it may be called twice or even thrice. And it's OK for now.
+     */
+    public static void onShutDown() {
+        try {
+            ElexPreferences.putInt(Prop.WIDTH.name(), application.getWidth());
+            ElexPreferences.putInt(Prop.HEIGHT.name(), application.getHeight());
+            ElexPreferences.putInt(Prop.POS_X.name(), (int) application.getLocation().getX());
+            ElexPreferences.putInt(Prop.POS_Y.name(), (int) application.getLocation().getY());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            ElexHttpServer.getInstance().stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DictionariesPool.getInstance().close();
+
+        if (isFtServerRunning) {
+            FtServer.getInstance().stop();
+            isFtServerRunning = false;
+        }
+
     }
 }

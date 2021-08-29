@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     private Map<String, ElexDictionary> dictionaries = Collections.synchronizedMap(new HashMap<>());
     private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
     private FileAlterationObserver observer;
-    private static String DATA_FOLDER_NAME = "data";
+    private static String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"),"data");
     CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
 
     public static DictionariesPool getInstance() {
@@ -50,7 +51,9 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         try {
             long t1 = System.currentTimeMillis();
             dictionaries.clear();
-            File[] dicFiles = new File(DATA_FOLDER_NAME).listFiles();
+            File dataFolder = new File(DATA_FOLDER_NAME);
+            dataFolder.mkdirs();
+            File[] dicFiles = dataFolder.listFiles();
             //installing
             for (File dicFile : dicFiles) {
                 if (dicFile.isDirectory()) {

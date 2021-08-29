@@ -1,6 +1,7 @@
 package io.github.geniot.elex.ui;
 
 import io.github.geniot.elex.ElexHttpServer;
+import io.github.geniot.elex.ElexLauncher;
 import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ui.ElexPreferences.Prop;
 
@@ -100,6 +101,7 @@ public class MainPanel implements Observer {
 
         exitButton.addActionListener(e -> {
             try {
+                ElexLauncher.onShutDown();
                 frame.dispose();
                 System.exit(0);
             } catch (Exception ioException) {

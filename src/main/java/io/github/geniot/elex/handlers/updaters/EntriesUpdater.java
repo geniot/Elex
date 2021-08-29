@@ -16,7 +16,6 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static io.github.geniot.elex.ezip.DslUtils.*;
 
@@ -29,7 +28,8 @@ public class EntriesUpdater {
             for (Entry entry : entries) {
                 String article = entry.getBody();
 
-                if (model.getAction().equals(Action.FT_LINK)) {
+                if (model.getAction().equals(Action.FT_LINK) &&
+                        model.getLockFullText()) {
                     article = highlight(model, article);
                 }
 
