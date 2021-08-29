@@ -1,11 +1,11 @@
 package io.github.geniot.elex.handlers.index;
 
 import io.github.geniot.elex.DictionariesPool;
+import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Model;
 
-import java.io.IOException;
 import java.util.Set;
 
 public class HeadwordSelector {
@@ -41,6 +41,10 @@ public class HeadwordSelector {
             String exact = exact(forwardIteratorsWrapper, backwardIteratorsWrapper, model.getFtLink());
             if (exact != null) {
                 selectedHeadword = exact;
+            } else {
+                Logger.getInstance().log("\"" + model.getFtLink() +
+                        "\" not found in current index, displaying \"" +
+                        selectedHeadword + "\" instead");
             }
         }
         return selectedHeadword;
