@@ -43,7 +43,7 @@ public class HeadwordSelector {
                 selectedHeadword = exact;
             } else {
                 Logger.getInstance().log("\"" + model.getFtLink() +
-                        "\" not found in current index, displaying \"" +
+                        "\" not found in the current index, displaying \"" +
                         selectedHeadword + "\" instead");
             }
         }

@@ -30,11 +30,11 @@ public class ElexDataHandler extends BaseHttpHandler {
         try {
             long t1 = System.currentTimeMillis();
             InputStream input = httpExchange.getRequestBody();
-            StringBuffer stringBuilder = new StringBuffer();
+            StringBuffer payload = new StringBuffer();
 
-            new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().forEach((String s) -> stringBuilder.append(s + "\n"));
+            new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().forEach((String s) -> payload.append(s + "\n"));
 
-            Model model = gson.fromJson(stringBuilder.toString(), Model.class);
+            Model model = gson.fromJson(payload.toString(), Model.class);
             List<Dictionary> dictionaryList = DictionariesPool.getInstance().getDictionaries(model);
 
             languagesUpdater.updateLanguages(model, dictionaryList);
