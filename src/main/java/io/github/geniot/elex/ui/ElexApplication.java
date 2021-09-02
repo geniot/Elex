@@ -28,14 +28,6 @@ public class ElexApplication extends DesktopApplication {
         });
 
         getContentPane().add(mainPanel.contentPanel, BorderLayout.CENTER);
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ElexHttpServer.getInstance().start();
-            }
-        });
-
         pack();
     }
 

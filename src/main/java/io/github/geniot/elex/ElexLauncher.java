@@ -28,6 +28,8 @@ public class ElexLauncher {
             }
         });
 
+        SwingUtilities.invokeLater(() -> ElexHttpServer.getInstance().start());
+
         new Thread(() -> DictionariesPool.getInstance()).start();
         new Thread(() -> FtServer.getInstance()).start();
     }
