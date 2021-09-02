@@ -42,6 +42,7 @@ public class ElexHttpServer extends Observable {
             server = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(host, port), 0);
             server.createContext("/", new StaticResourceHandler());
             server.createContext("/data", new ElexDataHandler());
+            server.createContext("/**/data", new ElexDataHandler());
 
             server.createContext("/css", new CssHandler());
             server.createContext("/icon", new IconHandler());
