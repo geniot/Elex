@@ -21,9 +21,11 @@ public class ElexLauncher {
         }));
 
         SwingUtilities.invokeLater(() -> {
-            application = new ElexApplication();
-            setLAF(ElexPreferences.get(Prop.LAF.name(), "Luna"), application);
-            application.setVisible(true);
+            if (System.getProperty("desktop") != null) {
+                application = new ElexApplication();
+                setLAF(ElexPreferences.get(Prop.LAF.name(), "Luna"), application);
+                application.setVisible(true);
+            }
         });
 
         new Thread(() -> DictionariesPool.getInstance()).start();
@@ -47,9 +49,8 @@ public class ElexLauncher {
     /**
      * There is a 'better' way to check whether FileAlterationMonitor is running, described here:
      * https://stackoverflow.com/questions/36673817/commons-io-2-4-how-control-the-state-of-filealterationlistener-and-restart
-     *
+     * <p>
      * Meanwhile I'll just use this boolean constant.
-     *
      */
     private static boolean isFtServerRunning = true;
 
