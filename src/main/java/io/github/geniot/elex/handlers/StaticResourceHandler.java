@@ -1,6 +1,7 @@
 package io.github.geniot.elex.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
+import io.github.geniot.elex.ElexHttpServer;
 import io.github.geniot.elex.ezip.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -9,11 +10,38 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class StaticResourceHandler extends BaseHttpHandler {
+    ElexHttpServer elexHttpServer;
+
+    public StaticResourceHandler(ElexHttpServer s) {
+        this.elexHttpServer = s;
+    }
+
 
     @Override
     public void handle(HttpExchange httpExchange) {
         try {
             String path = httpExchange.getRequestURI().toString();
+            if (path.endsWith("/data")) {
+                elexHttpServer.elexDataHandler.handle(httpExchange);
+                return;
+            }
+            if (path.endsWith("/css")) {
+                elexHttpServer.cssHandler.handle(httpExchange);
+                return;
+            }
+            if (path.endsWith("/icon")) {
+                elexHttpServer.iconHandler.handle(httpExchange);
+                return;
+            }
+            if (path.endsWith("/wav")) {
+                elexHttpServer.wavHandler.handle(httpExchange);
+                return;
+            }
+            if (path.endsWith("/img")) {
+                elexHttpServer.imgHandler.handle(httpExchange);
+                return;
+            }
+
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }

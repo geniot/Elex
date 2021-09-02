@@ -17,6 +17,12 @@ public class ElexHttpServer extends Observable {
     private HttpServer server;
     private Prop status;
 
+    public ElexDataHandler elexDataHandler = new ElexDataHandler();
+    public CssHandler cssHandler = new CssHandler();
+    public IconHandler iconHandler = new IconHandler();
+    public WavHandler wavHandler = new WavHandler();
+    public ImgHandler imgHandler = new ImgHandler();
+
     public static ElexHttpServer getInstance() {
         if (instance == null) {
             instance = new ElexHttpServer();
@@ -40,14 +46,13 @@ public class ElexHttpServer extends Observable {
             int port = getInt(Prop.PORT.name(), 8000);
 
             server = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(host, port), 0);
-            server.createContext("/", new StaticResourceHandler());
-            server.createContext("/data", new ElexDataHandler());
-            server.createContext("/**/data", new ElexDataHandler());
+            server.createContext("/", new StaticResourceHandler(this));
 
-            server.createContext("/css", new CssHandler());
-            server.createContext("/icon", new IconHandler());
-            server.createContext("/wav", new WavHandler());
-            server.createContext("/img", new ImgHandler());
+            server.createContext("/data", elexDataHandler);
+            server.createContext("/css", cssHandler);
+            server.createContext("/icon", iconHandler);
+            server.createContext("/wav", wavHandler);
+            server.createContext("/img", imgHandler);
             server.setExecutor(null);
             server.start();
 
