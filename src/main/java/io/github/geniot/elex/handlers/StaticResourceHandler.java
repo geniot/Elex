@@ -21,6 +21,15 @@ public class StaticResourceHandler extends BaseHttpHandler {
     public void handle(HttpExchange httpExchange) {
         try {
             String path = httpExchange.getRequestURI().toString();
+
+
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            if (path.contains("?")) {
+                path = path.substring(0, path.indexOf('?'));
+            }
+
             if (path.endsWith("/data")) {
                 elexHttpServer.elexDataHandler.handle(httpExchange);
                 return;
@@ -42,12 +51,6 @@ public class StaticResourceHandler extends BaseHttpHandler {
                 return;
             }
 
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            if (path.contains("?")) {
-                path = path.substring(0, path.indexOf('?'));
-            }
             if (path.equals("")) {
                 path = "index.html";
             }
