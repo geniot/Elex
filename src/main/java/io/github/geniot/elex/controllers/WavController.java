@@ -1,7 +1,6 @@
 package io.github.geniot.elex.controllers;
 
 import io.github.geniot.elex.DictionariesPool;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +18,6 @@ public class WavController {
     @Autowired
     DictionariesPool dictionariesPool;
 
-    private byte[] exampleMp3;
-    private byte[] getExampleMp3() {
-        try {
-            if (exampleMp3 == null) {
-                exampleMp3 = IOUtils.toByteArray(Thread.currentThread().getContextClassLoader().getResourceAsStream("example.mp3"));
-            }
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-            exampleMp3 = new byte[]{};
-        }
-        return exampleMp3;
-    }
-
     @RequestMapping(value = "/wav", method = RequestMethod.GET)
     public void handle(HttpServletResponse response,
                        @RequestParam int id,
@@ -39,10 +25,9 @@ public class WavController {
     ) {
         try {
             long t1 = System.currentTimeMillis();
-            byte[] resourceBytes = getExampleMp3();//dictionariesPool.getResource(id, link);
+            byte[] resourceBytes = dictionariesPool.getResource(id, link);
 
-//            response.setContentType("audio/wav");
-            response.setContentType("audio/mpeg");
+            response.setContentType("audio/wav");
             response.setHeader("Content-Length", String.valueOf(resourceBytes.length));
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
