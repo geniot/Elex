@@ -4,12 +4,13 @@ import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Language;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-
+@Component
 public class LanguagesUpdater {
 
     public void updateLanguages(Model model, List<Dictionary> dictionaryList) throws Exception {

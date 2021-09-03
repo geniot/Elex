@@ -13,18 +13,23 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.geniot.elex.ezip.DslUtils.*;
-
+@Component
 public class EntriesUpdater {
+
+    @Autowired
+    DictionariesPool dictionariesPool;
 
     public void updateEntries(Model model) throws Exception {
         List<Entry> entries = new ArrayList<>();
         if (model.getHeadwords().length > 0) {
-            entries = DictionariesPool.getInstance().getArticles(model);
+            entries = dictionariesPool.getArticles(model);
             for (Entry entry : entries) {
                 String article = entry.getBody();
 

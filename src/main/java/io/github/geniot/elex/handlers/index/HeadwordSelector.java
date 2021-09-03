@@ -5,10 +5,17 @@ import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Model;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+@Component
 public class HeadwordSelector {
+
+    @Autowired
+    DictionariesPool dictionariesPool;
+
     public String select(Model model,
                          Set<ElexDictionary> set,
                          IteratorsWrapper forwardIteratorsWrapper,
@@ -17,9 +24,9 @@ public class HeadwordSelector {
         selectedHeadword = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, selectedHeadword);
 
         if (model.getAction().equals(Action.TO_START)) {
-            selectedHeadword = DictionariesPool.getInstance().getMinHeadword(set);
+            selectedHeadword = dictionariesPool.getMinHeadword(set);
         } else if (model.getAction().equals(Action.TO_END)) {
-            selectedHeadword = DictionariesPool.getInstance().getMaxHeadword(set);
+            selectedHeadword = dictionariesPool.getMaxHeadword(set);
         } else if (model.getAction().equals(Action.NEXT_WORD)) {
             selectedHeadword = scroll(forwardIteratorsWrapper, selectedHeadword, 1);
             model.selectNext();

@@ -1,12 +1,11 @@
 package io.github.geniot.elex.model;
 
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class Language implements Comparable<Language> {
     private String sourceCode;
     private boolean selected = false;
-    private SortedSet<Language> targetLanguages = new TreeSet();
+    private TreeSet<Language> targetLanguages = new TreeSet<>();
 
     public Language(String sc) {
         this.sourceCode = sc;
@@ -28,11 +27,11 @@ public class Language implements Comparable<Language> {
         this.sourceCode = sourceCode;
     }
 
-    public SortedSet<Language> getTargetLanguages() {
+    public TreeSet<Language> getTargetLanguages() {
         return targetLanguages;
     }
 
-    public void setTargetLanguages(SortedSet<Language> targetLanguages) {
+    public void setTargetLanguages(TreeSet<Language> targetLanguages) {
         this.targetLanguages = targetLanguages;
     }
 

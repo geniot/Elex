@@ -107,7 +107,7 @@
                 <version>3.8.1</version>
                 <configuration>
                     <compilerArgs>
-                        <arg>-Xlint:none</arg>
+                        <arg>-Xlint:unchecked</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

@@ -9,10 +9,16 @@ import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class FullTextHitsUpdater {
+
+    @Autowired
+    DictionariesPool dictionariesPool;
 
     public void updateFullTextHits(Model model) {
         if (model.getLockFullText()) {
@@ -20,7 +26,7 @@ public class FullTextHitsUpdater {
         }
         try {
             SortedSet<FullTextHit> hits = new TreeSet<>();
-            Map<String, ElexDictionary> dictionarySet = DictionariesPool.getInstance().getElexDictionaries(model);
+            Map<String, ElexDictionary> dictionarySet = dictionariesPool.getElexDictionaries(model);
             for (String fileName : dictionarySet.keySet()) {
                 ElexDictionary elexDictionary = dictionarySet.get(fileName);
                 Properties properties = elexDictionary.getProperties();

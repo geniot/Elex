@@ -6,18 +6,24 @@ import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.handlers.index.Direction;
 import io.github.geniot.elex.handlers.index.HeadwordSelector;
 import io.github.geniot.elex.handlers.index.IteratorsWrapper;
-import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class HeadwordsUpdater {
-    HeadwordSelector headwordSelector = new HeadwordSelector();
     CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
 
+    @Autowired
+    DictionariesPool dictionariesPool;
+    @Autowired
+    HeadwordSelector headwordSelector;
+
     public void updateHeadwords(Model model) throws Exception {
-        Set<ElexDictionary> set = new HashSet<>(DictionariesPool.getInstance().getElexDictionaries(model).values());
+        Set<ElexDictionary> set = new HashSet<>(dictionariesPool.getElexDictionaries(model).values());
 
         SortedSet<String> index = new TreeSet<>(caseInsensitiveComparator);
 
@@ -28,7 +34,7 @@ public class HeadwordsUpdater {
         int pageSize = model.getVisibleSize();
         int viewOffset = model.getSelectedIndex();
 
-        if (pageSize<=0){
+        if (pageSize <= 0) {
             empty(model);
             return;
         }
@@ -69,13 +75,13 @@ public class HeadwordsUpdater {
             headwords.add(hw);
         }
 
-        if (headwords.get(0).getName().equals(DictionariesPool.getInstance().getMinHeadword(set))) {
+        if (headwords.get(0).getName().equals(dictionariesPool.getMinHeadword(set))) {
             model.setStartReached(true);
         } else {
             model.setStartReached(false);
         }
 
-        if (headwords.get(headwords.size() - 1).getName().equals(DictionariesPool.getInstance().getMaxHeadword(set))) {
+        if (headwords.get(headwords.size() - 1).getName().equals(dictionariesPool.getMaxHeadword(set))) {
             model.setEndReached(true);
         } else {
             model.setEndReached(false);
@@ -85,7 +91,7 @@ public class HeadwordsUpdater {
         model.setHeadwords(headwords.toArray(new Headword[headwords.size()]));
     }
 
-    private void empty(Model model){
+    private void empty(Model model) {
         model.setHeadwords(new Headword[]{});
         model.setStartReached(true);
         model.setEndReached(true);

@@ -1,6 +1,5 @@
 package io.github.geniot.elex;
 
-import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.DslProperty;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
@@ -12,25 +11,24 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+@Component
 public class DictionariesPool extends FileAlterationListenerAdaptor {
-    private static DictionariesPool instance;
+    Logger logger = LoggerFactory.getLogger(DictionariesPool.class);
+
     private Map<String, ElexDictionary> dictionaries = Collections.synchronizedMap(new HashMap<>());
     private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
     private FileAlterationObserver observer;
-    private static String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"),"data");
+    private static String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
     CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
 
-    public static DictionariesPool getInstance() {
-        if (instance == null) {
-            instance = new DictionariesPool();
-        }
-        return instance;
-    }
 
     private DictionariesPool() {
         update();
@@ -42,7 +40,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             monitor.addObserver(observer);
             monitor.start();
         } catch (Exception e) {
-            Logger.getInstance().log(e);
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
@@ -61,28 +59,28 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                 }
                 if (dicFile.getName().endsWith(".ezp")) {
                     try {
-                        Logger.getInstance().log("Installing: " + dicFile);
+                        logger.info("Installing: " + dicFile);
                         dictionaries.put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
                     } catch (Exception ex) {
-                        Logger.getInstance().log("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
-                        Logger.getInstance().log(ex);
+                        logger.error("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
+                        logger.error(ex.getMessage(), ex);
                     }
                 } else if (dicFile.getName().endsWith(".ezr")) {
                     try {
-                        Logger.getInstance().log("Installing: " + dicFile);
+                        logger.info("Installing: " + dicFile);
                         resources.put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
                     } catch (Exception ex) {
-                        Logger.getInstance().log("Couldn't install the resources file: " + dicFile.getAbsolutePath());
-                        Logger.getInstance().log(ex);
+                        logger.error("Couldn't install the resources file: " + dicFile.getAbsolutePath());
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
 
             }
             long t2 = System.currentTimeMillis();
-            Logger.getInstance().log("Reloaded dictionaries in: " + (t2 - t1) + " ms");
+            logger.info("Reloaded dictionaries in: " + (t2 - t1) + " ms");
         } catch (Exception e) {
-            Logger.getInstance().log("Couldn't update state");
-            Logger.getInstance().log(e);
+            logger.error("Couldn't update state");
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -124,7 +122,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     }
 
     public List<Entry> getArticles(Model model) throws Exception {
-        List<Entry> entries =new ArrayList<>();
+        List<Entry> entries = new ArrayList<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
@@ -161,7 +159,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                 }
             }
         }
-        Logger.getInstance().log("Couldn't find resource for: " + id + "; " + link);
+        logger.error("Couldn't find resource for: " + id + "; " + link);
         return new byte[]{};
     }
 
@@ -208,9 +206,9 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             try {
                 ElexDictionary elexDictionary = dictionaries.get(fileName);
                 elexDictionary.close();
-                Logger.getInstance().log("Closed " + fileName);
+                logger.info("Closed " + fileName);
             } catch (IOException e) {
-                Logger.getInstance().log(e);
+                logger.error(e.getMessage(), e);
             }
         }
     }
