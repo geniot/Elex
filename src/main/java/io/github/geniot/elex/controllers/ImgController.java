@@ -4,7 +4,6 @@ import io.github.geniot.elex.DictionariesPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,9 +27,7 @@ public class ImgController {
             long t1 = System.currentTimeMillis();
             byte[] resourceBytes = dictionariesPool.getResource(id, link);
             String extension = link.substring(link.lastIndexOf(".") + 1);
-
-            MediaType mediaType = MediaType.valueOf("IMAGE_" + extension.toUpperCase() + "_VALUE");
-            response.setContentType(mediaType.toString());
+            response.setContentType("image/" + extension);
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
             response.getOutputStream().write(resourceBytes);
