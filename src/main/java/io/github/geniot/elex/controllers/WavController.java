@@ -28,7 +28,6 @@ public class WavController {
             byte[] resourceBytes = dictionariesPool.getResource(id, link);
 
             response.setContentType("audio/wav");
-            response.setHeader("Content-Range", "bytes 0-" + (resourceBytes.length - 1) + "/" + resourceBytes.length);
             response.setHeader("Content-Length", String.valueOf(resourceBytes.length));
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
