@@ -27,7 +27,7 @@ public class WavController {
             long t1 = System.currentTimeMillis();
             byte[] resourceBytes = dictionariesPool.getResource(id, link);
 
-            response.setContentType("audio/wav");
+            response.setContentType("audio/mpeg");
             response.setHeader("Content-Length", String.valueOf(resourceBytes.length));
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
