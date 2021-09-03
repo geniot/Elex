@@ -29,9 +29,11 @@ public class WavController {
 
             response.setContentType("audio/wav");
             response.setHeader("Content-Range", "bytes 0-" + (resourceBytes.length - 1) + "/" + resourceBytes.length);
+            response.setHeader("Content-Length", String.valueOf(resourceBytes.length));
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
             response.getOutputStream().write(resourceBytes);
+            response.getOutputStream().flush();
 
             long t2 = System.currentTimeMillis();
             logger.info((t2 - t1) + " ms " + link);
