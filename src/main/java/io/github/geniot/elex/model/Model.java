@@ -23,6 +23,15 @@ public class Model {
     private String searchResultsFor;
     private boolean lockFullText;
     private String baseApiUrl;
+    private boolean exactMatch = false;
+
+    public boolean getExactMatch() {
+        return exactMatch;
+    }
+
+    public void setExactMatch(boolean e) {
+        this.exactMatch = e;
+    }
 
     public String getBaseApiUrl() {
         return baseApiUrl;

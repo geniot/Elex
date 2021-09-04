@@ -43,12 +43,20 @@ public class HeadwordSelector {
             selectedHeadword = scroll(backwardIteratorsWrapper, selectedHeadword, model.getVisibleSize() * 10);
         } else if (model.getAction().equals(Action.SEARCH)) {
             String userInput = model.getUserInput();
-            selectedHeadword = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, userInput);
+            String bestMatch = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, userInput);
+            if (bestMatch.equals(userInput)) {
+                model.setExactMatch(true);
+            } else {
+                model.setExactMatch(false);
+            }
+            selectedHeadword = bestMatch;
         } else if (model.getAction().equals(Action.FT_LINK)) {
             String exact = exact(forwardIteratorsWrapper, backwardIteratorsWrapper, model.getFtLink());
             if (exact != null) {
                 selectedHeadword = exact;
+                model.setExactMatch(true);
             } else {
+                model.setExactMatch(false);
                 Logger.getInstance().log("\"" + model.getFtLink() +
                         "\" not found in the current index, displaying \"" +
                         selectedHeadword + "\" instead");
