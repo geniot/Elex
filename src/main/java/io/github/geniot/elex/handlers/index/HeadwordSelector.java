@@ -5,6 +5,7 @@ import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Model;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,10 +45,14 @@ public class HeadwordSelector {
         } else if (model.getAction().equals(Action.SEARCH)) {
             String userInput = model.getUserInput();
             String bestMatch = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, userInput);
-            if (bestMatch.equals(userInput)) {
-                model.setExactMatch(true);
-            } else {
+            if (StringUtils.isEmpty(bestMatch)){
                 model.setExactMatch(false);
+            }else{
+                if (bestMatch.equals(userInput)) {
+                    model.setExactMatch(true);
+                } else {
+                    model.setExactMatch(false);
+                }
             }
             selectedHeadword = bestMatch;
         } else if (model.getAction().equals(Action.FT_LINK)) {
