@@ -126,7 +126,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
-            if (model.isDictionaryCurrentSelected(name)) {
+            if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
                 String article = elexDictionary.readArticle(model.getSelectedHeadword());
                 if (article != null) {
                     Entry entry = new Entry();

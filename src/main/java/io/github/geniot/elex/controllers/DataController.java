@@ -3,7 +3,6 @@ package io.github.geniot.elex.controllers;
 import com.google.gson.Gson;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.handlers.updaters.*;
-import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -51,7 +50,7 @@ public class DataController {
             entriesUpdater.updateEntries(model);
 
             //default action
-            model.setAction(Action.INDEX);
+//            model.setAction(Action.INDEX);
 
             long t2 = System.currentTimeMillis();
             logger.info((t2 - t1) + " ms " + model.getSelectedHeadword());

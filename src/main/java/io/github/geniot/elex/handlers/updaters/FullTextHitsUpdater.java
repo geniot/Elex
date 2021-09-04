@@ -31,7 +31,7 @@ public class FullTextHitsUpdater {
                 ElexDictionary elexDictionary = dictionarySet.get(fileName);
                 Properties properties = elexDictionary.getProperties();
                 String name = properties.getProperty(DslProperty.NAME.name());
-                if (model.isDictionaryCurrentSelected(name)) {
+                if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
                     String search = model.getUserInput();
                     SortedMap<Float, String[]> results = FtServer.getInstance().search(fileName, search, 100);
                     model.setSearchResultsFor(search);

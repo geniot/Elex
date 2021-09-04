@@ -25,12 +25,12 @@ public class Model {
     private String baseApiUrl;
     private boolean exactMatch = false;
 
-    public boolean getExactMatch() {
+    public boolean isExactMatch() {
         return exactMatch;
     }
 
-    public void setExactMatch(boolean e) {
-        this.exactMatch = e;
+    public void setExactMatch(boolean exactMatch) {
+        this.exactMatch = exactMatch;
     }
 
     public String getBaseApiUrl() {
@@ -89,19 +89,21 @@ public class Model {
 
     public boolean isDictionarySelected(String name) {
         for (Dictionary dictionary : dictionaries) {
-            if (dictionary.getName().equals(name) && dictionary.getSelected()) {
-                return true;
+            if (dictionary.getName().equals(name)) {
+                if (dictionary.getSelected() || this.action.equals(Action.INIT)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    public boolean isDictionaryCurrentSelected(String name) {
+    public boolean isDictionaryCurrent(String name) {
         for (Dictionary dictionary : dictionaries) {
-            if (dictionary.getName().equals(name) &&
-                    dictionary.getSelected() &&
-                    dictionary.getCurrent()) {
-                return true;
+            if (dictionary.getName().equals(name)) {
+                if (dictionary.getCurrent()) {
+                    return true;
+                }
             }
         }
         return false;
