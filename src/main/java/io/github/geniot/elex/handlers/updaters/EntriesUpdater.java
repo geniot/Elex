@@ -38,8 +38,8 @@ public class EntriesUpdater {
                 String article = entry.getBody();
 
                 article = article.replaceAll("(<<)([^>]+)(>>)", "[ref]$2[/ref]");
-                article = article.replaceAll("\\{\\{Roman\\}\\}", "");
-                article = article.replaceAll("\\{\\{/Roman\\}\\}", "");
+                article = article.replaceAll("\\{\\{[^}]+\\}\\}", "");
+                article = article.replaceAll("\\{\\{/[^}]+\\}\\}", "");
 
                 if (model.getAction().equals(Action.FT_LINK) &&
                         model.getLockFullText()) {
