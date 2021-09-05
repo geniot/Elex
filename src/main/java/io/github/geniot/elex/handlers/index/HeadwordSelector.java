@@ -1,11 +1,12 @@
 package io.github.geniot.elex.handlers.index;
 
 import io.github.geniot.elex.DictionariesPool;
-import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 
 @Component
 public class HeadwordSelector {
+    Logger logger = LoggerFactory.getLogger(HeadwordSelector.class);
 
     @Autowired
     DictionariesPool dictionariesPool;
@@ -45,9 +47,9 @@ public class HeadwordSelector {
         } else if (model.getAction().equals(Action.SEARCH)) {
             String userInput = model.getUserInput();
             String bestMatch = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, userInput);
-            if (StringUtils.isEmpty(bestMatch)){
+            if (StringUtils.isEmpty(bestMatch)) {
                 model.setExactMatch(false);
-            }else{
+            } else {
                 if (bestMatch.equals(userInput)) {
                     model.setExactMatch(true);
                 } else {
@@ -62,7 +64,7 @@ public class HeadwordSelector {
                 model.setExactMatch(true);
             } else {
                 model.setExactMatch(false);
-                Logger.getInstance().log("\"" + model.getFtLink() +
+                logger.info("\"" + model.getFtLink() +
                         "\" not found in the current index, displaying \"" +
                         selectedHeadword + "\" instead");
             }

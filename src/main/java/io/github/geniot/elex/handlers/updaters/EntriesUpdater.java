@@ -4,7 +4,7 @@ import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
-import io.github.geniot.elex.util.HtmlUtils;
+import io.github.geniot.elex.tools.convert.HtmlUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -13,15 +13,19 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.geniot.elex.ezip.DslUtils.*;
+import static io.github.geniot.elex.tools.convert.DslUtils.*;
+
 @Component
 public class EntriesUpdater {
+    Logger logger = LoggerFactory.getLogger(EntriesUpdater.class);
 
     @Autowired
     DictionariesPool dictionariesPool;

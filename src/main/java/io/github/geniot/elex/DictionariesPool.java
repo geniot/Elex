@@ -1,11 +1,11 @@
 package io.github.geniot.elex;
 
 import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
-import io.github.geniot.elex.ezip.model.DslProperty;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
+import io.github.geniot.elex.tools.convert.DslProperty;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;

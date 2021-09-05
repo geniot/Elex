@@ -1,14 +1,15 @@
 package io.github.geniot.elex.handlers.updaters;
 
 import io.github.geniot.elex.DictionariesPool;
-import io.github.geniot.elex.ezip.Logger;
-import io.github.geniot.elex.ezip.model.DslProperty;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
+import io.github.geniot.elex.tools.convert.DslProperty;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.*;
 
 @Component
 public class FullTextHitsUpdater {
+    Logger logger = LoggerFactory.getLogger(FullTextHitsUpdater.class);
 
     @Autowired
     DictionariesPool dictionariesPool;
@@ -55,7 +57,7 @@ public class FullTextHitsUpdater {
 
             model.setSearchResults(hits.toArray(new FullTextHit[hits.size()]));
         } catch (Exception ex) {
-            Logger.getInstance().log(ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

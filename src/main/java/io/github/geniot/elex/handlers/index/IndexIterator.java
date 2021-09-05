@@ -1,11 +1,11 @@
 package io.github.geniot.elex.handlers.index;
 
-import io.github.geniot.elex.ezip.Logger;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
-
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IndexIterator implements IPeekIterator {
+    Logger logger = LoggerFactory.getLogger(IndexIterator.class);
     //points at next
     String from;
     Direction direction;
@@ -27,7 +27,7 @@ public class IndexIterator implements IPeekIterator {
                 return elexDictionary.previous(from) != null;
             }
         } catch (Exception e) {
-            Logger.getInstance().log(e);
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -43,7 +43,7 @@ public class IndexIterator implements IPeekIterator {
             }
             return from;
         } catch (Exception e) {
-            Logger.getInstance().log(e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class IndexIterator implements IPeekIterator {
                 return elexDictionary.previous(from);
             }
         } catch (Exception e) {
-            Logger.getInstance().log(e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
