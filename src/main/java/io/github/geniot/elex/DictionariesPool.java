@@ -91,8 +91,8 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             Properties properties = elexDictionary.getProperties();
             String sl1 = model.getSelectedSourceLanguage();
             String tl1 = model.getSelectedTargetLanguage();
-            String sl2 = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name());
-            String tl2 = properties.getProperty(DslProperty.INDEX_LANGUAGE.name());
+            String sl2 = properties.getProperty(DslProperty.INDEX_LANGUAGE.name());
+            String tl2 = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name());
             String name = properties.getProperty(DslProperty.NAME.name());
             if (sl1.equalsIgnoreCase(sl2) &&
                     tl1.equalsIgnoreCase(tl2) &&
@@ -112,8 +112,8 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             dictionary.setId(fileName.hashCode());
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
             dictionary.setName(name);
-            dictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
-            dictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
+            dictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
+            dictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
             dictionary.setSelected(model.isDictionarySelected(name));
             dictionary.setCurrent(true);
             result.add(dictionary);

@@ -13,7 +13,7 @@ import java.util.TreeMap;
 @Component
 public class LanguagesUpdater {
 
-    public void updateLanguages(Model model, List<Dictionary> dictionaryList) throws Exception {
+    public void updateLanguages(Model model, List<Dictionary> dictionaryList) {
         SortedMap<String, Language> resultLanguagesMap = new TreeMap<>();
         for (Dictionary dictionary : dictionaryList) {
 
