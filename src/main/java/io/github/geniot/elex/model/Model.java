@@ -21,7 +21,6 @@ public class Model {
     private boolean startReached = false;
     private boolean endReached = false;
     private String searchResultsFor;
-    private boolean lockFullText;
     private String baseApiUrl;
     private boolean exactMatch = false;
 
@@ -39,14 +38,6 @@ public class Model {
 
     public void setBaseApiUrl(String baseApiUrl) {
         this.baseApiUrl = baseApiUrl;
-    }
-
-    public boolean getLockFullText() {
-        return lockFullText;
-    }
-
-    public void setLockFullText(boolean lockFullText) {
-        this.lockFullText = lockFullText;
     }
 
     public String getSearchResultsFor() {

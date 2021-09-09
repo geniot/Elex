@@ -41,8 +41,7 @@ public class EntriesUpdater {
                 article = article.replaceAll("\\{\\{[^}]+\\}\\}", "");
                 article = article.replaceAll("\\{\\{/[^}]+\\}\\}", "");
 
-                if (model.getAction().equals(Action.FT_LINK) &&
-                        model.getLockFullText()) {
+                if (model.getAction().equals(Action.FT_LINK)) {
                     article = highlight(model, article);
                 }
 
