@@ -57,7 +57,8 @@ public class HeadwordSelector {
                 }
             }
             selectedHeadword = bestMatch;
-        } else if (model.getAction().equals(Action.FT_LINK)) {
+        } else if (model.getAction().equals(Action.FT_LINK) ||
+                model.getAction().equals(Action.CONTENT_LINK) ) {
             String exact = exact(forwardIteratorsWrapper, backwardIteratorsWrapper, model.getFtLink());
             if (exact != null) {
                 selectedHeadword = exact;
