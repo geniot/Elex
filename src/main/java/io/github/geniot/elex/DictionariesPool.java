@@ -2,6 +2,8 @@ package io.github.geniot.elex;
 
 import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
+import io.github.geniot.elex.ftindexer.FtServer;
+import io.github.geniot.elex.model.AdminDictionary;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.*;
 
 @Component
@@ -26,7 +29,8 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     private Map<String, ElexDictionary> dictionaries = Collections.synchronizedMap(new HashMap<>());
     private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
     private FileAlterationObserver observer;
-    private static String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
+    private static final String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
+    private static final String DATA_FOLDER_PATH = new File(DATA_FOLDER_NAME).getAbsolutePath() + File.separator;
     CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
 
 
@@ -117,6 +121,45 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             dictionary.setSelected(model.isDictionarySelected(name));
             dictionary.setCurrent(true);
             result.add(dictionary);
+        }
+        return result;
+    }
+
+    public List<AdminDictionary> getAdminDictionaries(Model model) throws IOException {
+        List<AdminDictionary> result = new ArrayList<>();
+        for (String fileName : dictionaries.keySet()) {
+            ElexDictionary elexDictionary = dictionaries.get(fileName);
+
+            long totalSize = 0;
+
+            AdminDictionary adminDictionary = new AdminDictionary();
+            adminDictionary.setId(fileName.hashCode());
+            adminDictionary.setFileName(fileName);
+            adminDictionary.setDataPath(DATA_FOLDER_PATH);
+            adminDictionary.setFileSize(NumberFormat.getInstance().format(elexDictionary.length()));
+            totalSize += elexDictionary.length();
+            adminDictionary.setEntries(elexDictionary.getSize());
+
+            String resourceFileName = FilenameUtils.removeExtension(fileName) + ".ezr";
+            if (resources.containsKey(resourceFileName)) {
+                adminDictionary.setResourcesFileName(resourceFileName);
+                adminDictionary.setResourcesFileSize(NumberFormat.getInstance().format(resources.get(resourceFileName).length()));
+                totalSize += resources.get(resourceFileName).length();
+                adminDictionary.setResourcesCount(resources.get(resourceFileName).getSize());
+            }
+
+            long ftSize = FtServer.getInstance().getDirectorySize(fileName);
+            adminDictionary.setFtIndexSize(NumberFormat.getInstance().format(ftSize));
+            totalSize += ftSize;
+
+            adminDictionary.setTotalSize(NumberFormat.getInstance().format(totalSize));
+
+            String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
+            adminDictionary.setName(name);
+            adminDictionary.setSelected(model.isDictionarySelected(name));
+            adminDictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
+            adminDictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
+            result.add(adminDictionary);
         }
         return result;
     }

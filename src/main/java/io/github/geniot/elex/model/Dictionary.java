@@ -7,6 +7,15 @@ public class Dictionary {
     private String contentsLanguageCode;
     private boolean selected = true;
     private boolean current = true;
+    private int entries;
+
+    public int getEntries() {
+        return entries;
+    }
+
+    public void setEntries(int entries) {
+        this.entries = entries;
+    }
 
     public boolean getCurrent() {
         return current;

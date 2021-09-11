@@ -2,8 +2,7 @@ package io.github.geniot.elex.controllers;
 
 import com.google.gson.Gson;
 import io.github.geniot.elex.DictionariesPool;
-import io.github.geniot.elex.handlers.updaters.DictionariesUpdater;
-import io.github.geniot.elex.model.Dictionary;
+import io.github.geniot.elex.model.AdminDictionary;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -23,8 +22,6 @@ public class AdminController {
 
     @Autowired
     DictionariesPool dictionariesPool;
-    @Autowired
-    DictionariesUpdater dictionariesUpdater;
 
     @PostMapping("/admin")
     public String handle(@RequestBody String payload) {
@@ -32,8 +29,10 @@ public class AdminController {
             long t1 = System.currentTimeMillis();
 
             Model model = gson.fromJson(payload, Model.class);
-            List<Dictionary> dictionaryList = dictionariesPool.getDictionaries(model);
-            dictionariesUpdater.updateDictionaries(model, dictionaryList);
+            List<AdminDictionary> dictionaryList = dictionariesPool.getAdminDictionaries(model);
+
+            AdminDictionary[] dictionariesArray = dictionaryList.toArray(new AdminDictionary[dictionaryList.size()]);
+            model.setDictionaries(dictionariesArray);
 
             long t2 = System.currentTimeMillis();
             logger.info((t2 - t1) + " ms ");

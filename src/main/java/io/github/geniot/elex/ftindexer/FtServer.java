@@ -21,8 +21,9 @@ public class FtServer extends FileAlterationListenerAdaptor {
 
     private static FtServer instance;
     private FileAlterationObserver observer;
-    public static String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
-    public static String FT_FOLDER_NAME = "ft-index";
+    public static final String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
+    public static final String FT_FOLDER_NAME = "ft-index";
+    public static final String FT_FOLDER_PATH = new File(DATA_FOLDER_NAME + File.separator + FT_FOLDER_NAME).getAbsolutePath();
     private Indexer indexer;
     private Searcher searcher;
     private FileAlterationMonitor monitor;
@@ -42,6 +43,17 @@ public class FtServer extends FileAlterationListenerAdaptor {
         } else {
             return null;
         }
+    }
+
+    public long getDirectorySize(String fileName) throws IOException {
+        long result = 0;
+        Directory directory = getIndexByDictionaryFileName(FilenameUtils.removeExtension(fileName));
+        String[] files = directory.listAll();
+        for (String file : files) {
+            String pathToIndex = FT_FOLDER_PATH + File.separator + FilenameUtils.removeExtension(fileName) + File.separator + file;
+            result += new File(pathToIndex).length();
+        }
+        return result;
     }
 
     private Map<String, Directory> directoriesCache = new HashMap<>();

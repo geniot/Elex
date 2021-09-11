@@ -92,6 +92,7 @@ public class ResourcesPackager {
             out.write(headwordsBbs);
             header.sections.put(Section.CONTENT_CHUNK_STARTERS, new Section(Section.CONTENT_CHUNK_STARTERS, writeOffset, headwordsBbs.length, true));
 
+            header.size = files.keySet().size();
 
             byte[] headerBytes = header.getBytes();
             out.write(headerBytes);
