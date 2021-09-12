@@ -14,6 +14,7 @@ public enum Action {
     TO_START,
     FT_LINK,
     CONTENT_LINK,
-
+    //
+    REINDEX,
     TOGGLE_DICTIONARY_STATE
 }

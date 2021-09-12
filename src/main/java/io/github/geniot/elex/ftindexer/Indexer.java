@@ -27,6 +27,7 @@ public class Indexer {
 
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
             IndexWriter w = new IndexWriter(directory, config);
+            w.deleteAll();
 
             int size = elexDictionary.getSize();
             int counter = 0;

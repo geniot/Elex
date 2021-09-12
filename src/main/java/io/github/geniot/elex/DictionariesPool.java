@@ -1,12 +1,10 @@
 package io.github.geniot.elex;
 
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
-import io.github.geniot.elex.model.AdminDictionary;
 import io.github.geniot.elex.model.Dictionary;
-import io.github.geniot.elex.model.Entry;
-import io.github.geniot.elex.model.Model;
+import io.github.geniot.elex.model.*;
+import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.convert.DslProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -123,8 +121,9 @@ public class DictionariesPool {
         return result;
     }
 
-    public List<AdminDictionary> getAdminDictionaries(Model model) throws IOException {
-        List<AdminDictionary> result = new ArrayList<>();
+    public SortedSet<AdminDictionary> getAdminDictionaries(AdminModel model) throws IOException {
+        boolean isAtLeastOneSelected = false;
+        SortedSet<AdminDictionary> result = new TreeSet<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
 
@@ -154,7 +153,17 @@ public class DictionariesPool {
 
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
             adminDictionary.setName(name);
-            adminDictionary.setSelected(model.isDictionarySelected(name));
+
+            boolean isSelected = model.isDictionarySelected(name);
+            if (isAtLeastOneSelected) {
+                adminDictionary.setSelected(false);
+            } else {
+                adminDictionary.setSelected(isSelected);
+            }
+            if (isSelected) {
+                isAtLeastOneSelected = true;
+            }
+
             adminDictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
             adminDictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
             result.add(adminDictionary);

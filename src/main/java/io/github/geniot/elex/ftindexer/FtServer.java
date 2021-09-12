@@ -128,24 +128,7 @@ public class FtServer extends FileAlterationListenerAdaptor {
                         dicFile.getName().endsWith(".ezp") &&
                         !indexFilesSet.contains(FilenameUtils.removeExtension(dicFile.getName()))) {
 
-                    ElexDictionary elexDictionary = null;
-                    try {
-                        logger.info("Indexing " + dicFile.getAbsolutePath());
-                        elexDictionary = new ElexDictionary(dicFile.getAbsolutePath(), "r");
-
-                        String path = ftIndexFolderName + File.separator + FilenameUtils.removeExtension(dicFile.getName());
-                        new File(path).mkdirs();
-
-                        Directory directory = FSDirectory.open(Paths.get(path));
-                        indexer.index(dicFile.getName(), directory, elexDictionary);
-
-                    } catch (Exception ex) {
-                        logger.error(ex.getMessage(), ex);
-                    } finally {
-                        if (elexDictionary != null) {
-                            elexDictionary.close();
-                        }
-                    }
+                    reindex(dicFile);
                 }
             }
 
@@ -154,6 +137,27 @@ public class FtServer extends FileAlterationListenerAdaptor {
             logger.info("Updated ft index in: " + (t2 - t1) + " ms");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    public void reindex(File dicFile) throws IOException {
+        ElexDictionary elexDictionary = null;
+        try {
+            logger.info("Indexing " + dicFile.getAbsolutePath());
+            elexDictionary = new ElexDictionary(dicFile.getAbsolutePath(), "r");
+
+            String path = ftFolderPath + File.separator + FilenameUtils.removeExtension(dicFile.getName());
+            new File(path).mkdirs();
+
+            Directory directory = FSDirectory.open(Paths.get(path));
+            indexer.index(dicFile.getName(), directory, elexDictionary);
+
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        } finally {
+            if (elexDictionary != null) {
+                elexDictionary.close();
+            }
         }
     }
 }
