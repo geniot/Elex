@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.github.geniot.elex.ezip.ElexUtils;
+import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 
 import java.io.File;
 import java.io.IOException;

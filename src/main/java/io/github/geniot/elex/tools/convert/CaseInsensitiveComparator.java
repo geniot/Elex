@@ -1,4 +1,4 @@
-package io.github.geniot.elex.ezip.model;
+package io.github.geniot.elex.tools.convert;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

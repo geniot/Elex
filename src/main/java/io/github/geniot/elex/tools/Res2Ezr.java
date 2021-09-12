@@ -1,6 +1,6 @@
 package io.github.geniot.elex.tools;
 
-import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
+import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.compile.ResourcesPackager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

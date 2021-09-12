@@ -1,7 +1,7 @@
 package io.github.geniot.elex.handlers.updaters;
 
 import io.github.geniot.elex.DictionariesPool;
-import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
+import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.handlers.index.Direction;
 import io.github.geniot.elex.handlers.index.HeadwordSelector;

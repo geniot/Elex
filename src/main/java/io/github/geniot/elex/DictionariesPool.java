@@ -1,6 +1,6 @@
 package io.github.geniot.elex;
 
-import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
+import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.AdminDictionary;
