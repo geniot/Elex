@@ -17,6 +17,8 @@ import javax.annotation.PreDestroy;
 public class WebConfig implements WebMvcConfigurer {
     Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
+    public static final String TASK_THREAD_NAME_PREFIX = "elex_task_executor_thread";
+
     @Autowired
     DictionariesPool dictionariesPool;
 
@@ -41,9 +43,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public TaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(1);
-        executor.setMaxPoolSize(1);
-        executor.setThreadNamePrefix("default_task_executor_thread");
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setKeepAliveSeconds(1);
+        executor.setThreadNamePrefix(TASK_THREAD_NAME_PREFIX);
         executor.initialize();
         return executor;
     }

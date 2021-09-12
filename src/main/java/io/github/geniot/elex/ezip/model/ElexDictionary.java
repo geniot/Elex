@@ -6,6 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.github.geniot.elex.ezip.ElexUtils;
 import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +16,13 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.TreeMap;
 
-/**
- *
- */
+@Getter
 public class ElexDictionary extends RandomAccessFile {
     private Header header;
     private String[] starters;
     private CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
     private LoadingCache<Integer, Object> chunksCache;
+    private File file;
 
     public static final int BUFFER_SIZE = 1024 * 64;
     public static final int RESOURCES_BUFFER_SIZE = 1024 * 1024;
@@ -30,12 +30,14 @@ public class ElexDictionary extends RandomAccessFile {
     public ElexDictionary(String name, String mode)
             throws IOException {
         super(name, mode);
+        this.file = new File(name);
         init(name);
     }
 
     public ElexDictionary(File file, String mode)
             throws IOException {
         super(file, mode);
+        this.file = file;
         init(file.getName());
     }
 
