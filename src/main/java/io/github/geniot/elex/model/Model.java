@@ -1,10 +1,14 @@
 package io.github.geniot.elex.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
 public class Model {
     private Language[] sourceLanguages = new Language[]{};
     private Dictionary[] dictionaries = new Dictionary[]{};
@@ -24,35 +28,11 @@ public class Model {
     private String baseApiUrl;
     private boolean exactMatch = false;
 
-    public boolean isExactMatch() {
-        return exactMatch;
-    }
-
-    public void setExactMatch(boolean exactMatch) {
-        this.exactMatch = exactMatch;
-    }
-
-    public String getBaseApiUrl() {
-        return baseApiUrl;
-    }
-
-    public void setBaseApiUrl(String baseApiUrl) {
-        this.baseApiUrl = baseApiUrl;
-    }
-
-    public String getSearchResultsFor() {
-        return searchResultsFor;
-    }
-
-    public void setSearchResultsFor(String searchResultsFor) {
-        this.searchResultsFor = searchResultsFor;
-    }
-
     private Action action = Action.INDEX;
 
     public String getSelectedSourceLanguage() {
         for (Language sourceLanguage : sourceLanguages) {
-            if (sourceLanguage.getSelected()) {
+            if (sourceLanguage.isSelected()) {
                 return sourceLanguage.getSourceCode();
             }
         }
@@ -67,9 +47,9 @@ public class Model {
 
     public String getSelectedTargetLanguage() {
         for (Language sourceLanguage : sourceLanguages) {
-            if (sourceLanguage.getSelected()) {
+            if (sourceLanguage.isSelected()) {
                 for (Language targetLanguage : sourceLanguage.getTargetLanguages()) {
-                    if (targetLanguage.getSelected()) {
+                    if (targetLanguage.isSelected()) {
                         return targetLanguage.getSourceCode();
                     }
                 }
@@ -81,7 +61,7 @@ public class Model {
     public boolean isDictionarySelected(String name) {
         for (Dictionary dictionary : dictionaries) {
             if (dictionary.getName().equals(name)) {
-                if (dictionary.getSelected() || this.action.equals(Action.INIT)) {
+                if (dictionary.isSelected() || this.action.equals(Action.INIT)) {
                     return true;
                 }
             }
@@ -92,7 +72,7 @@ public class Model {
     public boolean isDictionaryCurrent(String name) {
         for (Dictionary dictionary : dictionaries) {
             if (dictionary.getName().equals(name)) {
-                if (dictionary.getCurrent()) {
+                if (dictionary.isCurrent()) {
                     return true;
                 }
             }
@@ -108,7 +88,7 @@ public class Model {
             }
         }
         for (Headword hw : headwords) {
-            if (hw.getSelected()) {
+            if (hw.isSelected()) {
                 return hw.getName();
             }
         }
@@ -120,82 +100,9 @@ public class Model {
         selectedHeadwords.put(currentKey, hw);
     }
 
-
-    public Language[] getSourceLanguages() {
-        return sourceLanguages;
-    }
-
-    public void setSourceLanguages(Language[] sourceLanguages) {
-        this.sourceLanguages = sourceLanguages;
-    }
-
-    public Dictionary[] getDictionaries() {
-        return dictionaries;
-    }
-
-    public void setDictionaries(Dictionary[] dictionaries) {
-        this.dictionaries = dictionaries;
-    }
-
-    public Headword[] getHeadwords() {
-        return headwords;
-    }
-
-    public void setHeadwords(Headword[] headwords) {
-        this.headwords = headwords;
-    }
-
-    public Entry[] getEntries() {
-        return entries;
-    }
-
-    public void setEntries(Entry[] entries) {
-        this.entries = entries;
-    }
-
-    public FullTextHit[] getSearchResults() {
-        return searchResults;
-    }
-
-    public void setSearchResults(FullTextHit[] searchResults) {
-        this.searchResults = searchResults;
-    }
-
-    public Map<String, String> getSelectedHeadwords() {
-        return selectedHeadwords;
-    }
-
-    public void setSelectedHeadwords(Map<String, String> selectedHeadwords) {
-        this.selectedHeadwords = selectedHeadwords;
-    }
-
-    public Map<String, String> getUserInputs() {
-        return userInputs;
-    }
-
-    public void setUserInputs(Map<String, String> userInputs) {
-        this.userInputs = userInputs;
-    }
-
-    public int getVisibleSize() {
-        return visibleSize;
-    }
-
-    public void setVisibleSize(int visibleSize) {
-        this.visibleSize = visibleSize;
-    }
-
-    public Action getAction() {
-        return action;
-    }
-
-    public void setAction(Action action) {
-        this.action = action;
-    }
-
     public int getSelectedIndex() {
         for (int i = 0; i < headwords.length; i++) {
-            if (headwords[i].getSelected()) {
+            if (headwords[i].isSelected()) {
                 return i;
             }
         }
@@ -204,7 +111,7 @@ public class Model {
 
     public void selectNext() {
         for (int i = 0; i < headwords.length - 1; i++) {
-            if (headwords[i].getSelected()) {
+            if (headwords[i].isSelected()) {
                 headwords[i].setSelected(false);
                 headwords[i + 1].setSelected(true);
                 return;
@@ -214,7 +121,7 @@ public class Model {
 
     public void selectPrevious() {
         for (int i = headwords.length - 1; i > 0; i--) {
-            if (headwords[i].getSelected()) {
+            if (headwords[i].isSelected()) {
                 headwords[i].setSelected(false);
                 headwords[i - 1].setSelected(true);
                 return;
@@ -228,34 +135,6 @@ public class Model {
             input = getSelectedHeadword();
         }
         return input;
-    }
-
-    public void setSelectedIndex(int selectedIndex) {
-        this.selectedIndex = selectedIndex;
-    }
-
-    public boolean getStartReached() {
-        return startReached;
-    }
-
-    public void setStartReached(boolean startReached) {
-        this.startReached = startReached;
-    }
-
-    public boolean getEndReached() {
-        return endReached;
-    }
-
-    public void setEndReached(boolean endReached) {
-        this.endReached = endReached;
-    }
-
-    public String getFtLink() {
-        return ftLink;
-    }
-
-    public void setFtLink(String ftLink) {
-        this.ftLink = ftLink;
     }
 
 }

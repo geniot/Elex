@@ -15,6 +15,7 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -32,6 +33,8 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     private static final String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
     private static final String DATA_FOLDER_PATH = new File(DATA_FOLDER_NAME).getAbsolutePath() + File.separator;
     CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
+    @Autowired
+    private FtServer ftServer;
 
 
     private DictionariesPool() {
@@ -148,7 +151,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
                 adminDictionary.setResourcesCount(resources.get(resourceFileName).getSize());
             }
 
-            long ftSize = FtServer.getInstance().getDirectorySize(fileName);
+            long ftSize = ftServer.getDirectorySize(fileName);
             adminDictionary.setFtIndexSize(NumberFormat.getInstance().format(ftSize));
             totalSize += ftSize;
 

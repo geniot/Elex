@@ -11,11 +11,12 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 import static io.github.geniot.elex.ftindexer.Utils.stripTags;
-
+@Component
 public class Indexer {
     Logger logger = LoggerFactory.getLogger(Indexer.class);
 

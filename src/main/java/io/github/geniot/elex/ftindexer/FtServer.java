@@ -10,30 +10,27 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
-
+@Component
 public class FtServer extends FileAlterationListenerAdaptor {
     Logger logger = LoggerFactory.getLogger(FtServer.class);
 
-    private static FtServer instance;
     private FileAlterationObserver observer;
     public static final String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
     public static final String FT_FOLDER_NAME = "ft-index";
     public static final String FT_FOLDER_PATH = new File(DATA_FOLDER_NAME + File.separator + FT_FOLDER_NAME).getAbsolutePath();
+    @Autowired
     private Indexer indexer;
+    @Autowired
     private Searcher searcher;
     private FileAlterationMonitor monitor;
-
-    public static FtServer getInstance() {
-        if (instance == null) {
-            instance = new FtServer();
-        }
-        return instance;
-    }
+    private Map<String, Directory> directoriesCache = new HashMap<>();
 
     public SortedMap<Float, String[]> search(String fileName, String query, int hitsPerPage) throws IOException {
         Directory directory = getIndexByDictionaryFileName(FilenameUtils.removeExtension(fileName));
@@ -55,8 +52,6 @@ public class FtServer extends FileAlterationListenerAdaptor {
         }
         return result;
     }
-
-    private Map<String, Directory> directoriesCache = new HashMap<>();
 
     private Directory getIndexByDictionaryFileName(String fileName) throws IOException {
         Directory directory = directoriesCache.get(fileName);
@@ -84,8 +79,6 @@ public class FtServer extends FileAlterationListenerAdaptor {
 
     private FtServer() {
         try {
-            indexer = new Indexer();
-            searcher = new Searcher();
             observer = new FileAlterationObserver(DATA_FOLDER_NAME, pathname -> pathname.getPath().endsWith(".ezp"));
             observer.addListener(this);
             long interval = 1000;

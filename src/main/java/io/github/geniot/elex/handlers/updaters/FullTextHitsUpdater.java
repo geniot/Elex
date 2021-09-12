@@ -22,6 +22,8 @@ public class FullTextHitsUpdater {
 
     @Autowired
     DictionariesPool dictionariesPool;
+    @Autowired
+    FtServer ftServer;
 
     public void updateFullTextHits(Model model) {
         if (!model.getAction().equals(Action.FT_LINK)) {
@@ -34,7 +36,7 @@ public class FullTextHitsUpdater {
                     String name = properties.getProperty(DslProperty.NAME.name());
                     if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
                         String search = model.getUserInput();
-                        SortedMap<Float, String[]> results = FtServer.getInstance().search(fileName, search, 100);
+                        SortedMap<Float, String[]> results = ftServer.search(fileName, search, 100);
                         model.setSearchResultsFor(search);
 
                         for (Float score : results.keySet()) {

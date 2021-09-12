@@ -1,7 +1,12 @@
 package io.github.geniot.elex.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.TreeSet;
 
+@Getter
+@Setter
 public class Language implements Comparable<Language> {
     private String sourceCode;
     private boolean selected = false;
@@ -9,30 +14,6 @@ public class Language implements Comparable<Language> {
 
     public Language(String sc) {
         this.sourceCode = sc;
-    }
-
-    public boolean getSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    public String getSourceCode() {
-        return sourceCode;
-    }
-
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public TreeSet<Language> getTargetLanguages() {
-        return targetLanguages;
-    }
-
-    public void setTargetLanguages(TreeSet<Language> targetLanguages) {
-        this.targetLanguages = targetLanguages;
     }
 
     @Override

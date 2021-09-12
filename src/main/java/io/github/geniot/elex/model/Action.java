@@ -13,5 +13,7 @@ public enum Action {
     PREVIOUS_TEN_PAGES,
     TO_START,
     FT_LINK,
-    CONTENT_LINK
+    CONTENT_LINK,
+
+    TOGGLE_DICTIONARY_STATE
 }

@@ -13,11 +13,12 @@ import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
+@Component
 public class Searcher {
     Logger logger = LoggerFactory.getLogger(Searcher.class);
     private Comparator<Float> backwardFloatsComparator = Comparator.reverseOrder();
