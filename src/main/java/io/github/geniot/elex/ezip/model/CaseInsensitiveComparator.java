@@ -1,10 +1,12 @@
 package io.github.geniot.elex.ezip.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
+@Component
 public class CaseInsensitiveComparator implements Comparator<String>, Serializable {
     @Override
     public int compare(String o1, String o2) {

@@ -3,7 +3,6 @@ package io.github.geniot.elex.handlers.index;
 import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 

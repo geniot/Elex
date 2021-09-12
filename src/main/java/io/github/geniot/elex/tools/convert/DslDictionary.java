@@ -1,5 +1,6 @@
 package io.github.geniot.elex.tools.convert;
 
+import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

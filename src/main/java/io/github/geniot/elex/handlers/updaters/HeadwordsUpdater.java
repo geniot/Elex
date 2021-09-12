@@ -15,7 +15,9 @@ import java.util.*;
 
 @Component
 public class HeadwordsUpdater {
-    CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
+
+    @Autowired
+    CaseInsensitiveComparator caseInsensitiveComparator;
 
     @Autowired
     DictionariesPool dictionariesPool;

@@ -2,10 +2,10 @@ package io.github.geniot.elex.tools.compile;
 
 
 import io.github.geniot.elex.ezip.ElexUtils;
+import io.github.geniot.elex.ezip.model.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ezip.model.Header;
 import io.github.geniot.elex.ezip.model.Section;
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.convert.DslDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;

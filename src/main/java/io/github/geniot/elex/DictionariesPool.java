@@ -8,55 +8,50 @@ import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.tools.convert.DslProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
-import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
 
 @Component
-public class DictionariesPool extends FileAlterationListenerAdaptor {
+@Getter
+@Setter
+public class DictionariesPool {
     Logger logger = LoggerFactory.getLogger(DictionariesPool.class);
 
     private Map<String, ElexDictionary> dictionaries = Collections.synchronizedMap(new HashMap<>());
     private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
-    private FileAlterationObserver observer;
-    private static final String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
-    private static final String DATA_FOLDER_PATH = new File(DATA_FOLDER_NAME).getAbsolutePath() + File.separator;
-    CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
+
+    @Value("${path.data}")
+    private String pathToData;
+    private String pathToDataAbsolute;
+
+    @Autowired
+    CaseInsensitiveComparator caseInsensitiveComparator;
+
     @Autowired
     private FtServer ftServer;
 
-
-    private DictionariesPool() {
-        update();
-        try {
-            observer = new FileAlterationObserver(DATA_FOLDER_NAME, pathname -> pathname.getPath().endsWith(".ezp"));
-            observer.addListener(this);
-            long interval = 1000;
-            FileAlterationMonitor monitor = new FileAlterationMonitor(interval);
-            monitor.addObserver(observer);
-            monitor.start();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            e.printStackTrace();
-        }
+    @PostConstruct
+    public void init() {
+        this.pathToDataAbsolute = new File(pathToData).getAbsolutePath() + File.separator;
     }
 
-    private void update() {
+    public void update() {
         try {
             long t1 = System.currentTimeMillis();
             dictionaries.clear();
-            File dataFolder = new File(DATA_FOLDER_NAME);
+            File dataFolder = new File(pathToData);
             dataFolder.mkdirs();
             File[] dicFiles = dataFolder.listFiles();
             //installing
@@ -138,7 +133,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
             AdminDictionary adminDictionary = new AdminDictionary();
             adminDictionary.setId(fileName.hashCode());
             adminDictionary.setFileName(fileName);
-            adminDictionary.setDataPath(DATA_FOLDER_PATH);
+            adminDictionary.setDataPath(pathToDataAbsolute);
             adminDictionary.setFileSize(NumberFormat.getInstance().format(elexDictionary.length()));
             totalSize += elexDictionary.length();
             adminDictionary.setEntries(elexDictionary.getSize());
@@ -209,21 +204,6 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
         return new byte[]{};
     }
 
-    @Override
-    public void onFileCreate(final File file) {
-        update();
-    }
-
-    @Override
-    public void onFileChange(final File file) {
-        update();
-    }
-
-    @Override
-    public void onFileDelete(final File file) {
-        update();
-    }
-
     public String getMinHeadword(Set<ElexDictionary> set) throws Exception {
         String minHw = null;
         for (ElexDictionary cd : set) {
@@ -247,7 +227,7 @@ public class DictionariesPool extends FileAlterationListenerAdaptor {
     }
 
 
-    public void close() {
+    public void stop() {
         for (String fileName : dictionaries.keySet()) {
             try {
                 ElexDictionary elexDictionary = dictionaries.get(fileName);

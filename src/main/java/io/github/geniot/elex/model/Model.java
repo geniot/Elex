@@ -39,12 +39,6 @@ public class Model {
         return "";
     }
 
-    public void deselectAllSourceLanguages() {
-        for (Language sourceLanguage : sourceLanguages) {
-            sourceLanguage.setSelected(false);
-        }
-    }
-
     public String getSelectedTargetLanguage() {
         for (Language sourceLanguage : sourceLanguages) {
             if (sourceLanguage.isSelected()) {

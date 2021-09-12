@@ -14,4 +14,5 @@ public class AdminDictionary extends Dictionary {
     private int resourcesCount;
     private String ftIndexSize;
     private String totalSize;
+    private String status = "enabled";
 }

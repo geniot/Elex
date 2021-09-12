@@ -1,35 +1,47 @@
 package io.github.geniot.elex.ftindexer;
 
 import io.github.geniot.elex.ezip.model.ElexDictionary;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
-import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
+
 @Component
+@Getter
+@Setter
 public class FtServer extends FileAlterationListenerAdaptor {
     Logger logger = LoggerFactory.getLogger(FtServer.class);
 
-    private FileAlterationObserver observer;
-    public static final String DATA_FOLDER_NAME = StringUtils.defaultIfEmpty(System.getProperty("data"), "data");
-    public static final String FT_FOLDER_NAME = "ft-index";
-    public static final String FT_FOLDER_PATH = new File(DATA_FOLDER_NAME + File.separator + FT_FOLDER_NAME).getAbsolutePath();
+    @Value("${path.data}")
+    private String pathToData;
+    @Value("${name.folder.ft-index}")
+    private String ftIndexFolderName;
+
+    private String ftFolderPath;
+
     @Autowired
     private Indexer indexer;
     @Autowired
     private Searcher searcher;
-    private FileAlterationMonitor monitor;
+
+    @PostConstruct
+    public void init() {
+        ftFolderPath = new File(pathToData + File.separator + ftIndexFolderName).getAbsolutePath();
+    }
+
     private Map<String, Directory> directoriesCache = new HashMap<>();
 
     public SortedMap<Float, String[]> search(String fileName, String query, int hitsPerPage) throws IOException {
@@ -47,7 +59,7 @@ public class FtServer extends FileAlterationListenerAdaptor {
         Directory directory = getIndexByDictionaryFileName(FilenameUtils.removeExtension(fileName));
         String[] files = directory.listAll();
         for (String file : files) {
-            String pathToIndex = FT_FOLDER_PATH + File.separator + FilenameUtils.removeExtension(fileName) + File.separator + file;
+            String pathToIndex = ftFolderPath + File.separator + FilenameUtils.removeExtension(fileName) + File.separator + file;
             result += new File(pathToIndex).length();
         }
         return result;
@@ -56,39 +68,11 @@ public class FtServer extends FileAlterationListenerAdaptor {
     private Directory getIndexByDictionaryFileName(String fileName) throws IOException {
         Directory directory = directoriesCache.get(fileName);
         if (directory == null) {
-//            String pathToIndex = DATA_FOLDER_NAME +
-//                    File.separator +
-//                    FT_FOLDER_NAME +
-//                    File.separator +
-//                    fileName +
-//                    ".ft";
-//            File indexFile = new File(pathToIndex);
-//            if (indexFile.exists()) {
-//                directory = Utils.deserializeIndex(FileUtils.readFileToByteArray(indexFile));
-//            }
-            String pathToIndex = DATA_FOLDER_NAME +
-                    File.separator +
-                    FT_FOLDER_NAME +
-                    File.separator +
-                    fileName;
+            String pathToIndex = ftFolderPath + File.separator + fileName;
             directory = FSDirectory.open(Paths.get(pathToIndex));
             directoriesCache.put(fileName, directory);
         }
         return directory;
-    }
-
-    private FtServer() {
-        try {
-            observer = new FileAlterationObserver(DATA_FOLDER_NAME, pathname -> pathname.getPath().endsWith(".ezp"));
-            observer.addListener(this);
-            long interval = 1000;
-            monitor = new FileAlterationMonitor(interval);
-            monitor.addObserver(observer);
-            monitor.start();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        update();
     }
 
     public void stop() {
@@ -99,11 +83,6 @@ public class FtServer extends FileAlterationListenerAdaptor {
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             }
-        }
-        try {
-            monitor.stop();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
         }
     }
 
@@ -119,11 +98,11 @@ public class FtServer extends FileAlterationListenerAdaptor {
         try {
             long t1 = System.currentTimeMillis();
 
-            File dataFolder = new File(DATA_FOLDER_NAME);
+            File dataFolder = new File(pathToData);
             if (!dataFolder.exists() && !dataFolder.mkdirs()) {
                 logger.warn("Couldn't create " + dataFolder);
             }
-            File ftIndexFolder = new File(DATA_FOLDER_NAME + File.separator + FT_FOLDER_NAME);
+            File ftIndexFolder = new File(ftFolderPath);
             if (!ftIndexFolder.exists() && !ftIndexFolder.mkdirs()) {
                 logger.warn("Couldn't create " + ftIndexFolder);
             }
@@ -154,28 +133,12 @@ public class FtServer extends FileAlterationListenerAdaptor {
                         logger.info("Indexing " + dicFile.getAbsolutePath());
                         elexDictionary = new ElexDictionary(dicFile.getAbsolutePath(), "r");
 
-                        String path = DATA_FOLDER_NAME +
-                                File.separator +
-                                FT_FOLDER_NAME +
-                                File.separator +
-                                FilenameUtils.removeExtension(dicFile.getName());
+                        String path = ftIndexFolderName + File.separator + FilenameUtils.removeExtension(dicFile.getName());
                         new File(path).mkdirs();
 
                         Directory directory = FSDirectory.open(Paths.get(path));
                         indexer.index(dicFile.getName(), directory, elexDictionary);
 
-//                        SerializableRAMDirectory serializableRAMDirectory = new SerializableRAMDirectory();
-//                        ramIndexer.index(serializableRAMDirectory, elexDictionary);
-//                        byte[] index = Utils.serializeIndex(serializableRAMDirectory);
-//
-//                        String path = DATA_FOLDER_NAME +
-//                                File.separator +
-//                                FT_FOLDER_NAME +
-//                                File.separator +
-//                                FilenameUtils.removeExtension(dicFile.getName()) +
-//                                ".ft";
-//
-//                        FileUtils.writeByteArrayToFile(new File(path), index);
                     } catch (Exception ex) {
                         logger.error(ex.getMessage(), ex);
                     } finally {
@@ -192,20 +155,5 @@ public class FtServer extends FileAlterationListenerAdaptor {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void onFileCreate(final File file) {
-        update();
-    }
-
-    @Override
-    public void onFileChange(final File file) {
-        update();
-    }
-
-    @Override
-    public void onFileDelete(final File file) {
-        update();
     }
 }
