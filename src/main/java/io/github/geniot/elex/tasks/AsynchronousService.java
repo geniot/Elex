@@ -25,11 +25,14 @@ public class AsynchronousService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private long latency = 1000;
+    private long latency = 2000;
 
     private Map<String, Task> runningTasks = new ConcurrentHashMap<>();
 
-    public void reindex(ElexDictionary elexDictionary) {
+    synchronized public void reindex(ElexDictionary elexDictionary) {
+        if (runningTasks.containsKey(elexDictionary.getFile().getName())) {
+            return;
+        }
         FtIndexTask ftIndexTask = applicationContext.getBean(FtIndexTask.class);
         Task uiTask = new Task();
         ftIndexTask.setElexDictionary(elexDictionary);
@@ -38,7 +41,7 @@ public class AsynchronousService {
         taskExecutor.execute(ftIndexTask);
     }
 
-    public void cleanUp() {
+    synchronized public void cleanUp() {
         long now = System.currentTimeMillis();
         for (String fileName : runningTasks.keySet()) {
             Task task = runningTasks.get(fileName);
