@@ -16,8 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -248,4 +247,16 @@ public class DictionariesPool {
         }
     }
 
+    public String getDownloadFilePath(int id, String type) {
+        String path = null;
+        for (String fn : dictionaries.keySet()) {
+            if (fn.hashCode() == id) {
+                path = FilenameUtils.removeExtension(fn) + "." + type;
+            }
+        }
+        if (path != null) {
+            path = pathToDataAbsolute + path;
+        }
+        return path;
+    }
 }
