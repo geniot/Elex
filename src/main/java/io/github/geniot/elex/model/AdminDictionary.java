@@ -14,7 +14,7 @@ public class AdminDictionary extends Dictionary implements Comparable<AdminDicti
     private int resourcesCount;
     private String ftIndexSize;
     private String totalSize;
-    private String status = "enabled";
+    private DictionaryStatus status = DictionaryStatus.ENABLED;
 
     @Override
     public int compareTo(AdminDictionary o) {

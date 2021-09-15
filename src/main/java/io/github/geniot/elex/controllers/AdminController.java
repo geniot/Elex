@@ -83,6 +83,11 @@ public class AdminController {
                     String path = selectedDictionary.getDataPath() + selectedDictionary.getFileName();
                     asynchronousService.reindex(new ElexDictionary(path, "r"));
                 }
+            } else if (model.getAction().equals(Action.TOGGLE_DICTIONARY_STATE)) {
+                AdminDictionary selectedDictionary = model.getSelectedDictionary();
+                if (selectedDictionary != null) {
+                    dictionariesPool.changeState(selectedDictionary);
+                }
             }
 
             SortedSet<AdminDictionary> dictionaryList = dictionariesPool.getAdminDictionaries(model);

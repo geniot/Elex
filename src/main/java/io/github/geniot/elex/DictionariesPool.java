@@ -1,5 +1,6 @@
 package io.github.geniot.elex;
 
+import com.google.gson.Gson;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.Dictionary;
@@ -8,6 +9,7 @@ import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.convert.DslProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -39,9 +43,25 @@ public class DictionariesPool {
     @Autowired
     private FtServer ftServer;
 
+    private ServerSettings serverSettings = new ServerSettings();
+    private String settingsFileName = "serverSettings.json";
+    private Gson gson = new Gson();
+
     @PostConstruct
     public void init() {
         this.pathToDataAbsolute = new File(pathToData).getAbsolutePath() + File.separator;
+        File serverSettingsFile = new File(pathToDataAbsolute + settingsFileName);
+        if (serverSettingsFile.exists()) {
+            try {
+                String settingsStr = FileUtils.readFileToString(serverSettingsFile, StandardCharsets.UTF_8);
+                serverSettings = gson.fromJson(settingsStr, ServerSettings.class);
+                if (serverSettings == null) {
+                    serverSettings = new ServerSettings();
+                }
+            } catch (Exception ex) {
+                logger.warn("Couldn't read serverSettings file.", ex);
+            }
+        }
     }
 
     public void update() {
@@ -258,5 +278,55 @@ public class DictionariesPool {
             path = pathToDataAbsolute + path;
         }
         return path;
+    }
+
+    synchronized public void changeState(AdminDictionary selectedDictionary) {
+        try {
+            String fileName = FilenameUtils.removeExtension(selectedDictionary.getFileName());
+            String ezpFileName = fileName + ".ezp";
+            String ezrFileName = fileName + ".ezr";
+            if (selectedDictionary.getStatus().equals(DictionaryStatus.ENABLED)) {
+
+                ElexDictionary ezp = dictionaries.get(ezpFileName);
+                ezp.close();
+                dictionaries.remove(ezpFileName);
+
+                ElexDictionary ezr = resources.get(ezrFileName);
+                if (ezr != null) {
+                    ezr.close();
+                    resources.remove(ezrFileName);
+                }
+
+                serverSettings.getDisabledDictionariesMap().put(fileName, selectedDictionary.getName());
+
+            } else {
+                File ezpFile = new File(pathToDataAbsolute + ezpFileName);
+                if (ezpFile.exists()) {
+                    dictionaries.put(ezpFile.getName(), new ElexDictionary(ezpFile.getAbsolutePath(), "r"));
+                } else {
+                    logger.warn("Couldn't enable dictionary with file name: " + ezpFileName);
+                }
+                File ezrFile = new File(pathToDataAbsolute + ezrFileName);
+                if (ezrFile.exists()) {
+                    resources.put(ezrFile.getName(), new ElexDictionary(ezrFile.getAbsolutePath(), "r"));
+                }
+                serverSettings.getDisabledDictionariesMap().remove(fileName);
+
+            }
+        } catch (IOException e) {
+            logger.error("Couldn't change dictionary state for: " + selectedDictionary.getFileName(), e);
+        } finally {
+            saveSettings();
+        }
+    }
+
+    private void saveSettings() {
+        try {
+            String settingsStr = gson.toJson(serverSettings);
+            File serverSettingsFile = new File(pathToDataAbsolute + settingsFileName);
+            FileUtils.writeStringToFile(serverSettingsFile, settingsStr, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            logger.error("Couldn't save server settings to file.", e);
+        }
     }
 }
