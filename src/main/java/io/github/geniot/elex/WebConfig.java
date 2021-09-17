@@ -32,6 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
     AsynchronousService asynchronousService;
     @Autowired
     MyFileSystemWatcher myFileSystemWatcher;
+    @Autowired
+    DictionariesPool dictionariesPool;
 
 
     @Override
@@ -70,6 +72,6 @@ public class WebConfig implements WebMvcConfigurer {
     @PreDestroy
     public void onDestroy() {
         myFileSystemWatcher.stop();
-        asynchronousService.closePool();
+        dictionariesPool.close();
     }
 }

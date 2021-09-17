@@ -8,7 +8,7 @@ import lombok.Setter;
 public class Task {
     private String fileName;
     private Action action;
-    private TaskStatus status;
+    private TaskStatus status = TaskStatus.RUNNING;
     private int progress;
     private long finishedWhen;
 }

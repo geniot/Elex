@@ -3,6 +3,8 @@ package io.github.geniot.elex.tasks;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.ServerSettingsManager;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
+import io.github.geniot.elex.model.Task;
+import io.github.geniot.elex.model.TaskStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
@@ -27,12 +29,14 @@ public class DictionariesPoolUpdateTask implements Runnable {
     private DictionariesPool dictionariesPool;
     @Autowired
     private ServerSettingsManager serverSettingsManager;
+    private Task task;
 
     @Override
     public void run() {
         try {
+            task.setStatus(TaskStatus.RUNNING);
             long t1 = System.currentTimeMillis();
-            dictionariesPool.getDictionaries().clear();
+//            dictionariesPool.getDictionaries().clear();
             File dataFolder = new File(pathToData);
             dataFolder.mkdirs();
             File[] dicFiles = dataFolder.listFiles();
@@ -45,16 +49,20 @@ public class DictionariesPoolUpdateTask implements Runnable {
                 if (!serverSettingsManager.isDisabled(shortName)) {
                     if (dicFile.getName().endsWith(".ezp")) {
                         try {
-                            logger.info("Installing: " + dicFile);
-                            dictionariesPool.getDictionaries().put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
+                            if (!dictionariesPool.getDictionaries().containsKey(dicFile.getName())) {
+                                logger.info("Installing: " + dicFile);
+                                dictionariesPool.getDictionaries().put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
+                            }
                         } catch (Exception ex) {
                             logger.error("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
                             logger.error(ex.getMessage(), ex);
                         }
                     } else if (dicFile.getName().endsWith(".ezr")) {
                         try {
-                            logger.info("Installing: " + dicFile);
-                            dictionariesPool.getResources().put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
+                            if (!dictionariesPool.getResources().containsKey(dicFile.getName())) {
+                                logger.info("Installing: " + dicFile);
+                                dictionariesPool.getResources().put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
+                            }
                         } catch (Exception ex) {
                             logger.error("Couldn't install the resources file: " + dicFile.getAbsolutePath());
                             logger.error(ex.getMessage(), ex);
@@ -67,6 +75,8 @@ public class DictionariesPoolUpdateTask implements Runnable {
         } catch (Exception e) {
             logger.error("Couldn't update state");
             logger.error(e.getMessage(), e);
+        } finally {
+            task.setStatus(TaskStatus.SUCCESS);
         }
     }
 }

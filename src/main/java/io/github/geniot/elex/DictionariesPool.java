@@ -38,7 +38,6 @@ public class DictionariesPool {
     private ServerSettingsManager serverSettingsManager;
 
 
-
     public Map<String, ElexDictionary> getElexDictionaries(Model model) throws IOException {
         Map<String, ElexDictionary> result = new HashMap<>();
         for (String fileName : dictionaries.keySet()) {
@@ -77,7 +76,6 @@ public class DictionariesPool {
     }
 
     public SortedSet<AdminDictionary> getAdminDictionaries(AdminModel model) throws IOException {
-        boolean isAtLeastOneSelected = false;
         SortedSet<AdminDictionary> result = new TreeSet<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
@@ -85,6 +83,7 @@ public class DictionariesPool {
             long totalSize = 0;
 
             AdminDictionary adminDictionary = new AdminDictionary();
+            adminDictionary.setStatus(DictionaryStatus.ENABLED);
             adminDictionary.setId(fileName.hashCode());
             adminDictionary.setFileName(fileName);
             adminDictionary.setDataPath(webConfig.getPathToDataAbsolute());
@@ -108,20 +107,35 @@ public class DictionariesPool {
 
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
             adminDictionary.setName(name);
-
-            boolean isSelected = model.isDictionarySelected(name);
-            if (isAtLeastOneSelected) {
-                adminDictionary.setSelected(false);
-            } else {
-                adminDictionary.setSelected(isSelected);
-            }
-            if (isSelected) {
-                isAtLeastOneSelected = true;
-            }
+            adminDictionary.setSelected(model.isDictionarySelected(name));
 
             adminDictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
             adminDictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
             result.add(adminDictionary);
+        }
+
+        for (String fileName : serverSettingsManager.getServerSettings().getDisabledDictionariesMap().keySet()) {
+            String name = serverSettingsManager.getServerSettings().getDisabledDictionariesMap().get(fileName);
+            String ezpFileName = fileName + ".ezp";
+            String ezrFileName = fileName + ".ezr";
+            File ezpFile = new File(webConfig.getPathToDataAbsolute() + ezpFileName);
+            if (ezpFile.exists()) {
+                AdminDictionary adminDictionary = new AdminDictionary();
+                adminDictionary.setId(fileName.hashCode());
+                adminDictionary.setFileName(ezpFileName);
+                adminDictionary.setStatus(DictionaryStatus.DISABLED);
+                adminDictionary.setName(name);
+                adminDictionary.setSelected(model.isDictionarySelected(name));
+                adminDictionary.setDataPath(webConfig.getPathToDataAbsolute());
+                adminDictionary.setFileSize(NumberFormat.getInstance().format(ezpFile.length()));
+
+                File ezrFile = new File(webConfig.getPathToDataAbsolute() + ezrFileName);
+                if (ezrFile.exists()) {
+                    adminDictionary.setResourcesFileName(ezrFileName);
+                    adminDictionary.setResourcesFileSize(NumberFormat.getInstance().format(ezrFile.length()));
+                }
+                result.add(adminDictionary);
+            }
         }
         return result;
     }
@@ -240,6 +254,27 @@ public class DictionariesPool {
             logger.error("Couldn't change dictionary state for: " + selectedDictionary.getFileName(), e);
         } finally {
             serverSettingsManager.saveSettings();
+        }
+    }
+
+    public void close() {
+        for (String fileName : dictionaries.keySet()) {
+            try {
+                ElexDictionary elexDictionary = dictionaries.get(fileName);
+                elexDictionary.close();
+                logger.info("Closed " + fileName);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        for (String fileName : resources.keySet()) {
+            try {
+                ElexDictionary elexDictionary = resources.get(fileName);
+                elexDictionary.close();
+                logger.info("Closed " + fileName);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 

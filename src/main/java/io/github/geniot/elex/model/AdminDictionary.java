@@ -16,6 +16,10 @@ public class AdminDictionary extends Dictionary implements Comparable<AdminDicti
     private String totalSize;
     private DictionaryStatus status = DictionaryStatus.ENABLED;
 
+    public AdminDictionary() {
+        this.setSelected(false);
+    }
+
     @Override
     public int compareTo(AdminDictionary o) {
         return this.getName().compareTo(o.getName());

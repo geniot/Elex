@@ -64,9 +64,9 @@ public class AdminController {
     @GetMapping("/admin/tasks")
     public String tasks() {
         TaskExecutorModel taskExecutorModel = new TaskExecutorModel();
-        asynchronousService.cleanUp();
         Collection<Task> tasksList = asynchronousService.getRunningTasks().values();
         taskExecutorModel.setTasks(tasksList.toArray(new Task[tasksList.size()]));
+        asynchronousService.cleanUp();
         return gson.toJson(taskExecutorModel);
     }
 
@@ -75,32 +75,30 @@ public class AdminController {
         try {
             long t1 = System.currentTimeMillis();
 
-            AdminModel model = gson.fromJson(payload, AdminModel.class);
+            AdminModel adminModel = gson.fromJson(payload, AdminModel.class);
 
-            if (model.getAction().equals(Action.REINDEX)) {
-                AdminDictionary selectedDictionary = model.getSelectedDictionary();
-                if (selectedDictionary != null) {
+            AdminDictionary selectedDictionary = adminModel.getSelectedDictionary();
+            if (selectedDictionary != null) {
+                if (adminModel.getAction().equals(Action.REINDEX) &&
+                        selectedDictionary.getStatus().equals(DictionaryStatus.ENABLED)) {
                     String path = selectedDictionary.getDataPath() + selectedDictionary.getFileName();
                     asynchronousService.reindex(new ElexDictionary(path, "r"));
-                }
-            } else if (model.getAction().equals(Action.TOGGLE_DICTIONARY_STATE)) {
-                AdminDictionary selectedDictionary = model.getSelectedDictionary();
-                if (selectedDictionary != null) {
+                } else if (adminModel.getAction().equals(Action.TOGGLE_DICTIONARY_STATE)) {
                     dictionariesPool.changeState(selectedDictionary);
                 }
             }
 
-            SortedSet<AdminDictionary> dictionaryList = dictionariesPool.getAdminDictionaries(model);
-
+            SortedSet<AdminDictionary> dictionaryList = dictionariesPool.getAdminDictionaries(adminModel);
             AdminDictionary[] dictionariesArray = dictionaryList.toArray(new AdminDictionary[dictionaryList.size()]);
-            model.setAdminDictionaries(dictionariesArray);
+            adminModel.setAdminDictionaries(dictionariesArray);
+            adminModel.selectOneDictionary();
 
             long t2 = System.currentTimeMillis();
             logger.info((t2 - t1) + " ms ");
 
-            model.setAction(Action.INIT);
+            adminModel.setAction(Action.INIT);
 
-            return gson.toJson(model);
+            return gson.toJson(adminModel);
 
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

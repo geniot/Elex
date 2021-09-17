@@ -1,6 +1,7 @@
 package io.github.geniot.elex.tasks;
 
 import io.github.geniot.elex.ezip.model.ElexDictionary;
+import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Task;
 import io.github.geniot.elex.model.TaskStatus;
 import lombok.Getter;
@@ -30,11 +31,12 @@ public class AsynchronousService {
     private Map<String, Task> runningTasks = new ConcurrentHashMap<>();
 
     synchronized public void updatePool() {
-        taskExecutor.execute(applicationContext.getBean(DictionariesPoolUpdateTask.class));
-    }
-
-    synchronized public void closePool() {
-        taskExecutor.execute(applicationContext.getBean(DictionariesPoolCloseTask.class));
+        DictionariesPoolUpdateTask dictionariesPoolUpdateTask = applicationContext.getBean(DictionariesPoolUpdateTask.class);
+        Task uiTask = new Task();
+        uiTask.setAction(Action.POOL_UPDATE);
+        dictionariesPoolUpdateTask.setTask(uiTask);
+        runningTasks.put(Action.POOL_UPDATE.name(), uiTask);
+        taskExecutor.execute(dictionariesPoolUpdateTask);
     }
 
     synchronized public void reindex(ElexDictionary elexDictionary) {
