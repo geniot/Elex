@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 @Component
 @Getter
@@ -34,6 +35,9 @@ public class ServerSettingsManager {
                 serverSettings = gson.fromJson(settingsStr, ServerSettings.class);
                 if (serverSettings == null) {
                     serverSettings = new ServerSettings();
+                }
+                if (serverSettings.getDisabledDictionariesMap() == null) {
+                    serverSettings.setDisabledDictionariesMap(new HashMap<>());
                 }
             } catch (Exception ex) {
                 logger.warn("Couldn't read serverSettings file.", ex);
