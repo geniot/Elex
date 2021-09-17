@@ -250,7 +250,7 @@ public class DictionariesPool {
                 serverSettingsManager.remove(fileName);
 
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Couldn't change dictionary state for: " + selectedDictionary.getFileName(), e);
         } finally {
             serverSettingsManager.saveSettings();
