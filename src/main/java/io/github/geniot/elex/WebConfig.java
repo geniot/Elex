@@ -1,8 +1,11 @@
 package io.github.geniot.elex;
 
+import io.github.geniot.elex.tasks.AsynchronousService;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
@@ -11,19 +14,25 @@ import org.springframework.web.servlet.config.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.File;
 
 @Configuration
 @EnableWebMvc
+@Getter
 public class WebConfig implements WebMvcConfigurer {
     Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
     public static final String TASK_THREAD_NAME_PREFIX = "elex_task_executor_thread";
 
-    @Autowired
-    DictionariesPool dictionariesPool;
+    @Value("${path.data}")
+    private String pathToData;
+    private String pathToDataAbsolute;
 
     @Autowired
+    AsynchronousService asynchronousService;
+    @Autowired
     MyFileSystemWatcher myFileSystemWatcher;
+
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -53,13 +62,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     @PostConstruct
     public void onConstruct() {
-        dictionariesPool.update();
+        this.pathToDataAbsolute = new File(pathToData).getAbsolutePath() + File.separator;
+        asynchronousService.updatePool();
         myFileSystemWatcher.start();
     }
 
     @PreDestroy
     public void onDestroy() {
         myFileSystemWatcher.stop();
-        dictionariesPool.stop();
+        asynchronousService.closePool();
     }
 }

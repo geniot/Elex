@@ -29,6 +29,14 @@ public class AsynchronousService {
 
     private Map<String, Task> runningTasks = new ConcurrentHashMap<>();
 
+    synchronized public void updatePool() {
+        taskExecutor.execute(applicationContext.getBean(DictionariesPoolUpdateTask.class));
+    }
+
+    synchronized public void closePool() {
+        taskExecutor.execute(applicationContext.getBean(DictionariesPoolCloseTask.class));
+    }
+
     synchronized public void reindex(ElexDictionary elexDictionary) {
         if (runningTasks.containsKey(elexDictionary.getFile().getName())) {
             return;

@@ -1,6 +1,5 @@
 package io.github.geniot.elex;
 
-import com.google.gson.Gson;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.Dictionary;
@@ -9,18 +8,14 @@ import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.convert.DslProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -33,75 +28,16 @@ public class DictionariesPool {
     private Map<String, ElexDictionary> dictionaries = Collections.synchronizedMap(new HashMap<>());
     private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
 
-    @Value("${path.data}")
-    private String pathToData;
-    private String pathToDataAbsolute;
-
     @Autowired
     CaseInsensitiveComparator caseInsensitiveComparator;
-
     @Autowired
     private FtServer ftServer;
+    @Autowired
+    private WebConfig webConfig;
+    @Autowired
+    private ServerSettingsManager serverSettingsManager;
 
-    private ServerSettings serverSettings = new ServerSettings();
-    private String settingsFileName = "serverSettings.json";
-    private Gson gson = new Gson();
 
-    @PostConstruct
-    public void init() {
-        this.pathToDataAbsolute = new File(pathToData).getAbsolutePath() + File.separator;
-        File serverSettingsFile = new File(pathToDataAbsolute + settingsFileName);
-        if (serverSettingsFile.exists()) {
-            try {
-                String settingsStr = FileUtils.readFileToString(serverSettingsFile, StandardCharsets.UTF_8);
-                serverSettings = gson.fromJson(settingsStr, ServerSettings.class);
-                if (serverSettings == null) {
-                    serverSettings = new ServerSettings();
-                }
-            } catch (Exception ex) {
-                logger.warn("Couldn't read serverSettings file.", ex);
-            }
-        }
-    }
-
-    public void update() {
-        try {
-            long t1 = System.currentTimeMillis();
-            dictionaries.clear();
-            File dataFolder = new File(pathToData);
-            dataFolder.mkdirs();
-            File[] dicFiles = dataFolder.listFiles();
-            //installing
-            for (File dicFile : dicFiles) {
-                if (dicFile.isDirectory()) {
-                    continue;
-                }
-                if (dicFile.getName().endsWith(".ezp")) {
-                    try {
-                        logger.info("Installing: " + dicFile);
-                        dictionaries.put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
-                    } catch (Exception ex) {
-                        logger.error("Couldn't install the dictionary: " + dicFile.getAbsolutePath());
-                        logger.error(ex.getMessage(), ex);
-                    }
-                } else if (dicFile.getName().endsWith(".ezr")) {
-                    try {
-                        logger.info("Installing: " + dicFile);
-                        resources.put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
-                    } catch (Exception ex) {
-                        logger.error("Couldn't install the resources file: " + dicFile.getAbsolutePath());
-                        logger.error(ex.getMessage(), ex);
-                    }
-                }
-
-            }
-            long t2 = System.currentTimeMillis();
-            logger.info("Reloaded dictionaries in: " + (t2 - t1) + " ms");
-        } catch (Exception e) {
-            logger.error("Couldn't update state");
-            logger.error(e.getMessage(), e);
-        }
-    }
 
     public Map<String, ElexDictionary> getElexDictionaries(Model model) throws IOException {
         Map<String, ElexDictionary> result = new HashMap<>();
@@ -151,7 +87,7 @@ public class DictionariesPool {
             AdminDictionary adminDictionary = new AdminDictionary();
             adminDictionary.setId(fileName.hashCode());
             adminDictionary.setFileName(fileName);
-            adminDictionary.setDataPath(pathToDataAbsolute);
+            adminDictionary.setDataPath(webConfig.getPathToDataAbsolute());
             adminDictionary.setFileSize(NumberFormat.getInstance().format(elexDictionary.length()));
             totalSize += elexDictionary.length();
             adminDictionary.setEntries(elexDictionary.getSize());
@@ -254,19 +190,6 @@ public class DictionariesPool {
         return maxHw;
     }
 
-
-    public void stop() {
-        for (String fileName : dictionaries.keySet()) {
-            try {
-                ElexDictionary elexDictionary = dictionaries.get(fileName);
-                elexDictionary.close();
-                logger.info("Closed " + fileName);
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-    }
-
     public String getDownloadFilePath(int id, String type) {
         String path = null;
         for (String fn : dictionaries.keySet()) {
@@ -275,7 +198,7 @@ public class DictionariesPool {
             }
         }
         if (path != null) {
-            path = pathToDataAbsolute + path;
+            path = webConfig.getPathToDataAbsolute() + path;
         }
         return path;
     }
@@ -297,36 +220,28 @@ public class DictionariesPool {
                     resources.remove(ezrFileName);
                 }
 
-                serverSettings.getDisabledDictionariesMap().put(fileName, selectedDictionary.getName());
+                serverSettingsManager.put(fileName, selectedDictionary.getName());
 
             } else {
-                File ezpFile = new File(pathToDataAbsolute + ezpFileName);
+                File ezpFile = new File(webConfig.getPathToDataAbsolute() + ezpFileName);
                 if (ezpFile.exists()) {
                     dictionaries.put(ezpFile.getName(), new ElexDictionary(ezpFile.getAbsolutePath(), "r"));
                 } else {
                     logger.warn("Couldn't enable dictionary with file name: " + ezpFileName);
                 }
-                File ezrFile = new File(pathToDataAbsolute + ezrFileName);
+                File ezrFile = new File(webConfig.getPathToDataAbsolute() + ezrFileName);
                 if (ezrFile.exists()) {
                     resources.put(ezrFile.getName(), new ElexDictionary(ezrFile.getAbsolutePath(), "r"));
                 }
-                serverSettings.getDisabledDictionariesMap().remove(fileName);
+                serverSettingsManager.remove(fileName);
 
             }
         } catch (IOException e) {
             logger.error("Couldn't change dictionary state for: " + selectedDictionary.getFileName(), e);
         } finally {
-            saveSettings();
+            serverSettingsManager.saveSettings();
         }
     }
 
-    private void saveSettings() {
-        try {
-            String settingsStr = gson.toJson(serverSettings);
-            File serverSettingsFile = new File(pathToDataAbsolute + settingsFileName);
-            FileUtils.writeStringToFile(serverSettingsFile, settingsStr, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            logger.error("Couldn't save server settings to file.", e);
-        }
-    }
+
 }
