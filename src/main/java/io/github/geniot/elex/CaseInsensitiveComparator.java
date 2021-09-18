@@ -1,11 +1,10 @@
-package io.github.geniot.elex.tools.convert;
+package io.github.geniot.elex;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Comparator;
-
 @Component
 public class CaseInsensitiveComparator implements Comparator<String>, Serializable {
     @Override

@@ -1,11 +1,10 @@
 package io.github.geniot.elex.ezip.model;
 
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import io.github.geniot.elex.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.ElexUtils;
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import lombok.Getter;
 
 import java.io.File;

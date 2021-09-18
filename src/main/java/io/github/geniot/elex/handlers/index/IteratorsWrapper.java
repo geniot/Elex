@@ -1,6 +1,6 @@
 package io.github.geniot.elex.handlers.index;
 
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparator;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 
 import java.util.HashSet;

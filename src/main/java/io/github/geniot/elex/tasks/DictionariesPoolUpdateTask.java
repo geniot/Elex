@@ -29,6 +29,8 @@ public class DictionariesPoolUpdateTask implements Runnable {
     private DictionariesPool dictionariesPool;
     @Autowired
     private ServerSettingsManager serverSettingsManager;
+    @Autowired
+    private AsynchronousService asynchronousService;
     private Task task;
 
     @Override

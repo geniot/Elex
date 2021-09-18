@@ -50,17 +50,19 @@ public class FtServer extends FileAlterationListenerAdaptor {
             SortedMap<Float, String[]> result = searcher.search(directory, query, hitsPerPage);
             return result;
         } else {
-            return null;
+            return new TreeMap<>();
         }
     }
 
     public long getDirectorySize(String fileName) throws IOException {
         long result = 0;
         Directory directory = getIndexByDictionaryFileName(FilenameUtils.removeExtension(fileName));
-        String[] files = directory.listAll();
-        for (String file : files) {
-            String pathToIndex = ftFolderPath + File.separator + FilenameUtils.removeExtension(fileName) + File.separator + file;
-            result += new File(pathToIndex).length();
+        if (directory != null) {
+            String[] files = directory.listAll();
+            for (String file : files) {
+                String pathToIndex = ftFolderPath + File.separator + FilenameUtils.removeExtension(fileName) + File.separator + file;
+                result += new File(pathToIndex).length();
+            }
         }
         return result;
     }
@@ -69,8 +71,13 @@ public class FtServer extends FileAlterationListenerAdaptor {
         Directory directory = directoriesCache.get(fileName);
         if (directory == null) {
             String pathToIndex = ftFolderPath + File.separator + fileName;
-            directory = FSDirectory.open(Paths.get(pathToIndex));
-            directoriesCache.put(fileName, directory);
+            String[] ff = new File(pathToIndex).list();
+            if (ff != null && ff.length > 0) {
+                directoriesCache.put(fileName, directory);
+                directory = FSDirectory.open(Paths.get(pathToIndex));
+            } else {
+                return null;
+            }
         }
         return directory;
     }

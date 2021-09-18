@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 @Component
 @Getter
@@ -36,13 +35,13 @@ public class ServerSettingsManager {
                 if (serverSettings == null) {
                     serverSettings = new ServerSettings();
                 }
-                if (serverSettings.getDisabledDictionariesMap() == null) {
-                    serverSettings.setDisabledDictionariesMap(new HashMap<>());
-                }
             } catch (Exception ex) {
                 logger.warn("Couldn't read serverSettings file.", ex);
             }
+        } else {
+            serverSettings = new ServerSettings();
         }
+        saveSettings();
     }
 
     public void saveSettings() {

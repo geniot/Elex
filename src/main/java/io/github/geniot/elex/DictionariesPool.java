@@ -4,7 +4,6 @@ import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.*;
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.convert.DslProperty;
 import lombok.Getter;
 import lombok.Setter;

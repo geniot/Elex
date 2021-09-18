@@ -1,5 +1,6 @@
 package io.github.geniot.elex.tools.convert;
 
+import io.github.geniot.elex.CaseInsensitiveComparator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -8,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import static io.github.geniot.elex.tools.convert.DslUtils.noEscape;
@@ -29,9 +30,9 @@ public class DslDictionary implements Serializable {
      *
      * @param dslFile
      */
-    public DslDictionary(File dslFile) {
+    public DslDictionary(File dslFile, Charset charset) {
         try {
-            List<String> lines = FileUtils.readLines(dslFile, StandardCharsets.UTF_8);
+            List<String> lines = FileUtils.readLines(dslFile, charset);
             read(lines);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -58,16 +59,16 @@ public class DslDictionary implements Serializable {
         }
     }
 
-    public DslDictionary(String dslPath, String annotationPath, String iconPath, String abbreviationsPath) {
+    public DslDictionary(String dslPath, String annotationPath, String iconPath, String abbreviationsPath, Charset charset) {
         try {
-            List<String> lines = FileUtils.readLines(new File(dslPath), StandardCharsets.UTF_8);
+            List<String> lines = FileUtils.readLines(new File(dslPath), charset);
             read(lines);
-            annotation = FileUtils.readFileToString(new File(annotationPath), StandardCharsets.UTF_8);
+            annotation = FileUtils.readFileToString(new File(annotationPath), charset);
             icon = FileUtils.readFileToByteArray(new File(iconPath));
 
             File abbreviationsFile = new File(abbreviationsPath);
             if (abbreviationsFile.exists()) {
-                DslDictionary abbreviationsDictionary = new DslDictionary(abbreviationsFile);
+                DslDictionary abbreviationsDictionary = new DslDictionary(abbreviationsFile, charset);
                 abbreviations = abbreviationsDictionary.entriesToProperties();
             }
         } catch (Exception ex) {
@@ -131,6 +132,9 @@ public class DslDictionary implements Serializable {
             StringBuffer headwordsStringBuffer = new StringBuffer(line);
             while (iterator.hasNext()) {
                 line = iterator.next();
+                if (StringUtils.isEmpty(line)) {
+                    continue;
+                }
                 if (!line.startsWith("\t") && !line.startsWith(" ")) {
                     headwordsStringBuffer.append("\n");
                     headwordsStringBuffer.append(line);
@@ -143,22 +147,26 @@ public class DslDictionary implements Serializable {
             StringBuffer entryStringBuffer = new StringBuffer(line);
             while (iterator.hasNext()) {
                 line = iterator.next();
+                if (StringUtils.isEmpty(line)) {
+                    continue;
+                }
                 if (line.startsWith("\t") || line.startsWith(" ")) {
                     entryStringBuffer.append("\n");
                     entryStringBuffer.append(line);
-                    entryStringBuffer.append("\n");
+//                    entryStringBuffer.append("\n");
                 } else {
                     break;
                 }
             }
 
             String key = headwordsStringBuffer.toString();
-            String value = entryStringBuffer.toString()
-                    .replaceAll("^\\t", "")
-                    .replaceAll("^\\s+", "")
-                    .replaceAll("\\n\\t", "\n")
-                    .replaceAll("\\r+", "")
-                    .replaceAll("\\n+", "\n");
+            String value = entryStringBuffer.toString();
+//                    .replaceAll("^\\t", "")
+//                    .replaceAll("^\\s+", "")
+//                    .replaceAll("\\n\\t", "\n")
+//                    .replaceAll("\\r+", "")
+//                    .replaceAll("\\n+", "\n")
+//                    .replaceAll("\\n$", "");
 
 
             Map<String, String> variants = getVariants(key, value);
@@ -191,17 +199,21 @@ public class DslDictionary implements Serializable {
      * @param value
      * @return
      */
-    private Map<String, String> getVariants(String k, String value) {
-        Map<String, String> result = new HashMap<>();
+    static public SortedMap<String, String> getVariants(String k, String value) {
+        SortedMap<String, String> result = new TreeMap<>();
 
         String[] keys = k.split("\n");
+//        if (keys.length > 1) {
+//            System.out.println("stop");
+//        }
+        String firstKey = null;
         for (String key : keys) {
             key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "\\}", "");
 //            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
-            key = key.replaceAll(noEscape + "\\\\", "");
-            key = key.replaceAll("\\(", " ");
-            key = key.replaceAll("\\)", " ");
+            key = key.replaceAll(noEscape + "\\(", " ");
+            key = key.replaceAll(noEscape + "\\)", " ");
             key = key.replaceAll("\\s+", " ");
+            key = key.replaceAll(noEscape + "\\\\", "");
             key = key.trim();
 
             if (key.contains("{")
@@ -209,7 +221,16 @@ public class DslDictionary implements Serializable {
                     || key.contains("\\")) {
                 throw new RuntimeException(key);
             }
-            result.put(key, value);
+            if (result.containsKey(key)) {
+                throw new RuntimeException("Duplicate key: " + key);
+            } else {
+                if (firstKey == null) {
+                    firstKey = key;
+                    result.put(key, k + "\n" + value);
+                } else {
+                    result.put(key, "[ref]" + firstKey + "[/ref]");
+                }
+            }
         }
         return result;
     }

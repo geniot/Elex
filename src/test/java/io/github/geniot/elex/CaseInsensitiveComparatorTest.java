@@ -1,6 +1,5 @@
-package io.github.geniot.elex.ezip;
+package io.github.geniot.elex;
 
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
 import org.junit.jupiter.api.Test;
 
 import java.util.SortedSet;

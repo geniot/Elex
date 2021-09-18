@@ -1,6 +1,6 @@
 package io.github.geniot.elex.tools;
 
-import io.github.geniot.elex.tools.convert.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparator;
 import io.github.geniot.elex.tools.compile.ResourcesPackager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -16,17 +16,26 @@ public class Res2Ezr {
 
     public static void main(String[] args) {
         try {
+            String inputFolder = "D:\\torrents\\elex\\oxford_advanced\\media\\";
+            String outputPath = "D:\\torrents\\elex\\oxford_advanced\\en-en_OALD9_v1.1.ezr";
+
             SortedMap<String, File> resourcesMap = new TreeMap<>(new CaseInsensitiveComparator());
-            File[] files = new File(args[0]).listFiles();
-            for (File file : files) {
-                resourcesMap.put(file.getName(), file);
+            File[] folders = new File(inputFolder).listFiles();
+            for (File folder : folders) {
+                if (folder.isDirectory()) {
+                    File[] files = folder.listFiles();
+                    for (File file : files) {
+                        resourcesMap.put(file.getName(), file);
+                    }
+                }
             }
+
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ResourcesPackager resourcesPackager = new ResourcesPackager();
             resourcesPackager.pack(resourcesMap, byteArrayOutputStream);
 
-            FileUtils.writeByteArrayToFile(new File(args[1]), byteArrayOutputStream.toByteArray());
+            FileUtils.writeByteArrayToFile(new File(outputPath), byteArrayOutputStream.toByteArray());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
