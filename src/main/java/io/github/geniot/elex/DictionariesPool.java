@@ -147,16 +147,54 @@ public class DictionariesPool {
             if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
                 String article = elexDictionary.readArticle(model.getSelectedHeadword());
                 if (article != null) {
+                    String header = model.getSelectedHeadword();
+                    String content = article;
+                    int indexOfArticle = getArticleStart(article);
+                    if (indexOfArticle > 0) {
+                        header = article.substring(0, indexOfArticle).trim();
+                        content = article.substring(indexOfArticle).trim();
+                    } else {
+                        if (content.startsWith("[ref]") && content.endsWith("[/ref]")) {
+                            String ref = content.substring("[ref]".length(), content.length() - "[/ref]".length());
+                            article = elexDictionary.readArticle(ref);
+                            if (article != null) {
+                                indexOfArticle = getArticleStart(article);
+                                if (indexOfArticle > 0) {
+                                    header = article.substring(0, indexOfArticle).trim();
+                                    content = article.substring(indexOfArticle).trim();
+                                }
+                            }
+                        }
+                    }
+                    header = header.replaceAll("\\{", "");
+                    header = header.replaceAll("\\}", "");
+                    header = header.replaceAll("\\\\", "");
+                    if (Arrays.asList(header.split("\n")).contains(model.getSelectedHeadword())) {
+                        header = model.getSelectedHeadword();
+                    } else {
+                        header = header.replaceAll("\n", "<br/>\n");
+                    }
+
                     Entry entry = new Entry();
                     entry.setDicId(String.valueOf(fileName.hashCode()));
                     entry.setDicName(name);
-                    entry.setHeadword(model.getSelectedHeadword());
-                    entry.setBody(article);
+                    entry.setHeadword(header);
+                    entry.setBody(content);
                     entries.add(entry);
                 }
             }
         }
         return entries;
+    }
+
+    private int getArticleStart(String entry) {
+        for (int i = 0; i < entry.length() - 1; i++) {
+            if (entry.charAt(i) == '\n' &&
+                    (entry.charAt(i + 1) == '\t' || entry.charAt(i + 1) == ' ')) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public byte[] getIcon(int id) throws IOException {

@@ -210,8 +210,8 @@ public class DslDictionary implements Serializable {
         for (String key : keys) {
             key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "\\}", "");
 //            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
-            key = key.replaceAll(noEscape + "\\(", " ");
-            key = key.replaceAll(noEscape + "\\)", " ");
+            key = key.replaceAll(noEscape + "\\(", "");
+            key = key.replaceAll(noEscape + "\\)", "");
             key = key.replaceAll("\\s+", " ");
             key = key.replaceAll(noEscape + "\\\\", "");
             key = key.trim();

@@ -40,6 +40,7 @@ public class EntriesUpdater {
                 article = article.replaceAll("(<<)([^>]+)(>>)", "[ref]$2[/ref]");
                 article = article.replaceAll("\\{\\{[^}]+\\}\\}", "");
                 article = article.replaceAll("\\{\\{/[^}]+\\}\\}", "");
+                article = article.replaceAll("\\n\\t\\\\\\s+\\n", "\n");
 
                 if (model.getAction().equals(Action.FT_LINK)) {
                     article = highlight(model, article);
