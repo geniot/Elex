@@ -146,7 +146,11 @@ public class ElexDictionary extends RandomAccessFile {
     private int getChunkIndexByHeadword(String headword) {
         int pos = Arrays.binarySearch(starters, headword, caseInsensitiveComparator);
         if (pos < 0) {
-            pos = Math.abs(pos + 2);
+            if (pos == -1) {
+                pos = 0;
+            } else {
+                pos = Math.abs(pos + 2);
+            }
         }
         return pos;
     }

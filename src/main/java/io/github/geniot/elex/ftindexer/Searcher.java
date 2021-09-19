@@ -6,6 +6,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
@@ -30,7 +31,7 @@ public class Searcher {
             MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
                     new String[]{"headword", "article"},
                     analyzer);
-            Query query = queryParser.parse(queryStr);
+            Query query = queryParser.parse(QueryParser.escape(queryStr));
             IndexReader reader = DirectoryReader.open(directory);
             IndexSearcher searcher = new IndexSearcher(reader);
             TopDocs hits = searcher.search(query, hitsPerPage);

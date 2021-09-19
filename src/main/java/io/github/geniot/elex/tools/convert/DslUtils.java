@@ -7,7 +7,7 @@ public class DslUtils {
     public static String validBracketO = noEscape + "\\[";
     public static String validBracketC = noEscape + "\\]";
     public static String anythingButBracket = "[^\\[]+";
-    public static String anythingButBracket50 = "[^\\[]{1,50}";
+    public static String anythingButBracket50 = "[^\\[]{1,100}";
     public static String anyTag = "(" + validBracketO + anythingButBracket50 + validBracketC + "|\r\n)";
 
     public static String tagName(String tag) {
