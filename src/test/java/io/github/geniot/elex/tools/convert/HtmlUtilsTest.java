@@ -23,7 +23,7 @@ public class HtmlUtilsTest {
     @Test
     public void testToHtmlNew3() {
         String article = "\t[m2][c darkslateblue]BrE[/c] [c gray]/[/c][c navy]ˈɡɪftɪd[/c][c gray]/[/c] [s]gifted__gb_1.wav[/s]; [c indianred]NAmE[/c] [c gray]/[/c][c navy]ˈɡɪftɪd[/c][c gray]/[/c] [s]gifted__us_1.wav[/s]";
-        String expected = "<span class=\"m2\">\t<span class=\"c\">BrE</span> <span class=\"c\">/</span><span class=\"c\">ˈɡɪftɪd</span><span class=\"c\">/</span> <span class=\"s\">gifted__gb_1.wav</span>; <span class=\"c\">NAmE</span> <span class=\"c\">/</span><span class=\"c\">ˈɡɪftɪd</span><span class=\"c\">/</span> <span class=\"s\">gifted__us_1.wav</span></span><br/>\n";
+        String expected = "<span class=\"m2\">\t<span style=\"color:darkslateblue\">BrE</span> <span style=\"color:gray\">/</span><span style=\"color:navy\">ˈɡɪftɪd</span><span style=\"color:gray\">/</span> <span class=\"sound\" data-id=\"\" data-link=\"gifted__gb_1.wav\"><span style=\"display:none\">gifted__gb_1.wav</span></span>; <span style=\"color:indianred\">NAmE</span> <span style=\"color:gray\">/</span><span style=\"color:navy\">ˈɡɪftɪd</span><span style=\"color:gray\">/</span> <span class=\"sound\" data-id=\"\" data-link=\"gifted__us_1.wav\"><span style=\"display:none\">gifted__us_1.wav</span></span></span><br/>\n";
         String result = HtmlUtils.toHtml("", "", false, null, article);
         Assertions.assertEquals(expected, result);
     }
