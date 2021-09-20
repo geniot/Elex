@@ -169,11 +169,15 @@ public class DictionariesPool {
                     header = header.replaceAll("\\{", "");
                     header = header.replaceAll("\\}", "");
                     header = header.replaceAll("\\\\", "");
-                    if (Arrays.asList(header.split("\n")).contains(model.getSelectedHeadword())) {
-                        header = model.getSelectedHeadword();
-                    } else {
-                        header = header.replaceAll("\n", "<br/>\n");
-                    }
+
+
+//                    if (Arrays.asList(header.split("\n")).contains(model.getSelectedHeadword())) {
+//                        header = model.getSelectedHeadword();
+//                    } else {
+//                        header = header.replaceAll("\n", "<br/>\n");
+//                    }
+
+                    header = header.replaceAll("\n", "<br/>\n");
 
                     Entry entry = new Entry();
                     entry.setDicId(String.valueOf(fileName.hashCode()));

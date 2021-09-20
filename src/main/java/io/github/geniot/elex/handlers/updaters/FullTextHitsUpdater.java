@@ -8,6 +8,7 @@ import io.github.geniot.elex.model.FullTextHit;
 import io.github.geniot.elex.model.Headword;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.tools.convert.DslProperty;
+import io.github.geniot.elex.tools.convert.HtmlUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class FullTextHitsUpdater {
     DictionariesPool dictionariesPool;
     @Autowired
     FtServer ftServer;
+
+    String preTag = "<B>";
+    String postTag = "</B>";
 
     public void updateFullTextHits(Model model) {
         if (!model.getAction().equals(Action.FT_LINK)) {
@@ -43,13 +47,23 @@ public class FullTextHitsUpdater {
                             String[] value = results.get(score);
                             String headword = value[0];
                             String extract = value[1];
+                            extract = extract.replaceAll("\\{[^}]+\\}","");
 //                        StringUtils.isNotEmpty(value[1]) &&
                             if (!model.getSearchResultsFor().equals(headword)) {
                                 FullTextHit hit = getByHeadwordOrCreate(hits, headword);
                                 hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()));
-                                hit.setExtracts(ArrayUtils.add(hit.getExtracts(), extract));
+
                                 hit.setScores(ArrayUtils.add(hit.getScores(), score));
-                                hit.setHeadword(new Headword(headword));
+
+                                Headword hwd = new Headword(headword);
+                                String nameHighlighted = HtmlUtils.highlight(model.getSearchResultsFor(), headword, preTag, postTag);
+                                hwd.setNameHighlighted(nameHighlighted);
+                                hit.setHeadword(hwd);
+                                if (extract.startsWith(nameHighlighted)) {
+                                    extract = extract.substring(nameHighlighted.length());
+                                }
+                                hit.setExtracts(ArrayUtils.add(hit.getExtracts(), extract));
+
                                 hits.add(hit);
                             }
                         }

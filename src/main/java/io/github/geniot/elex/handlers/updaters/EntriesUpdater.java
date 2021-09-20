@@ -6,13 +6,6 @@ import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.tools.convert.HtmlUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleFragmenter;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.geniot.elex.tools.convert.DslUtils.*;
+import static io.github.geniot.elex.tools.convert.HtmlUtils.postTag;
+import static io.github.geniot.elex.tools.convert.HtmlUtils.preTag;
 
 @Component
 public class EntriesUpdater {
@@ -42,34 +36,20 @@ public class EntriesUpdater {
                 article = article.replaceAll("\\{\\{/[^}]+\\}\\}", "");
                 article = article.replaceAll("\\n\\t\\\\\\s+\\n", "\n");
 
-                if (model.getAction().equals(Action.FT_LINK)) {
-                    article = highlight(model, article);
+                article = StringEscapeUtils.escapeHtml4(article);
+
+                boolean shouldHighlight = model.getAction().equals(Action.FT_LINK);
+                String searchWord = model.getSearchResultsFor();
+
+                if (shouldHighlight) {
+                    entry.setHeadword(HtmlUtils.highlight(model.getSearchResultsFor(), entry.getHeadword(), preTag, postTag));
                 }
 
-                article = StringEscapeUtils.escapeHtml4(article);
-                article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), article);
+                article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article);
 
                 entry.setBody(article);
             }
         }
         model.setEntries(entries.toArray(new Entry[entries.size()]));
-    }
-
-    private String highlight(Model model, String article) throws Exception {
-        EnglishAnalyzer analyzer = new EnglishAnalyzer();
-        Query q = new QueryParser("content", analyzer).parse(model.getSearchResultsFor());
-        SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("[highlight]", "[/highlight]");
-        Highlighter highlighter = new Highlighter(formatter, new QueryScorer(q));
-        highlighter.setTextFragmenter(new SimpleFragmenter());
-        String[] tokens = tokenize(article);
-        for (int i = 0; i < tokens.length; i++) {
-            if (!isTag(tokens[i])) {
-                String fragment = highlighter.getBestFragment(analyzer, "", tokens[i]);
-                if (fragment != null) {
-                    tokens[i] = fragment;
-                }
-            }
-        }
-        return glue(tokens);
     }
 }

@@ -1,120 +1,33 @@
 package io.github.geniot.elex.tools.convert;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.SortedMap;
-
-import static io.github.geniot.elex.tools.convert.DslUtils.*;
-
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HtmlUtils {
-    public static String DSL_STYLE = getDslStyle();
-    static String noEscape = "(?<!\\\\)";
-    static String validBracketO = noEscape + "\\[";
-    static String validBracketC = noEscape + "\\]";
-    static String anythingButBracket50 = "[^\\[]{1,50}";
-    static String anythingButBracket = "[^\\[]+";
-    static String anyTag = "(" + validBracketO + anythingButBracket50 + validBracketC + "|\r\n)";
+    static Logger logger = LoggerFactory.getLogger(HtmlUtils.class);
 
-    public static String getDslStyle() {
-        try {
-            StringWriter writer = new StringWriter();
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("dsl.css"), writer, StandardCharsets.UTF_8);
-            return writer.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static String preTag = "<span class=\"highlight\">";
+    public static String postTag = "</span>";
 
-    public static String toHtml(String baseApiUrl, String dicId, String article) {
+    public static String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, String article) {
+        StringBuilder stringBuilder = new StringBuilder();
         String[] lines = article.split("\n");
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < lines.length; i++) {
-            stringBuffer.append(toHtml(baseApiUrl, dicId, tokenize(lines[i])));
-            stringBuffer.append("<br/>\n");
+        int mValue = 1;
+        for (String line : lines) {
+            DslLine dslLine = new DslLine(line, mValue, baseApiUrl, dicId);
+            mValue = dslLine.getMValue();
+            stringBuilder.append(dslLine.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord));
+            stringBuilder.append("<br/>\n");
         }
-        return stringBuffer.toString();
-    }
-
-
-
-    public static String toHtml(String baseApiUrl, String dicId, String[] tokens) {
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-            if (isTag(token)) {
-                if (isOpening(token)) {
-                    Tag openingTag = new Tag(token);
-                    if (openingTag.name.equals("b")) {
-                        stringBuffer.append("<b>");
-                    } else if (openingTag.name.equals("c")) {
-                        stringBuffer.append("<span style=\"color:" + (openingTag.attr == null ? "green" : openingTag.attr) + "\">");
-                    } else if (openingTag.name.equals("i")) {
-                        stringBuffer.append("<i>");
-                    } else if (openingTag.name.equals("ref")) {
-                        String dataLink = collectRefValue(tokens, i + 1);
-                        stringBuffer.append("<a data-link=\"" + dataLink + "\">");
-                    } else if (openingTag.name.equals("s")) {
-                        String dataLink = tokens[i + 1];
-                        if (dataLink.endsWith(".wav")) {
-                            stringBuffer.append("<span class=\"sound\" data-id=\"" + dicId + "\" " +
-                                    "data-link=\"" + dataLink + "\">");
-                        } else {//image?
-                            stringBuffer.append("<img class=\"dicImg\" src=\"" + baseApiUrl + "/img?id=" + dicId + "&link=" + dataLink + "\" />");
-                        }
-                        stringBuffer.append("<span style=\"display:none\">");
-                    } else {
-                        String classes = htmlName(openingTag.name);
-                        if (StringUtils.isNotEmpty(openingTag.mValue)) {
-                            classes += openingTag.mValue;
-                        }
-                        if (StringUtils.isNotEmpty(openingTag.attr)) {
-                            if (openingTag.attr.contains("\"")) {
-                                throw new RuntimeException("Not implemented: " + openingTag.attr);
-                            }
-                            String attr = openingTag.attr.replaceAll("\\s|=", "");
-                            classes += attr;
-                        }
-                        stringBuffer.append("<span class=\"" + classes + "\">");
-                    }
-                } else {
-                    Tag closing = new Tag(token);
-                    if (closing.name.equals("b")) {
-                        stringBuffer.append("</b>");
-                    } else if (closing.name.equals("i")) {
-                        stringBuffer.append("</i>");
-                    } else if (closing.name.equals("ref")) {
-                        stringBuffer.append("</a>");
-                    } else if (closing.name.equals("c")) {
-                        stringBuffer.append("</span>");
-                    } else if (closing.name.equals("s")) {
-                        stringBuffer.append("</span></span>");
-                    } else {
-                        stringBuffer.append("</span>");
-                    }
-
-                }
-            } else {
-                stringBuffer.append(token.replaceAll("\\\\", ""));
-            }
-        }
-        return stringBuffer.toString();
-    }
-
-    private static String collectRefValue(String[] tokens, int i) {
-        StringBuffer stringBuffer = new StringBuffer();
-        String currentToken = tokens[i];
-        while (i < tokens.length - 1 && !currentToken.equals("[/ref]")) {
-            if (!isTag(currentToken)) {
-                stringBuffer.append(currentToken);
-            }
-            currentToken = tokens[++i];
-        }
-        return stringBuffer.toString();
+        return stringBuilder.toString();
     }
 
     public static String htmlName(String dslName) {
@@ -127,40 +40,20 @@ public class HtmlUtils {
         }
     }
 
-    public static String entriesToHtml(SortedMap<String, String> entriesSorted) {
-        StringBuffer htmlDictionary = new StringBuffer();
-        htmlDictionary.append("<html><body><head><style>" + DSL_STYLE + "</style></head>\n");
-        for (String headword : entriesSorted.keySet()) {
-            htmlDictionary.append("<div class=\"article\">\n");
-            htmlDictionary.append("<div class=\"hwds\">\n");
-            String[] hwds = headword.split("\n");
-            for (String hwd : hwds) {
-                htmlDictionary.append("<span class=\"hwd\">" + hwd + "</span>\n");
-            }
-            htmlDictionary.append("</div>\n");
-            htmlDictionary.append("<div class=\"entry\">\n");
-            htmlDictionary.append(entriesSorted.get(headword));
-            htmlDictionary.append("</div>\n");
-            htmlDictionary.append("</div>\n");
+    public static String highlight(String searchWord, String text, String preTag, String postTag) {
+        try {
+            EnglishAnalyzer analyzer = new EnglishAnalyzer();
+            Query q = new QueryParser("content", analyzer).parse(searchWord);
+            SimpleHTMLFormatter formatter = new SimpleHTMLFormatter(preTag, postTag);
+            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(q));
+            highlighter.setTextFragmenter(new SimpleFragmenter());
+            String fragment = highlighter.getBestFragment(analyzer, "", text);
+            return fragment == null ? text : fragment;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return text;
         }
-        htmlDictionary.append("</body></html>");
-        return htmlDictionary.toString();
     }
 
-    public static String entryToHtml(String headword, String dslEntry) {
-        StringBuffer htmlDictionary = new StringBuffer();
-        htmlDictionary.append("<div class=\"article\">\n");
-        htmlDictionary.append("<div class=\"hwds\">\n");
-        String[] hwds = headword.split("\n");
-        for (String hwd : hwds) {
-            htmlDictionary.append("<span class=\"hwd\">" + hwd + "</span>\n");
-        }
-        htmlDictionary.append("</div>\n");
-        htmlDictionary.append("<div class=\"entry\">\n");
-        htmlDictionary.append(dslEntry);
-        htmlDictionary.append("</div>\n");
-        htmlDictionary.append("</div>\n");
-        return htmlDictionary.toString();
-    }
 }
 

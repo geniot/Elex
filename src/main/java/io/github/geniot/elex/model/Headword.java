@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class Headword implements Comparable<Headword> {
     private String name;
+    private String nameHighlighted;
     private boolean selected;
 
     public Headword(String n) {

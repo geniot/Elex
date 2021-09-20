@@ -1,107 +1,42 @@
 package io.github.geniot.elex.tools.convert;
 
-
 import java.util.*;
 
 import static io.github.geniot.elex.tools.convert.DslUtils.*;
 
-
 public class DslLine {
+    private List<TextElement> textElementList = new ArrayList<>();
+    private int mValue = 1;
+    private String baseApiUrl;
+    private String dicId;
 
-    String wellFormed;
+    public DslLine(String line, int mValue, String baseApiUrl, String dicId) {
+        this.mValue = mValue;
+        this.baseApiUrl = baseApiUrl;
+        this.dicId = dicId;
 
-    String origLine;
-
-    public DslLine(String input) {
-        this.origLine = input;
-
-        input = input.replaceAll("\\[p\\] \\[\\/p\\]", " ");
-        String[] tokens = tokenize(input);
-
-        if (isWellFormed(tokens)) {
-            this.wellFormed = input;
-            return;
-        } else {
-//            moveSpaces(tokens);
-
-            String lastToken = tokens[tokens.length - 1];
-            String firstToken = tokens[0];
-            if (isTag(lastToken) &&
-                    isClosing(lastToken) &&
-                    new Tag(lastToken).name.equals("m") &&
-                    (!isTag(firstToken) || !new Tag(firstToken).name.equals("m"))
-            ) {
-                //sometimes it's just necessary to add m1 opening tag
-                List<String> tokensList = new ArrayList<>(Arrays.asList(tokens));
-                tokensList.add(0, "[m1]");
-                String[] newTokenArr = tokensList.toArray(new String[tokensList.size()]);
-                if (isWellFormed(newTokenArr)) {
-                    this.wellFormed = glue(newTokenArr);
-                    return;
-                }
-            }
-        }
-
-        SortedSet<Tag> openedTags = new TreeSet<>();
-
-        for (int i = 0; i < tokens.length; i++) {
-            String token = tokens[i];
-
+        String[] tokens = tokenize(line);
+        TreeSet<Tag> openTags = new TreeSet<>();
+        for (String token : tokens) {
             if (isTag(token)) {
+                Tag tag = new Tag(token);
                 if (isOpening(token)) {
-                    openedTags.add(new Tag(token));
+                    if (tag.name.equals("m")) {
+                        this.mValue = tag.mValue;
+                    }
+                    openTags.add(tag);
                 } else {
-                    Tag tagToRemove = findTagByName(openedTags, tagName(token));
-                    if (tagToRemove != null) {
-                        openedTags.remove(tagToRemove);
-                    } else {//we found a closing tag with no matching opening tag
-                        //marking all current text elements with this tag
-                        for (TextElement tElement : textElementList) {
-                            tElement.addTag(new Tag(token));
+                    if (openTags.contains(tag)) {
+                        openTags.remove(tag);
+                    } else {
+                        //found a closing tag without a matching opening
+                        for (TextElement textElement : textElementList) {
+                            textElement.addTag(tag);
                         }
                     }
                 }
             } else {
-                //collecting closing tags
-                SortedSet<Tag> closedTags = new TreeSet<>();
-                for (int k = i + 1; k < tokens.length; k++) {
-                    String possibleClosingTag = tokens[k];
-                    if (isTag(possibleClosingTag) && isClosing(possibleClosingTag)) {
-                        closedTags.add(new Tag(possibleClosingTag));
-                    } else {
-                        break;
-                    }
-                }
-                TextElement textElement = new TextElement(token);
-
-//                if (token.contains("(red-billed)")) {
-//                    System.out.println(token);
-//                }
-
-                TreeSet<Tag> clonedOpenedTags = cloneSet(openedTags);
-                for (Tag openedTag : clonedOpenedTags) {
-                    if (closedTags.contains(openedTag)) {
-                        openedTag.weight += 10;
-                    }
-                }
-                textElement.setTags(clonedOpenedTags);
-                closedTags.clear();
-                textElementList.add(textElement);
-            }
-        }
-    }
-
-    private void moveSpaces(String[] tokens) {
-        //if there is a space between closing tags let's move it out
-        //[/i][/c] [/p][b] should become [/i][/c][/p] [b]
-        for (int i = 0; i < tokens.length - 1; i++) {
-            if (isClosing(tokens[i]) &&
-                    (tokens[i + 1].trim().equals("") || tokens[i + 1].trim().equals(" ")) &&
-                    isClosing(tokens[i + 2])
-            ) {
-                String tmp = tokens[i + 1];
-                tokens[i + 1] = tokens[i + 2];
-                tokens[i + 2] = tmp;
+                textElementList.add(new TextElement(token, cloneSet(openTags)));
             }
         }
     }
@@ -114,71 +49,21 @@ public class DslLine {
         return res;
     }
 
-    public void debug() {
+    public int getMValue() {
+        return mValue;
+    }
+
+    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (mValue > 1) {
+            stringBuilder.append("<span class=\"m" + mValue + "\">");
+        }
         for (TextElement textElement : textElementList) {
-            textElement.debug();
+            stringBuilder.append(textElement.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord));
         }
-    }
-
-    private Tag findTagByName(SortedSet<Tag> openedTags, String tagName) {
-        for (Tag t : openedTags) {
-            if (t.name.equals(tagName)) {
-                return t;
-            }
+        if (mValue > 1) {
+            stringBuilder.append("</span>");
         }
-        return null;
-    }
-
-    List<TextElement> textElementList = new ArrayList<>();
-
-
-    @Override
-    public String toString() {
-        if (wellFormed != null) {
-            return wellFormed;
-        }
-
-        StringBuffer stringBuffer = new StringBuffer();
-        TreeSet<Tag> openTags = new TreeSet<>();
-        for (TextElement textElement : textElementList) {
-
-            Iterator<Tag> openTagsIterator = openTags.descendingIterator();
-            while (openTagsIterator.hasNext()) {
-                Tag tag = openTagsIterator.next();
-                if (tag.name.equals("p") || //we should always close p as soon as possible
-                        !tagNames(textElement.tags).contains(tag.name)) {
-                    openTagsIterator.remove();
-                    stringBuffer.append(tag.close());
-                }
-            }
-
-            for (Tag tag : textElement.tags) {
-                if (!tagNames(openTags).contains(tag.name)) {
-                    openTags.add(tag);
-                    stringBuffer.append(tag.open());
-                }
-            }
-//            if (textElement.text.contains("Student's")) {
-//                System.out.println("stop");
-//            }
-            stringBuffer.append(textElement.text);
-        }
-        for (Tag tag : openTags.descendingSet()) {
-            stringBuffer.append(tag.close());
-        }
-        String line = stringBuffer.toString();
-        if (!isWellFormed(tokenize(line))) {
-            throw new RuntimeException("Not well-formed: " + origLine);
-        }
-        return line;
-    }
-
-    public Set<String> tagNames(SortedSet<Tag> tags) {
-        Set<String> set = new HashSet<>();
-        for (Tag t : tags) {
-            set.add(t.name);
-        }
-        return set;
+        return stringBuilder.toString();
     }
 }
-
