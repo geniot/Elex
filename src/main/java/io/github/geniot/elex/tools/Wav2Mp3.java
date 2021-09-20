@@ -21,8 +21,8 @@ public class Wav2Mp3 {
 
     public static void main(String[] args) {
         try {
-            String base = args[0];
-            String out = args[1];
+            String base = "D:\\torrents\\elex\\LingvoUniversalRuEn\\SoundRu.extracted\\";
+            String out = "D:\\torrents\\elex\\LingvoUniversalRuEn\\SoundRu.converted\\";
 
             new File(out).mkdirs();
 

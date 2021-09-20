@@ -47,7 +47,7 @@ public class FullTextHitsUpdater {
                             String[] value = results.get(score);
                             String headword = value[0];
                             String extract = value[1];
-                            extract = extract.replaceAll("\\{[^}]+\\}","");
+                            extract = extract.replaceAll("\\{[^}]*\\}","");
 //                        StringUtils.isNotEmpty(value[1]) &&
                             if (!model.getSearchResultsFor().equals(headword)) {
                                 FullTextHit hit = getByHeadwordOrCreate(hits, headword);
@@ -62,6 +62,10 @@ public class FullTextHitsUpdater {
                                 if (extract.startsWith(nameHighlighted)) {
                                     extract = extract.substring(nameHighlighted.length());
                                 }
+                                if (extract.startsWith(headword)) {
+                                    extract = extract.substring(headword.length());
+                                }
+                                extract = extract.trim();
                                 hit.setExtracts(ArrayUtils.add(hit.getExtracts(), extract));
 
                                 hits.add(hit);

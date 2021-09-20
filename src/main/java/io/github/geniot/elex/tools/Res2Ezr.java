@@ -16,8 +16,8 @@ public class Res2Ezr {
 
     public static void main(String[] args) {
         try {
-            String inputFolder = "D:\\torrents\\elex\\GermanyDeRu\\media\\";
-            String outputPath = "C:\\development\\elex\\data\\GermanyDeRu.ezr";
+            String inputFolder = "D:\\torrents\\elex\\LingvoUniversalRuEn\\SoundRu.converted\\";
+            String outputPath = "C:\\development\\elex\\data\\LingvoUniversalRuEn.ezr";
 
             SortedMap<String, File> resourcesMap = new TreeMap<>(new CaseInsensitiveComparator());
             File[] files = new File(inputFolder).listFiles();
