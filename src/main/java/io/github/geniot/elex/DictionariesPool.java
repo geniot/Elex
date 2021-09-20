@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
 
+import static io.github.geniot.elex.tools.convert.DslUtils.getArticleStart;
+
 @Component
 @Getter
 @Setter
@@ -191,15 +193,7 @@ public class DictionariesPool {
         return entries;
     }
 
-    private int getArticleStart(String entry) {
-        for (int i = 0; i < entry.length() - 1; i++) {
-            if (entry.charAt(i) == '\n' &&
-                    (entry.charAt(i + 1) == '\t' || entry.charAt(i + 1) == ' ')) {
-                return i;
-            }
-        }
-        return -1;
-    }
+
 
     public byte[] getIcon(int id) throws IOException {
         for (String fileName : dictionaries.keySet()) {
@@ -320,4 +314,17 @@ public class DictionariesPool {
     }
 
 
+    public Properties getProperties(String dicId) {
+        try {
+            for (String fileName : dictionaries.keySet()) {
+                if (String.valueOf(fileName.hashCode()).equals(dicId)) {
+                    ElexDictionary elexDictionary = dictionaries.get(fileName);
+                    return elexDictionary.getAbbreviations();
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return new Properties();
+    }
 }

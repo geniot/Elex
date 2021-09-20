@@ -75,5 +75,15 @@ public class DslUtils {
         }
         return true;
     }
+
+    public static int getArticleStart(String entry) {
+        for (int i = 0; i < entry.length() - 1; i++) {
+            if (entry.charAt(i) == '\n' &&
+                    (entry.charAt(i + 1) == '\t' || entry.charAt(i + 1) == ' ')) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
 

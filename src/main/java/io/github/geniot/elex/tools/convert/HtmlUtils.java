@@ -11,20 +11,22 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
+
 public class HtmlUtils {
     static Logger logger = LoggerFactory.getLogger(HtmlUtils.class);
 
     public static String preTag = "<span class=\"highlight\">";
     public static String postTag = "</span>";
 
-    public static String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, String article) {
+    public static String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, String article, Properties dicProperties) {
         StringBuilder stringBuilder = new StringBuilder();
         String[] lines = article.split("\n");
         int mValue = 1;
         for (String line : lines) {
             DslLine dslLine = new DslLine(line, mValue, baseApiUrl, dicId);
             mValue = dslLine.getMValue();
-            stringBuilder.append(dslLine.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord));
+            stringBuilder.append(dslLine.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord, dicProperties));
             stringBuilder.append("<br/>\n");
         }
         return stringBuilder.toString();

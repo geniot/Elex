@@ -1,6 +1,7 @@
 package io.github.geniot.elex.tools.convert;
 
 
+import java.util.Properties;
 import java.util.TreeSet;
 
 import static io.github.geniot.elex.tools.convert.HtmlUtils.postTag;
@@ -19,10 +20,10 @@ public class TextElement {
         tags.add(t);
     }
 
-    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord) {
+    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, Properties dicProps) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Tag tag : tags.descendingSet()) {
-            stringBuilder.append(tag.toOpeningHtml(text, baseApiUrl, dicId));
+            stringBuilder.append(tag.toOpeningHtml(text, baseApiUrl, dicId, dicProps));
         }
 
         if (shouldHighlight) {

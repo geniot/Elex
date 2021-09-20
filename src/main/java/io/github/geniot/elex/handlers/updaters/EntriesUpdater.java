@@ -45,7 +45,7 @@ public class EntriesUpdater {
                     entry.setHeadword(HtmlUtils.highlight(model.getSearchResultsFor(), entry.getHeadword(), preTag, postTag));
                 }
 
-                article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article);
+                article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article, dictionariesPool.getProperties(entry.getDicId()));
 
                 entry.setBody(article);
             }

@@ -140,7 +140,11 @@ public class ElexDictionary extends RandomAccessFile {
     }
 
     public Properties getAbbreviations() throws IOException {
-        return (Properties) header.sections.get(Section.ABBREVIATIONS).getValue(this);
+        if (header.sections.containsKey(Section.ABBREVIATIONS)) {
+            return (Properties) header.sections.get(Section.ABBREVIATIONS).getValue(this);
+        } else {
+            return new Properties();
+        }
     }
 
     private int getChunkIndexByHeadword(String headword) {

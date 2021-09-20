@@ -16,6 +16,6 @@ public class VariantsTest {
                         "\"the United States (of America)\":\"[ref]the United States[/ref]\"," +
                         "\"the United States of America\":\"[ref]the United States[/ref]\"}";
         Gson gson = new Gson();
-        Assertions.assertEquals(expected, gson.toJson(DslDictionary.getVariants(key, value)));
+        Assertions.assertEquals(expected, gson.toJson(DslDictionary.getVariants(key, value, false)));
     }
 }

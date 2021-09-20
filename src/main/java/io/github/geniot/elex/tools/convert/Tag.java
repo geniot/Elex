@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import static io.github.geniot.elex.tools.convert.DslUtils.tagName;
 import static io.github.geniot.elex.tools.convert.HtmlUtils.htmlName;
@@ -59,7 +60,7 @@ public class Tag implements Comparable<Tag> {
         return cp;
     }
 
-    public String toOpeningHtml(String text, String baseApiUrl, String dicId) {
+    public String toOpeningHtml(String text, String baseApiUrl, String dicId, Properties dicProps) {
         if (name.equals("m")) {
             return "";
         }
@@ -74,6 +75,11 @@ public class Tag implements Comparable<Tag> {
         }
         if (name.equals("ref")) {
             return "<a data-link=\"" + text + "\">";
+        }
+        if (name.equals("p")) {
+            String tooltip = dicProps.containsKey(text) ? dicProps.getProperty(text) : null;
+            String title = tooltip == null ? "" : ("title=\"" + tooltip + "\"");
+            return "<span class=\"p\" " + title + ">";
         }
         if (name.equals("s")) {
             if (text.endsWith(".wav")) {

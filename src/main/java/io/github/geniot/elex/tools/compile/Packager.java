@@ -80,6 +80,9 @@ public class Packager {
             header.sections.put(Section.CONTENT_CHUNKS, new Section(Section.CONTENT_CHUNKS, 0, writeOffset, true));
 
             //chunk offsets
+            if (chunkOffsetsList.size() == 0) {
+                throw new RuntimeException("Empty dictionary?");
+            }
             int[] chunkOffsets = ArrayUtils.toPrimitive(chunkOffsetsList.toArray(new Integer[chunkOffsetsList.size()]));
             byte[] chunkOffsetsBbs = ElexUtils.serialize(chunkOffsets);
             out.write(chunkOffsetsBbs);
@@ -87,33 +90,47 @@ public class Packager {
             writeOffset += chunkOffsetsBbs.length;
 
             //headwords
+            if (chunkStartersList.size() == 0) {
+                throw new RuntimeException("Empty dictionary?");
+            }
             byte[] headwordsBbs = ElexUtils.compressBytes(ElexUtils.serialize(chunkStartersList.toArray(new String[chunkStartersList.size()])));
             out.write(headwordsBbs);
             header.sections.put(Section.CONTENT_CHUNK_STARTERS, new Section(Section.CONTENT_CHUNK_STARTERS, writeOffset, headwordsBbs.length, true));
             writeOffset += headwordsBbs.length;
 
             //icon
-            byte[] iconBytes = dslDictionary.getIcon();
-            out.write(iconBytes);
-            header.sections.put(Section.ICON, new Section(Section.ICON, writeOffset, iconBytes.length, false));
-            writeOffset += iconBytes.length;
+            if (dslDictionary.getIcon() != null) {
+                byte[] iconBytes = dslDictionary.getIcon();
+                out.write(iconBytes);
+                header.sections.put(Section.ICON, new Section(Section.ICON, writeOffset, iconBytes.length, false));
+                writeOffset += iconBytes.length;
+            }
 
             //annotations
-            byte[] annotationBytes = ElexUtils.compressToBytes(dslDictionary.getAnnotation(), StandardCharsets.UTF_8.name());
-            out.write(annotationBytes);
-            header.sections.put(Section.ANNOTATIONS, new Section(Section.ANNOTATIONS, writeOffset, annotationBytes.length, true));
-            writeOffset += annotationBytes.length;
+            if (dslDictionary.getAnnotation() != null) {
+                byte[] annotationBytes = ElexUtils.compressToBytes(dslDictionary.getAnnotation(), StandardCharsets.UTF_8.name());
+                out.write(annotationBytes);
+                header.sections.put(Section.ANNOTATIONS, new Section(Section.ANNOTATIONS, writeOffset, annotationBytes.length, true));
+                writeOffset += annotationBytes.length;
+            }
 
             //properties
-            byte[] propsBytes = ElexUtils.compressBytes(ElexUtils.serialize(dslDictionary.getProperties()));
-            out.write(propsBytes);
-            header.sections.put(Section.PROPERTIES, new Section(Section.PROPERTIES, writeOffset, propsBytes.length, true));
-            writeOffset += annotationBytes.length;
+            if (dslDictionary.getProperties() == null) {
+                throw new RuntimeException("Properties cannot be null");
+            } else {
+                byte[] propsBytes = ElexUtils.compressBytes(ElexUtils.serialize(dslDictionary.getProperties()));
+                out.write(propsBytes);
+                header.sections.put(Section.PROPERTIES, new Section(Section.PROPERTIES, writeOffset, propsBytes.length, true));
+                writeOffset += propsBytes.length;
+            }
 
             //abbreviations
-            byte[] abbrBytes = ElexUtils.compressBytes(ElexUtils.serialize(dslDictionary.getAbbreviations()));
-            out.write(abbrBytes);
-            header.sections.put(Section.ABBREVIATIONS, new Section(Section.ABBREVIATIONS, writeOffset, abbrBytes.length, true));
+            if (dslDictionary.getAbbreviations() != null) {
+                byte[] abbrBytes = ElexUtils.compressBytes(ElexUtils.serialize(dslDictionary.getAbbreviations()));
+                out.write(abbrBytes);
+                header.sections.put(Section.ABBREVIATIONS, new Section(Section.ABBREVIATIONS, writeOffset, abbrBytes.length, true));
+                writeOffset += abbrBytes.length;
+            }
 
             header.size = dslDictionary.getEntries().keySet().size();
 

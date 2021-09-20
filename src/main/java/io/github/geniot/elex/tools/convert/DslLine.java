@@ -53,13 +53,13 @@ public class DslLine {
         return mValue;
     }
 
-    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord) {
+    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, Properties dicProperties) {
         StringBuilder stringBuilder = new StringBuilder();
         if (mValue > 1) {
             stringBuilder.append("<span class=\"m" + mValue + "\">");
         }
         for (TextElement textElement : textElementList) {
-            stringBuilder.append(textElement.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord));
+            stringBuilder.append(textElement.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord, dicProperties));
         }
         if (mValue > 1) {
             stringBuilder.append("</span>");

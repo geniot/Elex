@@ -13,11 +13,13 @@ import java.nio.charset.StandardCharsets;
 public class Dsl2Ezp {
     static Logger logger = LoggerFactory.getLogger(Dsl2Ezp.class);
     public static String[] PATHS = new String[]{
-            "D:\\torrents\\elex\\collins\\",
-            "CollinsCobuildEnEn",
+
 
             "D:\\torrents\\elex\\enru\\",
             "LingvoUniversalEnRu",
+
+            "D:\\torrents\\elex\\collins\\",
+            "CollinsCobuildEnEn",
 
             "D:\\torrents\\elex\\longman\\",
             "En-En-Longman_DOCE5",

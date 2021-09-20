@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import static io.github.geniot.elex.tools.convert.DslUtils.getArticleStart;
 import static io.github.geniot.elex.tools.convert.DslUtils.noEscape;
 
 
@@ -33,7 +34,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(File dslFile, Charset charset) {
         try {
             List<String> lines = FileUtils.readLines(dslFile, charset);
-            read(lines);
+            read(lines, true);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -42,7 +43,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String abrDsl) {
         try {
             List<String> lines = Arrays.asList(abrDsl.split("\n"));
-            read(lines);
+            read(lines, true);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -51,7 +52,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String dsl, String annotation, byte[] icon) {
         try {
             List<String> lines = Arrays.asList(dsl.split("\n"));
-            read(lines);
+            read(lines, false);
             this.annotation = annotation;
             this.icon = icon;
         } catch (Exception ex) {
@@ -62,7 +63,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String dslPath, String annotationPath, String iconPath, String abbreviationsPath, Charset charset) {
         try {
             List<String> lines = FileUtils.readLines(new File(dslPath), charset);
-            read(lines);
+            read(lines, false);
             annotation = FileUtils.readFileToString(new File(annotationPath), charset);
             icon = FileUtils.readFileToByteArray(new File(iconPath));
 
@@ -80,6 +81,12 @@ public class DslDictionary implements Serializable {
         Properties props = new Properties();
         for (String key : entries.keySet()) {
             String value = entries.get(key);
+            int entryStart = getArticleStart(value);
+            if (entryStart < 0) {
+                throw new RuntimeException("Couldn't find abbreviation definition");
+            } else {
+                value = value.substring(entryStart).trim();
+            }
             props.setProperty(key, value);
         }
         return props;
@@ -107,7 +114,7 @@ public class DslDictionary implements Serializable {
         return stringBuffer.toString();
     }
 
-    private void read(List<String> lines) {
+    private void read(List<String> lines, boolean isAbbreviations) {
         Iterator<String> iterator = lines.iterator();
         entries = new TreeMap<>(new CaseInsensitiveComparator());
         String line = null;
@@ -169,7 +176,7 @@ public class DslDictionary implements Serializable {
 //                    .replaceAll("\\n$", "");
 
 
-            Map<String, String> variants = getVariants(key, value);
+            Map<String, String> variants = getVariants(key, value, isAbbreviations);
             if (variants.isEmpty()) {
                 throw new RuntimeException("Empty result: " + key);
             }
@@ -199,7 +206,7 @@ public class DslDictionary implements Serializable {
      * @param value
      * @return
      */
-    static public SortedMap<String, String> getVariants(String k, String value) {
+    static public SortedMap<String, String> getVariants(String k, String value, boolean isAbbreviations) {
         SortedMap<String, String> result = new TreeMap<>();
 
         String[] keys = k.split("\n");
@@ -224,11 +231,15 @@ public class DslDictionary implements Serializable {
             if (result.containsKey(key)) {
                 throw new RuntimeException("Duplicate key: " + key);
             } else {
-                if (firstKey == null) {
-                    firstKey = key;
+                if (isAbbreviations) {
                     result.put(key, k + "\n" + value);
                 } else {
-                    result.put(key, "[ref]" + firstKey + "[/ref]");
+                    if (firstKey == null) {
+                        firstKey = key;
+                        result.put(key, k + "\n" + value);
+                    } else {
+                        result.put(key, "[ref]" + firstKey + "[/ref]");
+                    }
                 }
             }
         }
