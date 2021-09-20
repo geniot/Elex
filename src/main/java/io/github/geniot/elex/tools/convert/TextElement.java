@@ -21,7 +21,7 @@ public class TextElement {
 
     public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Tag tag : tags) {
+        for (Tag tag : tags.descendingSet()) {
             stringBuilder.append(tag.toOpeningHtml(text, baseApiUrl, dicId));
         }
 
@@ -30,7 +30,7 @@ public class TextElement {
         }
         stringBuilder.append(text);
 
-        for (Tag tag : tags.descendingSet()) {
+        for (Tag tag : tags) {
             stringBuilder.append(tag.toClosingHtml());
         }
         return stringBuilder.toString();
