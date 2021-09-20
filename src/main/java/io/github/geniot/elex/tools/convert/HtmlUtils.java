@@ -37,6 +37,8 @@ public class HtmlUtils {
             return "opt";
         } else if (dslName.equals("!trs")) {
             return "trs";
+        } else if (dslName.equals("'")) {
+            return "stress";
         } else {
             return dslName;
         }

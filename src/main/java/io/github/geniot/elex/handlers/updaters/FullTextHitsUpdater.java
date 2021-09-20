@@ -51,7 +51,7 @@ public class FullTextHitsUpdater {
 //                        StringUtils.isNotEmpty(value[1]) &&
                             if (!model.getSearchResultsFor().equals(headword)) {
                                 FullTextHit hit = getByHeadwordOrCreate(hits, headword);
-                                hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()));
+                                hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()& 0xfffffff));
 
                                 hit.setScores(ArrayUtils.add(hit.getScores(), score));
 

@@ -37,8 +37,11 @@ public class Dsl2Ezp {
 //            "D:\\torrents\\elex\\TransportEnRu\\",
 //            "TransportEnRu",
 
-            "D:\\torrents\\elex\\GermanyDeRu\\",
-            "GermanyDeRu",
+//            "D:\\torrents\\elex\\GermanyDeRu\\",
+//            "GermanyDeRu",
+
+            "D:\\torrents\\elex\\LingvoUniversalRuEn\\",
+            "LingvoUniversalRuEn",
     };
 
     static String outputBase = "C:\\development\\elex\\data\\";

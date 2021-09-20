@@ -16,13 +16,13 @@ public class Tag implements Comparable<Tag> {
     public String name;
     public String attr;
     public int mValue = 1;
-    List<String> tagsOrdered = Arrays.asList(new String[]{"m", "trn", "*", "ex", "lang", "com", "c", "i", "b", "ref", "p", "t", "sup", "sub"});
+    List<String> tagsOrdered = Arrays.asList(new String[]{"m", "trn", "!trs", "*", "ex", "lang", "com", "*", "c", "i", "b", "ref", "p", "s", "t", "sup", "sub"});
 
     public Tag() {
     }
 
     public Tag(String token) {
-        name = htmlName(tagName(token));
+        name = tagName(token);
         if (name.matches("m[0-9]")) {
             try {
                 mValue = Integer.parseInt(name.substring(1));
@@ -54,7 +54,7 @@ public class Tag implements Comparable<Tag> {
 
     public Tag copy() {
         Tag cp = new Tag();
-        cp.name = name;
+        cp.name = htmlName(name);
         cp.attr = attr;
         cp.mValue = mValue;
         return cp;

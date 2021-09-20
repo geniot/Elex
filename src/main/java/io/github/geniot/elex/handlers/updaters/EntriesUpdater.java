@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.geniot.elex.tools.convert.HtmlUtils.postTag;
-import static io.github.geniot.elex.tools.convert.HtmlUtils.preTag;
-
 @Component
 public class EntriesUpdater {
     Logger logger = LoggerFactory.getLogger(EntriesUpdater.class);
@@ -41,9 +38,11 @@ public class EntriesUpdater {
                 boolean shouldHighlight = model.getAction().equals(Action.FT_LINK);
                 String searchWord = model.getSearchResultsFor();
 
-                if (shouldHighlight) {
-                    entry.setHeadword(HtmlUtils.highlight(model.getSearchResultsFor(), entry.getHeadword(), preTag, postTag));
-                }
+                String headword = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, entry.getHeadword(), dictionariesPool.getProperties(entry.getDicId()));
+                entry.setHeadword(headword);
+//                if (shouldHighlight) {
+//                    entry.setHeadword(HtmlUtils.highlight(model.getSearchResultsFor(), entry.getHeadword(), preTag, postTag));
+//                }
 
                 article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article, dictionariesPool.getProperties(entry.getDicId()));
 

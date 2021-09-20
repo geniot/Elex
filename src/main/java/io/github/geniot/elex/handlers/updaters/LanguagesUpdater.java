@@ -15,6 +15,7 @@ public class LanguagesUpdater {
 
     public void updateLanguages(Model model, List<Dictionary> dictionaryList) {
         SortedMap<String, Language> resultLanguagesMap = new TreeMap<>();
+        Language selectedSourceLanguage = null;
         for (Dictionary dictionary : dictionaryList) {
 
             Language sourceLanguage = resultLanguagesMap.get(dictionary.getIndexLanguageCode());
@@ -23,6 +24,7 @@ public class LanguagesUpdater {
             }
             if (dictionary.getIndexLanguageCode().equals(model.getSelectedSourceLanguage())) {
                 sourceLanguage.setSelected(true);
+                selectedSourceLanguage = sourceLanguage;
             }
 
             Language targetLanguage = new Language(dictionary.getContentsLanguageCode());
@@ -35,12 +37,13 @@ public class LanguagesUpdater {
         //what if there are no selections?
         if (StringUtils.isEmpty(model.getSelectedSourceLanguage())) {
             if (resultLanguagesMap.size() > 0) {
-                resultLanguagesMap.values().iterator().next().setSelected(true);
+                selectedSourceLanguage = resultLanguagesMap.values().iterator().next();
+                selectedSourceLanguage.setSelected(true);
             }
         }
         if (StringUtils.isEmpty(model.getSelectedTargetLanguage())) {
-            if (resultLanguagesMap.size() > 0) {
-                resultLanguagesMap.values().iterator().next().getTargetLanguages().first().setSelected(true);
+            if (resultLanguagesMap.size() > 0 && selectedSourceLanguage != null) {
+                selectedSourceLanguage.getTargetLanguages().first().setSelected(true);
             }
         }
 

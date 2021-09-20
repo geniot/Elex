@@ -12,7 +12,12 @@ public class TextElement {
     String text;
 
     public TextElement(String txt, TreeSet<Tag> tgs) {
-        this.text = txt.replaceAll("\\\\", "");
+        this.text = txt;
+
+        text = text.replaceAll("\\\\", "");
+        text = text.replaceAll("\\{", "");
+        text = text.replaceAll("\\}", "");
+
         this.tags = tgs;
     }
 
