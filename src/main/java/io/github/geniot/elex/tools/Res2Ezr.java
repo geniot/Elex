@@ -16,17 +16,19 @@ public class Res2Ezr {
 
     public static void main(String[] args) {
         try {
-            String inputFolder = "D:\\torrents\\elex\\oxford_advanced\\media\\";
-            String outputPath = "D:\\torrents\\elex\\oxford_advanced\\en-en_OALD9_v1.1.ezr";
+            String inputFolder = "D:\\torrents\\elex\\GermanyDeRu\\media\\";
+            String outputPath = "C:\\development\\elex\\data\\GermanyDeRu.ezr";
 
             SortedMap<String, File> resourcesMap = new TreeMap<>(new CaseInsensitiveComparator());
-            File[] folders = new File(inputFolder).listFiles();
-            for (File folder : folders) {
-                if (folder.isDirectory()) {
-                    File[] files = folder.listFiles();
-                    for (File file : files) {
-                        resourcesMap.put(file.getName(), file);
+            File[] files = new File(inputFolder).listFiles();
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    File[] ffs = file.listFiles();
+                    for (File f : ffs) {
+                        resourcesMap.put(f.getName(), f);
                     }
+                }else{
+                    resourcesMap.put(file.getName(), file);
                 }
             }
 

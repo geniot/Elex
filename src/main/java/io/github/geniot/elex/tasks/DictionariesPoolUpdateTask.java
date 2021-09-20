@@ -53,7 +53,12 @@ public class DictionariesPoolUpdateTask implements Runnable {
                         try {
                             if (!dictionariesPool.getDictionaries().containsKey(dicFile.getName())) {
                                 logger.info("Installing: " + dicFile);
-                                dictionariesPool.getDictionaries().put(dicFile.getName(), new ElexDictionary(dicFile.getAbsolutePath(), "r"));
+                                ElexDictionary elexDictionary = new ElexDictionary(dicFile.getAbsolutePath(), "r");
+                                dictionariesPool.getDictionaries().put(dicFile.getName(), elexDictionary);
+                                // we need to create a new instance of ElexDictionary here
+                                // because indexer is asynchronous and it will close the stream,
+                                // which we need to work with
+                                asynchronousService.index(new ElexDictionary(elexDictionary.getFile().getAbsolutePath(), "r"));
                             }
                         } catch (Exception ex) {
                             logger.error("Couldn't install the dictionary: " + dicFile.getAbsolutePath());

@@ -2,7 +2,8 @@ package io.github.geniot.elex.tools.convert;
 
 public enum Language {
     EN("English"),
-    RU("Russian");
+    RU("Russian"),
+    DE("German");
 
     public final String label;
 

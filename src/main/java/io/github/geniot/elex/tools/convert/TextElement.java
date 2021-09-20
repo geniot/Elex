@@ -22,7 +22,7 @@ public class TextElement {
 
     public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, Properties dicProps) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Tag tag : tags.descendingSet()) {
+        for (Tag tag : tags) {
             stringBuilder.append(tag.toOpeningHtml(text, baseApiUrl, dicId, dicProps));
         }
 
@@ -31,7 +31,7 @@ public class TextElement {
         }
         stringBuilder.append(text);
 
-        for (Tag tag : tags) {
+        for (Tag tag : tags.descendingSet()) {
             stringBuilder.append(tag.toClosingHtml());
         }
         return stringBuilder.toString();

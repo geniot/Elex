@@ -18,11 +18,10 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -34,23 +33,12 @@ import static io.github.geniot.elex.ftindexer.Utils.stripTags;
 @Getter
 @Setter
 public class FtIndexTask implements Runnable {
-
     Logger logger = LoggerFactory.getLogger(FtIndexTask.class);
-
-    @Value("${path.data}")
-    private String pathToData;
-    @Value("${name.folder.ft-index}")
-    private String ftIndexFolderName;
-
-    private String ftFolderPath;
 
     private ElexDictionary elexDictionary;
     private Task task;
-
-    @PostConstruct
-    public void init() {
-        ftFolderPath = new File(pathToData + File.separator + ftIndexFolderName).getAbsolutePath();
-    }
+    @Autowired
+    private AsynchronousService asynchronousService;
 
     @Override
     public void run() {
@@ -62,7 +50,7 @@ public class FtIndexTask implements Runnable {
             long t1 = System.currentTimeMillis();
             logger.info("Indexing " + elexDictionary.getFile().getAbsolutePath());
 
-            String path = ftFolderPath + File.separator + FilenameUtils.removeExtension(elexDictionary.getFile().getName());
+            String path = asynchronousService.getFtFolderPath() + File.separator + FilenameUtils.removeExtension(elexDictionary.getFile().getName());
             new File(path).mkdirs();
 
             Directory directory = FSDirectory.open(Paths.get(path));
