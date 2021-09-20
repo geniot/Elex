@@ -78,8 +78,8 @@ public class Tag implements Comparable<Tag> {
         }
         if (name.equals("p")) {
             String tooltip = dicProps.containsKey(text) ? dicProps.getProperty(text) : null;
-            String title = tooltip == null ? "" : ("title=\"" + tooltip + "\"");
-            return "<span class=\"p\" " + title + ">";
+            String title = tooltip == null ? "" : (" title=\"" + tooltip + "\"");
+            return "<span class=\"p\"" + title + ">";
         }
         if (name.equals("s")) {
             if (text.endsWith(".wav")) {
