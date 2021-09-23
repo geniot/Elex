@@ -1,5 +1,7 @@
 Dictionary server.
 
+![Drag Racing](screenshots/main.png)
+
 User interface in Angular: https://github.com/geniot/elex-ui
 
 Admin interface in Angular: https://github.com/geniot/elex-admin-ui
