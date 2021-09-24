@@ -47,7 +47,7 @@ public class HtmlUtils {
     public static String highlight(String searchWord, String text, String preTag, String postTag) {
         try {
             EnglishAnalyzer analyzer = new EnglishAnalyzer();
-            Query q = new QueryParser("content", analyzer).parse(searchWord);
+            Query q = new QueryParser("content", analyzer).parse(QueryParser.escape(searchWord));
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter(preTag, postTag);
             Highlighter highlighter = new Highlighter(formatter, new QueryScorer(q));
             highlighter.setTextFragmenter(new SimpleFragmenter());

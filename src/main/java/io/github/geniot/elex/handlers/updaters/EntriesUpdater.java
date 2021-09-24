@@ -34,18 +34,11 @@ public class EntriesUpdater {
                 article = article.replaceAll("\\n\\t\\\\\\s+\\n", "\n");
 
                 article = StringEscapeUtils.escapeHtml4(article);
-
                 boolean shouldHighlight = model.getAction().equals(Action.FT_LINK);
                 String searchWord = model.getSearchResultsFor();
-
                 String headword = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, entry.getHeadword(), dictionariesPool.getProperties(entry.getDicId()));
                 entry.setHeadword(headword);
-//                if (shouldHighlight) {
-//                    entry.setHeadword(HtmlUtils.highlight(model.getSearchResultsFor(), entry.getHeadword(), preTag, postTag));
-//                }
-
                 article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article, dictionariesPool.getProperties(entry.getDicId()));
-
                 entry.setBody(article);
             }
         }
