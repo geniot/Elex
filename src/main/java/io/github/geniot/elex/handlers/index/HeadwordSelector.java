@@ -27,9 +27,11 @@ public class HeadwordSelector {
         selectedHeadword = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, selectedHeadword);
 
         if (model.getAction().equals(Action.TO_START)) {
-            selectedHeadword = dictionariesPool.getMinHeadword(set);
+            String minHeadword = dictionariesPool.getMinHeadword(set);
+            selectedHeadword = scroll(forwardIteratorsWrapper, minHeadword, model.getSelectedIndex());
         } else if (model.getAction().equals(Action.TO_END)) {
-            selectedHeadword = dictionariesPool.getMaxHeadword(set);
+            String maxHeadword = dictionariesPool.getMaxHeadword(set);
+            selectedHeadword = scroll(backwardIteratorsWrapper, maxHeadword, model.getVisibleSize() - model.getSelectedIndex() - 1);
         } else if (model.getAction().equals(Action.NEXT_WORD)) {
             selectedHeadword = scroll(forwardIteratorsWrapper, selectedHeadword, 1);
             model.selectNext();
