@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Section implements Serializable {
     public int offset;
     public int length;
-    public boolean isCompressed = false;
+    public boolean isCompressed;
 
     //offset, length, isCompressed, type
     public static int SIZE = Integer.BYTES + Integer.BYTES + Byte.BYTES + Byte.BYTES;
@@ -50,7 +50,7 @@ public class Section implements Serializable {
         return byteArrayOutputStream.toByteArray();
     }
 
-    public Object getValue(ElexDictionary elexDictionary) throws IOException {
+    synchronized public Object getValue(ElexDictionary elexDictionary) throws IOException {
         if (value == null) {
             byte[] bbs = new byte[length];
             elexDictionary.seek(offset);
@@ -60,7 +60,7 @@ public class Section implements Serializable {
         return value;
     }
 
-    public Object getRawValue(ElexDictionary elexDictionary) throws IOException {
+    synchronized public Object getRawValue(ElexDictionary elexDictionary) throws IOException {
         if (value == null) {
             byte[] bbs = new byte[length];
             elexDictionary.seek(offset);
@@ -70,7 +70,7 @@ public class Section implements Serializable {
         return value;
     }
 
-    public Object getContentsChunk(ElexDictionary elexDictionary, int chunkIndex) throws IOException {
+    synchronized public Object getContentsChunk(ElexDictionary elexDictionary, int chunkIndex) throws IOException {
         int[] chunkOffsets = (int[]) getValue(elexDictionary);
         int from = (chunkIndex == 0 ? 0 : chunkOffsets[chunkIndex - 1]);
         int to = chunkOffsets[chunkIndex];

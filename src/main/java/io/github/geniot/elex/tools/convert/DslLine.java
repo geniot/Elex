@@ -41,8 +41,8 @@ public class DslLine {
         }
     }
 
-    private TreeSet<Tag> cloneSet(SortedSet<Tag> orig) {
-        TreeSet<Tag> res = new TreeSet<>();
+    private List<Tag> cloneSet(SortedSet<Tag> orig) {
+        List<Tag> res = new ArrayList<>();
         for (Tag tag : orig) {
             res.add(tag.copy());
         }

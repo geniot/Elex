@@ -42,18 +42,24 @@ public class DataController {
             Model model = gson.fromJson(payload, Model.class);
             List<Dictionary> dictionaryList = dictionariesPool.getDictionaries(model);
 
+            long t2 = System.currentTimeMillis();
+
             languagesUpdater.updateLanguages(model, dictionaryList);
             dictionariesUpdater.updateDictionaries(model, dictionaryList);
 
+            long t3 = System.currentTimeMillis();
+
             fullTextHitsUpdater.updateFullTextHits(model);
+            long t4 = System.currentTimeMillis();
             headwordsUpdater.updateHeadwords(model);
+            long t5 = System.currentTimeMillis();
             entriesUpdater.updateEntries(model);
+            long t6 = System.currentTimeMillis();
 
             //default action
 //            model.setAction(Action.INDEX);
 
-            long t2 = System.currentTimeMillis();
-            logger.info((t2 - t1) + " ms " + model.getSelectedHeadword());
+            logger.info((t2 - t1) + ":" + (t3 - t2) + ":" + (t4 - t3) + ":" + (t5 - t4) + ":" + (t6 - t5) + " ms " + model.getSelectedHeadword());
 
             return gson.toJson(model);
 

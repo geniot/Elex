@@ -1,0 +1,79 @@
+[m0][b][c darkmagenta]▪ [u]I.[/u][/c][/b] [b][c red]long[/c][/b] [sup]1[/sup] [p]UK[/p] [s]zzz_uk_B_B20_B2062_B2062610.wav[/s] [c teal]\[lɒŋ\][/c] [p]US[/p] [s]zzz_us_A_A20_A2062_A2062610.wav[/s] [c teal]\[lɔŋ\][/c] [c orange]adjective[/c] [c rosybrown]\[[/c][c rosybrown][i]adjective[/i][/c] [c darkslategray]long[/c] [c rosybrown][i]comparative[/i][/c] [c darkslategray]longer[/c] [c rosybrown][i]superlative[/i][/c] [c darkslategray]longest[/c][c rosybrown]\][/c] [p]★★★[/p]
+	[m2][c darkmagenta][b]1.[/b][/c] lasting for a large amount of time
+	[m4][ex][*]It&rsquo;s a long time since I saw Rachel.[/*][/ex]
+	[m4][ex][*]There was a long pause before he spoke.[/*][/ex]
+	[m4][ex][*]Many people face a long wait for surgery.[/*][/ex]
+	[m4][ex][*]I haven&rsquo;t spoken to him for a long while.[/*][/ex]
+	[m4][ex][*]He has a long history of mental illness.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]existing or continuing for a long time[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m3][c darkmagenta][b]1a.[/b][/c] seeming to last for a very long time, especially because you are bored or tired
+	[m4][ex][*]It had been a long week.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]continuing or existing for too long[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m3][c darkmagenta][b]1b.[/b][/c] if you work long hours or a long day, you work more than usual
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]working day[/ref][sub][c rosybrown]hyponym[/c][/sub]
+	[m3][c darkmagenta][b]1c.[/b][/c] if you have a long memory, you remember even small things that happened many years ago
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]words used to describe memory and memories[/ref][sub][c rosybrown]hyponym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]to remember[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m2][c darkmagenta][b]2.[/b][/c] measuring a large amount from one end to the other
+	[m4][ex][*]a woman with long blonde hair[/*][/ex]
+	[m4][ex][*]There was a long queue outside the bank.[/*][/ex]
+	[m4][ex][*]We walked into a long narrow hall.[/*][/ex]
+	[m4][ex][*]It&rsquo;s the longest tunnel in Europe.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]words used to describe length[/ref][sub][c rosybrown]hyponym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]length and width[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m3][c darkmagenta][b]2a.[/b][/c] covering a large distance
+	[m4][ex][*]We went for a long walk.[/*][/ex]
+	[m4][ex][*]It&rsquo;s a long way to Tokyo from here.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]relating to or describing distance[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m2][c darkmagenta][b]3.[/b][/c] used for saying or asking how far it is from one end of something to the other
+	[m4][b]10 metres/​2 centimetres/​7 inches etc long[/b][c darkslategray]:[/c] [ex][*]The room was 3 metres long.[/*][/ex]
+	[m4][b]how long...?[/b][c darkslategray]:[/c] [ex][*]How long do you think the table is?[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]words used to describe length[/ref][sub][c rosybrown]hyponym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]length and width[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m3][c darkmagenta][b]3a.[/b][/c] used for saying or asking about the amount of time that something lasts
+	[m4][b]2 hours/​an hour etc long[/b][c darkslategray]:[/c] [ex][*]The journey was about an hour long.[/*][/ex]
+	[m4][b]how long...?[/b][c darkslategray]:[/c] [ex][*]How long was the film?[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]general words relating to frequency and duration[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m2][c darkmagenta][b]4.[/b][/c] a long book, letter, report etc has a lot of pages
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]large in size[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m3][c darkmagenta][b]4a.[/b][/c] a long list has a lot of things on it
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]words used to describe length[/ref][sub][c rosybrown]hyponym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]length and width[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m2][c darkmagenta][b]5.[/b][/c] long dresses, trousers, sleeves etc cover your arms or legs
+	[m4][ex][*]a shirt with long sleeves[/*][/ex]
+	[m4][ex][*]She came down to dinner in a long skirt.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]words used to describe clothes[/ref][sub][c rosybrown]hyponym[/c][/sub]
+	[m2][c darkmagenta][b]6.[/b][/c] a long drink is one that is served in a tall glass
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]words used to describe drinks[/ref][sub][c rosybrown]hyponym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]general words for drinks[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m2][c darkmagenta][b]7.[/b][/c] [c darkgreen]linguistics[/c] a long vowel is a vowel that is pronounced for a longer time than most other vowels
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]terms in phonetics[/ref][sub][c rosybrown]hyponym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]general grammatical and linguistic terms[/ref][sub][c rosybrown]hyponym[/c][/sub]
+	[m2][c darkmagenta][b]8.[/b][/c] in sport, a long ball is one that is kicked or hit so it travels over a large distance, or kicked or hit beyond a line
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]relating to the ball in sports and games[/ref][sub][c rosybrown]hyponym[/c][/sub]
+	[m4][c darkslategray][u]Phrases:[/u][/c] [ref]as long as your arm[/ref] [c darkslategray]▪[/c] [ref]at long last[/ref] [c darkslategray]▪[/c] [ref]go a long way[/ref] [c darkslategray]▪[/c] [ref]go a long way towards doing something[/ref] [c darkslategray]▪[/c] [ref]have a long way to go[/ref] [c darkslategray]▪[/c] [ref]have come a long way[/ref] [c darkslategray]▪[/c] [ref]how long is a piece of string?[/ref] [c darkslategray]▪[/c] [ref]in the long run[/ref] [c darkslategray]▪[/c] [ref]in the long term[/ref] [c darkslategray]▪[/c] [ref]it's a long story[/ref] [c darkslategray]▪[/c] [ref]long arm of the law[/ref] [c darkslategray]▪[/c] [ref]long in the tooth[/ref] [c darkslategray]▪[/c] [ref]long odds[/ref] [c darkslategray]▪[/c] [ref]long on something[/ref] [c darkslategray]▪[/c] [ref]long shot[/ref] [c darkslategray]▪[/c] [ref]long time no see[/ref] [c darkslategray]▪[/c] [ref]not by a long chalk[/ref] [c darkslategray]▪[/c] [ref]not by a long shot[/ref] [c darkslategray]▪[/c] [ref]not by a long way[/ref] [c darkslategray]▪[/c] [ref]not long for this world[/ref] [c darkslategray]▪[/c] [ref]take a long hard look at someone[/ref] [c darkslategray]▪[/c] take a long hard look at ​something [c darkslategray]▪[/c] [ref]take the long view[/ref] [c darkslategray]▪[/c] [ref]take the long view of something[/ref] [c darkslategray]▪[/c] [ref]to cut a long story short[/ref] [c darkslategray]▪[/c] [ref]to make a long story short[/ref]
+	[m0]&nbsp;	[m0][b][c darkmagenta]▪ [u]II.[/u][/c][/b] [b][c red]long[/c][/b] [sup]2[/sup] [p]UK[/p] [s]zzz_uk_B_B20_B2062_B2062620.wav[/s] [c teal]\[lɒŋ\][/c] [p]US[/p] [s]zzz_us_A_A20_A2062_A2062620.wav[/s] [c teal]\[lɔŋ\][/c] [c orange]adverb[/c] [c rosybrown]\[[/c][c rosybrown][i]comparative[/i][/c] [c darkslategray]longer[/c] [c rosybrown][i]superlative[/i][/c] [c darkslategray]longest[/c][c rosybrown]\][/c] [p]★★★[/p]
+	[m2][c darkmagenta][b]1.[/b][/c] for a long period of time
+	[m4][ex][*]I hope you haven&rsquo;t been waiting long.[/*][/ex]
+	[m4][ex][*]People are living longer nowadays.[/*][/ex]
+	[m4][ex][*]Smoking has long been linked to lung cancer.[/*][/ex]
+	[m4][ex][*]He wanted to stay as long as he could.[/*][/ex]
+	[m4][ex][*]Their relationship didn&rsquo;t last long.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]existing or continuing for a long time[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m2][c darkmagenta][b]2.[/b][/c] much earlier or later than a particular event or period
+	[m4][b]long before[/b][c darkslategray]:[/c] [ex][*]I knew her long before she became famous.[/*][/ex]
+	[m4][b]long after[/b][c darkslategray]:[/c] [ex][*]I was born long after my parents got married.[/*][/ex]
+	[m4][b]long ago[/b][c darkslategray]:[/c] [ex][*]I should have ended the relationship long ago.[/*][/ex]
+	[m4][b]long since[/b][c darkslategray]:[/c] [ex][*]The time for negotiations has long since passed.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]at an unspecified time in the future[/ref][sub][c rosybrown]synonym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]long time ago[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m4][c darkslategray][u]See&nbsp;also:[/u][/c] [ref]so[/ref][sup]1[/sup]
+	[m4][c darkslategray][u]Phrases:[/u][/c] [ref]all day long[/ref] [c darkslategray]▪[/c] [ref]all week long[/ref] [c darkslategray]▪[/c] [ref]all year long[/ref] [c darkslategray]▪[/c] [ref]as long as[/ref] [c darkslategray]▪[/c] [ref]be long[/ref] [c darkslategray]▪[/c] [ref]long live someone[/ref] [c darkslategray]▪[/c] long live ​something [c darkslategray]▪[/c] [ref]no longer[/ref] [c darkslategray]▪[/c] [ref]so long as[/ref] [c darkslategray]▪[/c] [ref]take long[/ref]
+	[m0]&nbsp;	[m0][b][c darkmagenta]▪ [u]III.[/u][/c][/b] [b][c red]long[/c][/b] [sup]3[/sup] [p]UK[/p] [s]zzz_uk_B_B20_B2062_B2062640.wav[/s] [c teal]\[lɒŋ\][/c] [p]US[/p] [s]zzz_us_A_A20_A2062_A2062640.wav[/s] [c teal]\[lɔŋ\][/c] [c orange]noun[/c] [c sienna]\[uncountable\][/c] [c orangered]usually in negatives or questions[/c] [p]★[/p]
+	[m2]a long period of time
+	[m4][ex][*]It didn&rsquo;t take long to get there.[/*][/ex]
+	[m4][ex][*]It wasn&rsquo;t long before I realized I&rsquo;d made a mistake.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]long periods of time[/ref][sub][c rosybrown]synonym[/c][/sub] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]general periods of time[/ref][sub][c rosybrown]hyponym[/c][/sub]
+	[m4][c darkslategray][u]Phrases:[/u][/c] [ref]before long[/ref] [c darkslategray]▪[/c] [ref]for long[/ref] [c darkslategray]▪[/c] [ref]long and the short of it[/ref]
+	[m0]&nbsp;	[m0][b][c darkmagenta]▪ [u]IV.[/u][/c][/b] [b][c red]long[/c][/b] [sup]4[/sup] [p]UK[/p] [s]zzz_uk_B_B20_B2062_B2062630.wav[/s] [c teal]\[lɒŋ\][/c] [p]US[/p] [s]zzz_us_A_A20_A2062_A2062630.wav[/s] [c teal]\[lɔŋ\][/c] [c orange]verb[/c] [c sienna]\[intransitive\][/c] [c rosybrown]\[[/c][c rosybrown][i]present tense[/i][/c] [c rosybrown][i]I/you/we/they[/i][/c] [c darkslategray]long[/c] [c rosybrown][i]he/she/it[/i][/c] [c darkslategray]longs[/c] [c rosybrown][i]present participle[/i][/c] [c darkslategray]longing[/c] [c rosybrown][i]past tense[/i][/c] [c darkslategray]longed[/c] [c rosybrown][i]past participle[/i][/c] [c darkslategray]longed[/c][c rosybrown]\][/c] [p]★[/p]
+	[m2]to want something very much
+	[m4][b]long to do something[/b][c darkslategray]:[/c] [ex][*]She longed to see him again.[/*][/ex]
+	[m4][b]long for[/b][c darkslategray]:[/c] [ex][*]It was freezing outside, and Marcia longed for a hot drink.[/*][/ex]
+	[m4][ex][*]This was the excitement that she had secretly longed for.[/*][/ex]
+	[m4][b]long for someone to do something[/b][c darkslategray]:[/c] [ex][*]I was tired and was longing for her to leave.[/*][/ex]
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]to want something[/ref][sub][c rosybrown]synonym[/c][/sub]
+	[m3][c darkmagenta][b]a.[/b][/c] [c rosybrown]literary[/c] to want to be with someone who you love, especially when this is not likely to happen soon
+	[m4][c darkslategray][u]Thesaurus:[/u][/c] [ref dict=&quot;Macmillan English Thesaurus (En-En)&quot;]to love or like a person[/ref][sub][c rosybrown]synonym[/c][/sub]

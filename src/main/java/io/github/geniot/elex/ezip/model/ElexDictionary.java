@@ -41,7 +41,7 @@ public class ElexDictionary extends RandomAccessFile {
     }
 
 
-    private void init(String fileName) throws IOException {
+    synchronized private void init(String fileName) throws IOException {
         CacheLoader<Integer, Object> loader = new CacheLoader<Integer, Object>() {
             @Override
             public Object load(Integer pos) throws Exception {

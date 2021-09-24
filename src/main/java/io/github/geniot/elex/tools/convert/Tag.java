@@ -12,7 +12,7 @@ import static io.github.geniot.elex.tools.convert.HtmlUtils.htmlName;
 
 
 public class Tag implements Comparable<Tag> {
-    Logger logger = LoggerFactory.getLogger(Tag.class);
+    static Logger logger = LoggerFactory.getLogger(Tag.class);
     public String name;
     public String attr;
     public int mValue = 1;
@@ -23,18 +23,22 @@ public class Tag implements Comparable<Tag> {
 
     public Tag(String token) {
         name = tagName(token);
-        if (name.matches("m[0-9]")) {
+        if (name.startsWith("m") && token.charAt(1) != '/') {
             try {
                 mValue = Integer.parseInt(name.substring(1));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                logger.warn("Couldn't parse m value of tag: " + token);
             }
             name = "m";
         }
-        if (token.contains(" ")) {
-            String[] splits = token.replaceAll("\\[|\\]", "").split(" ");
-            attr = splits[1];
+        int spaceAt = token.indexOf(" ");
+        if (spaceAt > 0) {
+            attr = token.substring(spaceAt + 1, token.length() - 1);
         }
+//        if (token.contains(" ")) {
+//            String[] splits = token.replaceAll("\\[|\\]", "").split(" ");
+//            attr = splits[1];
+//        }
     }
 
     @Override

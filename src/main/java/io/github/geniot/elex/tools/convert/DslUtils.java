@@ -1,5 +1,7 @@
 package io.github.geniot.elex.tools.convert;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class DslUtils {
@@ -14,12 +16,26 @@ public class DslUtils {
         if (!isTag(tag)) {
             throw new RuntimeException("Not a tag: " + tag);
         }
-        tag = tag.replaceAll("\\[|\\]", "");
-        tag = tag.replaceAll("/", "");
-        if (tag.contains(" ")) {
-            tag = tag.split(" ")[0];
+        StringBuilder stringBuilder = new StringBuilder();
+        int from = 1;
+        if (tag.charAt(from) == '/') {
+            from = 2;
         }
-        return tag;
+        for (int i = from; i < tag.length() - 1; i++) {
+            char c = tag.charAt(i);
+            if (c != ' ') {
+                stringBuilder.append(c);
+            } else {
+                return stringBuilder.toString();
+            }
+        }
+        return stringBuilder.toString();
+//        tag = tag.replaceAll("\\[|\\]", "");
+//        tag = tag.replaceAll("/", "");
+//        if (tag.contains(" ")) {
+//            tag = tag.split(" ")[0];
+//        }
+//        return tag;
     }
 
     public static String tagNameShort(String tag) {
@@ -27,7 +43,8 @@ public class DslUtils {
     }
 
     public static boolean isTag(String token) {
-        return token.matches("^" + noEscape + "\\[" + anythingButBracket + "\\]" + noEscape + "$");
+        return token.charAt(0) == '[' && token.charAt(token.length() - 1) == ']';
+//        return token.matches("^" + noEscape + "\\[" + anythingButBracket + "\\]" + noEscape + "$");
     }
 
     public static boolean isOpening(String tag) {
@@ -43,7 +60,33 @@ public class DslUtils {
     }
 
     public static String[] tokenize(String entryStr) {
-        return entryStr.split("((?<=" + anyTag + ")|(?=" + anyTag + "))");
+        List<String> tokens = new ArrayList<>();
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < entryStr.length(); i++) {
+            char c = entryStr.charAt(i);
+            if (
+                    i > 0 &&
+                            (c == '[' || c == ']') &&
+                            entryStr.charAt(i - 1) != '\\' &&
+                            buffer.length() > 0
+            ) {
+                if (c == ']') {
+                    buffer.append(c);
+                }
+                tokens.add(buffer.toString());
+                buffer = new StringBuilder();
+                if (c == '[') {
+                    buffer.append(c);
+                }
+            } else {
+                buffer.append(c);
+            }
+        }
+        if (buffer.length() > 0) {
+            tokens.add(buffer.toString());
+        }
+        return tokens.toArray(new String[tokens.size()]);
+//        return entryStr.split("((?<=" + anyTag + ")|(?=" + anyTag + "))");
     }
 
     public static String glue(String[] tokens) {
