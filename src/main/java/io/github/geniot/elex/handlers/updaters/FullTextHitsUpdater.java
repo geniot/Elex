@@ -32,23 +32,28 @@ public class FullTextHitsUpdater {
     public void updateFullTextHits(Model model) {
         if (!model.getAction().equals(Action.FT_LINK)) {
             try {
+                String search = model.getUserInput();
+                model.setSearchResultsFor(search);
+
                 SortedSet<FullTextHit> hits = new TreeSet<>();
                 Map<String, ElexDictionary> dictionarySet = dictionariesPool.getElexDictionaries(model);
+
                 for (String fileName : dictionarySet.keySet()) {
+
                     ElexDictionary elexDictionary = dictionarySet.get(fileName);
                     Properties properties = elexDictionary.getProperties();
                     String name = properties.getProperty(DslProperty.NAME.name());
+
                     if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
-                        String search = model.getUserInput();
+
                         SortedMap<Float, String[]> results = ftServer.search(fileName, search, 100);
-                        model.setSearchResultsFor(search);
 
                         for (Float score : results.keySet()) {
                             String[] value = results.get(score);
                             String headword = value[0];
                             String extract = value[1];
                             extract = extract.replaceAll("\\{[^}]*\\}","");
-//                        StringUtils.isNotEmpty(value[1]) &&
+
                             if (!model.getSearchResultsFor().equals(headword)) {
                                 FullTextHit hit = getByHeadwordOrCreate(hits, headword);
                                 hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()& 0xfffffff));

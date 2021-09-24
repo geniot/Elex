@@ -56,9 +56,15 @@ public class HeadwordSelector {
                     model.setExactMatch(false);
                 }
             }
-            selectedHeadword = bestMatch;
+            if (bestMatch.substring(0, 1).equalsIgnoreCase(userInput.substring(0, 1))) {
+                selectedHeadword = bestMatch;
+            } else {
+                if (model.getSearchResults().length > 0) {
+                    selectedHeadword = model.getSearchResults()[0].getHeadword().getName();
+                }
+            }
         } else if (model.getAction().equals(Action.FT_LINK) ||
-                model.getAction().equals(Action.CONTENT_LINK) ) {
+                model.getAction().equals(Action.CONTENT_LINK)) {
             String exact = exact(forwardIteratorsWrapper, backwardIteratorsWrapper, model.getFtLink());
             if (exact != null) {
                 selectedHeadword = exact;

@@ -45,8 +45,8 @@ public class DataController {
             languagesUpdater.updateLanguages(model, dictionaryList);
             dictionariesUpdater.updateDictionaries(model, dictionaryList);
 
-            headwordsUpdater.updateHeadwords(model);
             fullTextHitsUpdater.updateFullTextHits(model);
+            headwordsUpdater.updateHeadwords(model);
             entriesUpdater.updateEntries(model);
 
             //default action
