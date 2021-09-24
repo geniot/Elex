@@ -2,7 +2,10 @@ package io.github.geniot.elex.controllers;
 
 import com.google.gson.Gson;
 import io.github.geniot.elex.DictionariesPool;
-import io.github.geniot.elex.handlers.updaters.*;
+import io.github.geniot.elex.handlers.updaters.DictionariesUpdater;
+import io.github.geniot.elex.handlers.updaters.EntriesUpdater;
+import io.github.geniot.elex.handlers.updaters.HeadwordsUpdater;
+import io.github.geniot.elex.handlers.updaters.LanguagesUpdater;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.exception.ExceptionUtils;
