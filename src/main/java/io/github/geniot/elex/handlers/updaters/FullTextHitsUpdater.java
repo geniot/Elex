@@ -3,10 +3,7 @@ package io.github.geniot.elex.handlers.updaters;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
-import io.github.geniot.elex.model.Action;
-import io.github.geniot.elex.model.FullTextHit;
-import io.github.geniot.elex.model.Headword;
-import io.github.geniot.elex.model.Model;
+import io.github.geniot.elex.model.*;
 import io.github.geniot.elex.tools.convert.DslProperty;
 import io.github.geniot.elex.tools.convert.HtmlUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -29,11 +26,11 @@ public class FullTextHitsUpdater {
     String preTag = "<B>";
     String postTag = "</B>";
 
-    public void updateFullTextHits(Model model) {
+    public void updateFullTextHits(Model model, FtModel ftModel) {
         if (!model.getAction().equals(Action.FT_LINK)) {
             try {
                 String search = model.getUserInput();
-                model.setSearchResultsFor(search);
+                ftModel.setSearchResultsFor(search);
 
                 SortedSet<FullTextHit> hits = new TreeSet<>();
                 Map<String, ElexDictionary> dictionarySet = dictionariesPool.getElexDictionaries(model);
@@ -54,14 +51,14 @@ public class FullTextHitsUpdater {
                             String extract = value[1];
                             extract = extract.replaceAll("\\{[^}]*\\}","");
 
-                            if (!model.getSearchResultsFor().equals(headword)) {
+                            if (!ftModel.getSearchResultsFor().equals(headword)) {
                                 FullTextHit hit = getByHeadwordOrCreate(hits, headword);
                                 hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()& 0xfffffff));
 
                                 hit.setScores(ArrayUtils.add(hit.getScores(), score));
 
                                 Headword hwd = new Headword(headword);
-                                String nameHighlighted = HtmlUtils.highlight(model.getSearchResultsFor(), headword, preTag, postTag);
+                                String nameHighlighted = HtmlUtils.highlight(ftModel.getSearchResultsFor(), headword, preTag, postTag);
                                 hwd.setNameHighlighted(nameHighlighted);
                                 hit.setHeadword(hwd);
                                 if (extract.startsWith(nameHighlighted)) {
@@ -79,7 +76,7 @@ public class FullTextHitsUpdater {
                     }
                 }
 
-                model.setSearchResults(hits.toArray(new FullTextHit[hits.size()]));
+                ftModel.setSearchResults(hits.toArray(new FullTextHit[hits.size()]));
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }

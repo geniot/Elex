@@ -7,6 +7,7 @@ import io.github.geniot.elex.handlers.updaters.FullTextHitsUpdater;
 import io.github.geniot.elex.handlers.updaters.HeadwordsUpdater;
 import io.github.geniot.elex.handlers.updaters.LanguagesUpdater;
 import io.github.geniot.elex.model.Dictionary;
+import io.github.geniot.elex.model.FtModel;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -42,10 +43,11 @@ public class FtController {
             languagesUpdater.updateLanguages(model, dictionaryList);
             dictionariesUpdater.updateDictionaries(model, dictionaryList);
             headwordsUpdater.updateHeadwords(model);
-            fullTextHitsUpdater.updateFullTextHits(model);
-            String res = gson.toJson(model);
+            FtModel ftModel = new FtModel();
+            fullTextHitsUpdater.updateFullTextHits(model, ftModel);
+            String res = gson.toJson(ftModel);
             long t2 = System.currentTimeMillis();
-            logger.info((t2 - t1) + " ms " + model.getSearchResultsFor());
+            logger.info((t2 - t1) + " ms " + ftModel.getSearchResultsFor());
             return res;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

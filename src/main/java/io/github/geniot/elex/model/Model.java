@@ -14,7 +14,6 @@ public class Model {
     private Dictionary[] dictionaries = new Dictionary[]{};
     private Headword[] headwords = new Headword[]{};
     private Entry[] entries = new Entry[]{};
-    private FullTextHit[] searchResults = new FullTextHit[]{};
 
     private Map<String, String> selectedHeadwords = new HashMap<>();
     private Map<String, String> userInputs = new HashMap<>();
