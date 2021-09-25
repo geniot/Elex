@@ -57,9 +57,9 @@ public class HeadwordSelector {
                 } else {
                     model.setExactMatch(false);
                 }
-            }
-            if (bestMatch.substring(0, 1).equalsIgnoreCase(userInput.substring(0, 1))) {
-                selectedHeadword = bestMatch;
+                if (bestMatch.substring(0, 1).equalsIgnoreCase(userInput.substring(0, 1))) {
+                    selectedHeadword = bestMatch;
+                }
             }
         } else if (model.getAction().equals(Action.FT_LINK) ||
                 model.getAction().equals(Action.CONTENT_LINK)) {

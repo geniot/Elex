@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 @Component
 public class Searcher {
     Logger logger = LoggerFactory.getLogger(Searcher.class);
@@ -53,7 +54,7 @@ public class Searcher {
             return resultsMap;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return null;
+            return new TreeMap<>();
         }
     }
 }
