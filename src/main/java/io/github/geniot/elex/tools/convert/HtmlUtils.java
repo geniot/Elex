@@ -50,7 +50,7 @@ public class HtmlUtils {
             Query q = new QueryParser("content", analyzer).parse(QueryParser.escape(searchWord));
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter(preTag, postTag);
             Highlighter highlighter = new Highlighter(formatter, new QueryScorer(q));
-            highlighter.setTextFragmenter(new SimpleFragmenter());
+            highlighter.setTextFragmenter(new SimpleFragmenter(text.length()));
             String fragment = highlighter.getBestFragment(analyzer, "", text);
             return fragment == null ? text : fragment;
         } catch (Exception e) {

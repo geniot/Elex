@@ -43,8 +43,11 @@ public class Dsl2Ezp {
 //            "D:\\torrents\\elex\\LingvoUniversalRuEn\\",
 //            "LingvoUniversalRuEn",
 
-            "D:\\torrents\\elex\\vandenbaar\\",
-            "vandenbaar_x3",
+//            "D:\\torrents\\elex\\vandenbaar\\",
+//            "vandenbaar_x3",
+
+            "D:\\torrents\\elex\\combinatie\\",
+            "combi",
     };
 
     static String outputBase = "C:\\development\\elex\\data\\";
@@ -58,7 +61,7 @@ public class Dsl2Ezp {
 
                 String pathToDsl = base + name + ".dsl";
                 String pathToAnn = base + name + ".ann";
-                String pathToIcon = base + name + ".bmp";
+                String pathToIcon = base + name + ".png";
                 String pathToAbbr = base + name + "_abrv.dsl";
                 String output = outputBase + name + ".ezp";
 
