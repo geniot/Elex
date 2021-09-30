@@ -1,6 +1,6 @@
 package io.github.geniot.elex.handlers.index;
 
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 
 import java.util.HashSet;
@@ -10,7 +10,7 @@ public class IteratorsWrapper implements IPeekIterator {
     private Set<IndexIterator> iterators = new HashSet<>();
     Direction direction;
     String searchValue;
-    CaseInsensitiveComparator collator = new CaseInsensitiveComparator();
+    CaseInsensitiveComparatorV4 collator = new CaseInsensitiveComparatorV4();
 
     public IteratorsWrapper(Set<ElexDictionary> set, String sv, Direction d) throws Exception {
         for (ElexDictionary cd : set) {

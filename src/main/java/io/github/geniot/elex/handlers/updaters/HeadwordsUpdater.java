@@ -1,6 +1,6 @@
 package io.github.geniot.elex.handlers.updaters;
 
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.handlers.index.Direction;
@@ -17,7 +17,7 @@ import java.util.*;
 public class HeadwordsUpdater {
 
     @Autowired
-    CaseInsensitiveComparator caseInsensitiveComparator;
+    CaseInsensitiveComparatorV4 caseInsensitiveComparator;
 
     @Autowired
     DictionariesPool dictionariesPool;

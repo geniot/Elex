@@ -1,6 +1,7 @@
 package io.github.geniot.elex.tools;
 
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
+import io.github.geniot.elex.tools.compile.ByteArrayProvider;
 import io.github.geniot.elex.tools.compile.ResourcesPackager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -19,16 +20,16 @@ public class Res2Ezr {
             String inputFolder = "D:\\torrents\\elex\\LingvoUniversalRuEn\\SoundRu.converted\\";
             String outputPath = "C:\\development\\elex\\data\\LingvoUniversalRuEn.ezr";
 
-            SortedMap<String, File> resourcesMap = new TreeMap<>(new CaseInsensitiveComparator());
+            SortedMap<String, ByteArrayProvider> resourcesMap = new TreeMap<>(new CaseInsensitiveComparatorV4());
             File[] files = new File(inputFolder).listFiles();
             for (File file : files) {
                 if (file.isDirectory()) {
                     File[] ffs = file.listFiles();
                     for (File f : ffs) {
-                        resourcesMap.put(f.getName(), f);
+                        resourcesMap.put(f.getName(), new ByteArrayProvider(f));
                     }
-                }else{
-                    resourcesMap.put(file.getName(), file);
+                } else {
+                    resourcesMap.put(file.getName(), new ByteArrayProvider(file));
                 }
             }
 

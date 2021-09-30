@@ -30,7 +30,7 @@ public class DictionariesPool {
     private Map<String, ElexDictionary> resources = Collections.synchronizedMap(new HashMap<>());
 
     @Autowired
-    CaseInsensitiveComparator caseInsensitiveComparator;
+    CaseInsensitiveComparatorV4 caseInsensitiveComparator;
     @Autowired
     private FtServer ftServer;
     @Autowired

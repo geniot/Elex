@@ -2,6 +2,7 @@
 target
 *.iml
 data
+data2
 src/main/resources/web
 logs
 lame

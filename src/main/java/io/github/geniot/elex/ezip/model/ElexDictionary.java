@@ -3,7 +3,7 @@ package io.github.geniot.elex.ezip.model;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import io.github.geniot.elex.ezip.ElexUtils;
 import lombok.Getter;
 
@@ -19,7 +19,7 @@ import java.util.TreeMap;
 public class ElexDictionary extends RandomAccessFile {
     private Header header;
     private String[] starters;
-    private CaseInsensitiveComparator caseInsensitiveComparator = new CaseInsensitiveComparator();
+    private CaseInsensitiveComparatorV4 caseInsensitiveComparator = new CaseInsensitiveComparatorV4();
     private LoadingCache<Integer, Object> chunksCache;
     private File file;
 

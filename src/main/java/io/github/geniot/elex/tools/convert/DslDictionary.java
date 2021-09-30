@@ -1,6 +1,6 @@
 package io.github.geniot.elex.tools.convert;
 
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +25,14 @@ public class DslDictionary implements Serializable {
     private byte[] icon;
 
     private List<String> headersList;
+
+    public DslDictionary(Properties p, Properties a, SortedMap<String, String> e, String an, byte[] ic) {
+        this.properties = p;
+        this.abbreviations = a;
+        this.entries = e;
+        this.annotation = an;
+        this.icon = ic;
+    }
 
     /**
      * Constructor for abbreviations file
@@ -116,7 +124,7 @@ public class DslDictionary implements Serializable {
 
     private void read(List<String> lines, boolean isAbbreviations) {
         Iterator<String> iterator = lines.iterator();
-        entries = new TreeMap<>(new CaseInsensitiveComparator());
+        entries = new TreeMap<>(new CaseInsensitiveComparatorV4());
         String line = null;
         headersList = new ArrayList<>();
         //collecting header

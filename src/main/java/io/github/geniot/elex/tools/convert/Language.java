@@ -4,7 +4,8 @@ public enum Language {
     EN("English"),
     RU("Russian"),
     DE("German"),
-    NL("Dutch");
+    NL("Dutch"),
+    ES("SpanishTraditionalSort");
 
     public final String label;
 

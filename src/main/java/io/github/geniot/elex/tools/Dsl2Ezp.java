@@ -46,15 +46,15 @@ public class Dsl2Ezp {
 //            "D:\\torrents\\elex\\vandenbaar\\",
 //            "vandenbaar_x3",
 
-            "D:\\torrents\\elex\\combinatie\\",
-            "combi",
+            "C:\\development\\converters\\data\\drae\\",
+            "es_es-DRAE",
     };
 
     static String outputBase = "C:\\development\\elex\\data\\";
 
     public static void main(String[] args) {
         try {
-            Charset charset = StandardCharsets.UTF_8;
+            Charset charset = StandardCharsets.UTF_16;
             for (int i = 0; i < PATHS.length; i += 2) {
                 String base = PATHS[i];
                 String name = PATHS[i + 1];

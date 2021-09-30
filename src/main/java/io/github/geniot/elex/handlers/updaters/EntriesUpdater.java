@@ -5,7 +5,6 @@ import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.tools.convert.HtmlUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +32,13 @@ public class EntriesUpdater {
                 article = article.replaceAll("\\{\\{/[^}]+\\}\\}", "");
                 article = article.replaceAll("\\n\\t\\\\\\s+\\n", "\n");
 
-                article = StringEscapeUtils.escapeHtml4(article);
                 boolean shouldHighlight = model.getAction().equals(Action.FT_LINK);
                 String searchWord = model.getSearchResultsFor();
                 String headword = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, entry.getHeadword(), dictionariesPool.getProperties(entry.getDicId()));
                 entry.setHeadword(headword);
                 article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article, dictionariesPool.getProperties(entry.getDicId()));
+
+//                article = StringEscapeUtils.escapeHtml4(article);
                 entry.setBody(article);
             }
         }

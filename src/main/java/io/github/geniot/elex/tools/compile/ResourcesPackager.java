@@ -1,17 +1,15 @@
 package io.github.geniot.elex.tools.compile;
 
 
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import io.github.geniot.elex.ezip.ElexUtils;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ezip.model.Header;
 import io.github.geniot.elex.ezip.model.Section;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -22,12 +20,12 @@ import java.util.TreeMap;
 public class ResourcesPackager {
     Logger logger = LoggerFactory.getLogger(ResourcesPackager.class);
 
-    public void pack(SortedMap<String, File> files, OutputStream out) {
+    public void pack(SortedMap<String, ByteArrayProvider> files, OutputStream out) {
         try {
             List<Integer> chunkOffsetsList = new ArrayList<>();
             List<String> chunkStartersList = new ArrayList<>();
 
-            TreeMap<String, byte[]> currentChunk = new TreeMap<>(new CaseInsensitiveComparator());
+            TreeMap<String, byte[]> currentChunk = new TreeMap<>(new CaseInsensitiveComparatorV4());
 
             int writeOffset = 0;
             int currentChunkLength = 0;
@@ -40,7 +38,7 @@ public class ResourcesPackager {
                     System.out.println(counter);
                 }
 
-                byte[] value = FileUtils.readFileToByteArray(files.get(key));
+                byte[] value = files.get(key).getBytes();
                 currentChunk.put(key, value);
                 currentChunkLength += key.length();
                 currentChunkLength += value.length;

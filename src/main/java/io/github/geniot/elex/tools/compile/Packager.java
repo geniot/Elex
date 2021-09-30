@@ -1,7 +1,7 @@
 package io.github.geniot.elex.tools.compile;
 
 
-import io.github.geniot.elex.CaseInsensitiveComparator;
+import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import io.github.geniot.elex.ezip.ElexUtils;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ezip.model.Header;
@@ -27,7 +27,7 @@ public class Packager {
             List<Integer> chunkOffsetsList = new ArrayList<>();
             List<String> chunkStartersList = new ArrayList<>();
 
-            TreeMap<String, String> currentChunk = new TreeMap<>(new CaseInsensitiveComparator());
+            TreeMap<String, String> currentChunk = new TreeMap<>(new CaseInsensitiveComparatorV4());
 
             int chunkOffset = 0;
             int currentChunkLength = 0;
