@@ -35,8 +35,6 @@ public class FtServer extends FileAlterationListenerAdaptor {
     private String ftFolderPath;
 
     @Autowired
-    private Indexer indexer;
-    @Autowired
     private Searcher searcher;
 
     @PostConstruct
