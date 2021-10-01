@@ -47,7 +47,7 @@ public class HeadwordSelector {
         } else if (model.getAction().equals(Action.PREVIOUS_TEN_PAGES)) {
             selectedHeadword = scroll(backwardIteratorsWrapper, selectedHeadword, model.getVisibleSize() * 10);
         } else if (model.getAction().equals(Action.SEARCH)) {
-            String userInput = model.getUserInput();
+            String userInput = model.getUserInput().trim();
             String bestMatch = bestMatch(forwardIteratorsWrapper, backwardIteratorsWrapper, userInput);
             if (StringUtils.isEmpty(bestMatch)) {
                 model.setExactMatch(false);
