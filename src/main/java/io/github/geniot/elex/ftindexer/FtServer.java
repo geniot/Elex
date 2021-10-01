@@ -1,6 +1,5 @@
 package io.github.geniot.elex.ftindexer;
 
-import io.github.geniot.elex.ezip.model.ElexDictionary;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
@@ -17,7 +16,10 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Component
 @Getter
@@ -80,91 +82,5 @@ public class FtServer extends FileAlterationListenerAdaptor {
             }
         }
         return directory;
-    }
-
-    public void stop() {
-        for (String key : directoriesCache.keySet()) {
-            Directory value = directoriesCache.get(key);
-            try {
-                value.close();
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    private Set<String> toNames(File[] files) {
-        Set<String> set = new HashSet<>();
-        for (File f : files) {
-            set.add(FilenameUtils.removeExtension(f.getName()));
-        }
-        return set;
-    }
-
-    synchronized public void update() {
-        try {
-            long t1 = System.currentTimeMillis();
-
-            File dataFolder = new File(pathToData);
-            if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-                logger.warn("Couldn't create " + dataFolder);
-            }
-            File ftIndexFolder = new File(ftFolderPath);
-            if (!ftIndexFolder.exists() && !ftIndexFolder.mkdirs()) {
-                logger.warn("Couldn't create " + ftIndexFolder);
-            }
-
-            File[] dicFiles = dataFolder.listFiles();
-            File[] indexFiles = ftIndexFolder.listFiles();
-
-            Set<String> dicFilesSet = toNames(dicFiles);
-            Set<String> indexFilesSet = toNames(indexFiles);
-
-            //removing orphan indexes that do not have corresponding dictionary file
-            for (File indexFile : indexFiles) {
-                if (!dicFilesSet.contains(FilenameUtils.removeExtension(indexFile.getName()))) {
-                    indexFile.delete();
-                }
-            }
-
-            //installing
-            for (File dicFile : dicFiles) {
-                if (dicFile.isDirectory()) {
-                    //skip
-                } else if (dicFile.isFile() &&
-                        dicFile.getName().endsWith(".ezp") &&
-                        !indexFilesSet.contains(FilenameUtils.removeExtension(dicFile.getName()))) {
-
-                    reindex(dicFile);
-                }
-            }
-
-            long t2 = System.currentTimeMillis();
-
-            logger.info("Updated ft index in: " + (t2 - t1) + " ms");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
-    public void reindex(File dicFile) throws IOException {
-        ElexDictionary elexDictionary = null;
-        try {
-            logger.info("Indexing " + dicFile.getAbsolutePath());
-            elexDictionary = new ElexDictionary(dicFile.getAbsolutePath(), "r");
-
-            String path = ftFolderPath + File.separator + FilenameUtils.removeExtension(dicFile.getName());
-            new File(path).mkdirs();
-
-            Directory directory = FSDirectory.open(Paths.get(path));
-            indexer.index(dicFile.getName(), directory, elexDictionary);
-
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        } finally {
-            if (elexDictionary != null) {
-                elexDictionary.close();
-            }
-        }
     }
 }
