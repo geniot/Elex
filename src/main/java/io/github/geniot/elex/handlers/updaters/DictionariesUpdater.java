@@ -5,11 +5,11 @@ import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.SortedSet;
 
 @Component
 public class DictionariesUpdater {
-    public void updateDictionaries(Model model, List<Dictionary> dictionaryList) throws Exception {
+    public void updateDictionaries(Model model, SortedSet<Dictionary> dictionaryList) throws Exception {
         for (Dictionary dictionary : dictionaryList) {
             if (model.getAction().equals(Action.INIT)) {
                 dictionary.setSelected(true);

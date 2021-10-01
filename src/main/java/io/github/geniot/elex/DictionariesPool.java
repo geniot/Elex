@@ -59,14 +59,15 @@ public class DictionariesPool {
         return result;
     }
 
-    public List<Dictionary> getDictionaries(Model model) throws IOException {
-        List<Dictionary> result = new ArrayList<>();
+    public SortedSet<Dictionary> getDictionaries(Model model) throws IOException {
+        SortedSet<Dictionary> result = new TreeSet<>();
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             Dictionary dictionary = new Dictionary();
-            dictionary.setId(fileName.hashCode()& 0xfffffff);
+            dictionary.setId(fileName.hashCode() & 0xfffffff);
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
             dictionary.setName(name);
+            dictionary.setFileName(fileName);
             dictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
             dictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
             dictionary.setSelected(model.isDictionarySelected(name));
@@ -74,6 +75,20 @@ public class DictionariesPool {
             result.add(dictionary);
         }
         return result;
+    }
+
+    public SortedMap<String, String> getAbouts(String fileName) {
+        SortedMap<String, String> abouts = new TreeMap<>();
+        ElexDictionary elexDictionary = dictionaries.get(fileName);
+        if (elexDictionary != null) {
+            try {
+                String annotation = elexDictionary.getAnnotation();
+                abouts.put("English", annotation);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return abouts;
     }
 
     public SortedSet<AdminDictionary> getAdminDictionaries(AdminModel model) throws IOException {
@@ -85,7 +100,7 @@ public class DictionariesPool {
 
             AdminDictionary adminDictionary = new AdminDictionary();
             adminDictionary.setStatus(DictionaryStatus.ENABLED);
-            adminDictionary.setId(fileName.hashCode()& 0xfffffff);
+            adminDictionary.setId(fileName.hashCode() & 0xfffffff);
             adminDictionary.setFileName(fileName);
             adminDictionary.setDataPath(webConfig.getPathToDataAbsolute());
             adminDictionary.setFileSize(NumberFormat.getInstance().format(elexDictionary.length()));
@@ -122,7 +137,7 @@ public class DictionariesPool {
             File ezpFile = new File(webConfig.getPathToDataAbsolute() + ezpFileName);
             if (ezpFile.exists()) {
                 AdminDictionary adminDictionary = new AdminDictionary();
-                adminDictionary.setId(fileName.hashCode()& 0xfffffff);
+                adminDictionary.setId(fileName.hashCode() & 0xfffffff);
                 adminDictionary.setFileName(ezpFileName);
                 adminDictionary.setStatus(DictionaryStatus.DISABLED);
                 adminDictionary.setName(name);
@@ -180,7 +195,7 @@ public class DictionariesPool {
 //                    header = header.replaceAll("\n", "<br/>\n");
 
                     Entry entry = new Entry();
-                    entry.setDicId(String.valueOf(fileName.hashCode()& 0xfffffff));
+                    entry.setDicId(String.valueOf(fileName.hashCode() & 0xfffffff));
                     entry.setDicName(name);
                     entry.setHeadword(header);
                     entry.setBody(content);
@@ -192,10 +207,9 @@ public class DictionariesPool {
     }
 
 
-
     public byte[] getIcon(int id) throws IOException {
         for (String fileName : dictionaries.keySet()) {
-            if ((fileName.hashCode()& 0xfffffff) == id) {
+            if ((fileName.hashCode() & 0xfffffff) == id) {
                 return dictionaries.get(fileName).getIcon();
             }
         }
@@ -204,7 +218,7 @@ public class DictionariesPool {
 
     public byte[] getResource(int id, String link) throws Exception {
         for (String fileName : dictionaries.keySet()) {
-            if ((fileName.hashCode()& 0xfffffff) == id) {
+            if ((fileName.hashCode() & 0xfffffff) == id) {
                 String resourceFileName = FilenameUtils.removeExtension(fileName) + ".ezr";
                 if (resources.containsKey(resourceFileName)) {
                     return resources.get(resourceFileName).readResource(link);
@@ -240,7 +254,7 @@ public class DictionariesPool {
     public String getDownloadFilePath(int id, String type) {
         String path = null;
         for (String fn : dictionaries.keySet()) {
-            if ((fn.hashCode()& 0xfffffff) == id) {
+            if ((fn.hashCode() & 0xfffffff) == id) {
                 path = FilenameUtils.removeExtension(fn) + "." + type;
             }
         }
@@ -315,7 +329,7 @@ public class DictionariesPool {
     public Properties getProperties(String dicId) {
         try {
             for (String fileName : dictionaries.keySet()) {
-                if (String.valueOf(fileName.hashCode()& 0xfffffff).equals(dicId)) {
+                if (String.valueOf(fileName.hashCode() & 0xfffffff).equals(dicId)) {
                     ElexDictionary elexDictionary = dictionaries.get(fileName);
                     return elexDictionary.getAbbreviations();
                 }

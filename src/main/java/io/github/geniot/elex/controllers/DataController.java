@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.SortedSet;
 
 @RestController
 public class DataController {
@@ -41,7 +41,7 @@ public class DataController {
             long t1 = System.currentTimeMillis();
 
             Model model = gson.fromJson(payload, Model.class);
-            List<Dictionary> dictionaryList = dictionariesPool.getDictionaries(model);
+            SortedSet<Dictionary> dictionaryList = dictionariesPool.getDictionaries(model);
 
             long t2 = System.currentTimeMillis();
 

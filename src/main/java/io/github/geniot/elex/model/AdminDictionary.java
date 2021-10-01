@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AdminDictionary extends Dictionary implements Comparable<AdminDictionary> {
-    private String fileName;
+public class AdminDictionary extends Dictionary{
     private String dataPath;
     private String fileSize;
     private String resourcesFileName;
@@ -20,8 +19,4 @@ public class AdminDictionary extends Dictionary implements Comparable<AdminDicti
         this.setSelected(false);
     }
 
-    @Override
-    public int compareTo(AdminDictionary o) {
-        return this.getName().compareTo(o.getName());
-    }
 }

@@ -6,14 +6,14 @@ import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 
 @Component
 public class LanguagesUpdater {
 
-    public void updateLanguages(Model model, List<Dictionary> dictionaryList) {
+    public void updateLanguages(Model model, SortedSet<Dictionary> dictionaryList) {
         SortedMap<String, Language> resultLanguagesMap = new TreeMap<>();
         Language selectedSourceLanguage = null;
         for (Dictionary dictionary : dictionaryList) {
