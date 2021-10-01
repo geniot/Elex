@@ -1,5 +1,6 @@
 package io.github.geniot.elex;
 
+import io.github.geniot.elex.ezip.ElexUtils;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.Dictionary;
@@ -8,6 +9,7 @@ import io.github.geniot.elex.tools.convert.DslProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,12 +85,36 @@ public class DictionariesPool {
         if (elexDictionary != null) {
             try {
                 String annotation = elexDictionary.getAnnotation();
-                abouts.put("English", annotation);
+                if (annotation.startsWith("#LANGUAGE")) {
+                    String[] splits = annotation.split("#LANGUAGE");
+                    for (String split : splits) {
+                        if (!StringUtils.isEmpty(split)) {
+                            int firstLineBreak = split.indexOf('\n');
+                            String language = split.substring(0, firstLineBreak).replaceAll("\"", "").trim();
+                            if (ElexUtils.SORT2NAME.containsKey(language)) {
+                                language = ElexUtils.SORT2NAME.get(language);
+                            }
+                            split = split.substring(firstLineBreak);
+                            split = brushUpAnnotation(split);
+                            abouts.put(language, split);
+                        }
+                    }
+                } else {
+                    abouts.put("English", brushUpAnnotation(annotation));
+                }
+
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             }
         }
         return abouts;
+    }
+
+    private String brushUpAnnotation(String split) {
+        split = split.replaceAll("\n+", "\n");
+        split = split.replaceAll("^\n", "");
+        split = split.replaceAll("\n$", "");
+        return split;
     }
 
     public SortedSet<AdminDictionary> getAdminDictionaries(AdminModel model) throws IOException {

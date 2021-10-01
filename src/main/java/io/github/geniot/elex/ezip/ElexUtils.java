@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -14,6 +16,20 @@ public class ElexUtils {
 
     public static byte[] int2bytes(int i) {
         return ByteBuffer.allocate(Integer.BYTES).putInt(i).array();
+    }
+
+    public final static Map<String,String> SORT2NAME = getSortToNameMap();
+
+    public static Map<String,String> getSortToNameMap(){
+        Map<String,String>sortToNameMap = new HashMap<>();
+        sortToNameMap.put("ChinesePRC","Chinese Traditional");
+        sortToNameMap.put("GermanNewSpelling","German");
+        sortToNameMap.put("NorwegianBokmal","Norwegian (Bokmal)");
+        sortToNameMap.put("NorwegianNynorsk","Norwegian (Nynorsk)");
+        sortToNameMap.put("SerbianCyrillic","Serbian (Cyrillic)");
+        sortToNameMap.put("SpanishModernSort","Spanish");
+        sortToNameMap.put("SpanishTraditionalSort","Spanish");
+        return sortToNameMap;
     }
 
     public static int bytes2int(byte[] rno) {
