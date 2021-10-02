@@ -44,10 +44,18 @@ public class FtServer extends FileAlterationListenerAdaptor {
 
     private Map<String, Directory> directoriesCache = new HashMap<>();
 
-    public SortedMap<Float, String[]> search(String fileName, String query, int hitsPerPage) throws IOException {
+    public SortedMap<Float, String[]> search(String fileName,
+                                             String query,
+                                             int hitsPerPage,
+                                             String indexLanguage,
+                                             String contentsLanguage) throws IOException {
+
         Directory directory = getIndexByDictionaryFileName(FilenameUtils.removeExtension(fileName));
         if (directory != null) {
-            SortedMap<Float, String[]> result = searcher.search(directory, query, hitsPerPage);
+            SortedMap<Float, String[]> result = searcher.search(directory, query, hitsPerPage, indexLanguage);
+            if (!contentsLanguage.equals(indexLanguage)) {
+                result.putAll(searcher.search(directory, query, hitsPerPage, contentsLanguage));
+            }
             return result;
         } else {
             return new TreeMap<>();

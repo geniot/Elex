@@ -1,13 +1,16 @@
 package io.github.geniot.elex.tasks;
 
 import io.github.geniot.elex.ezip.model.ElexDictionary;
+import io.github.geniot.elex.ftindexer.LocaleAwareAnalyzer;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Task;
 import io.github.geniot.elex.model.TaskStatus;
+import io.github.geniot.elex.tools.convert.DslProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -25,6 +28,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import static io.github.geniot.elex.ftindexer.Utils.stripTags;
 
@@ -37,8 +43,11 @@ public class FtIndexTask implements Runnable {
 
     private ElexDictionary elexDictionary;
     private Task task;
+
     @Autowired
     private AsynchronousService asynchronousService;
+    @Autowired
+    LocaleAwareAnalyzer localeAwareAnalyzer;
 
     @Override
     public void run() {
@@ -78,38 +87,43 @@ public class FtIndexTask implements Runnable {
 
     private void index(Directory directory, ElexDictionary elexDictionary) throws Exception {
         try {
-            //todo: select based on index/contents language headers
-            EnglishAnalyzer analyzer = new EnglishAnalyzer();
+            Properties properties = elexDictionary.getProperties();
 
-            IndexWriterConfig config = new IndexWriterConfig(analyzer);
-            IndexWriter w = new IndexWriter(directory, config);
-            w.deleteAll();
+            String indexLanguage = properties.getProperty(DslProperty.INDEX_LANGUAGE.name()).toLowerCase();
+            String contentsLanguage = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name()).toLowerCase();
+
+            Analyzer indexLanguageAnalyzer = localeAwareAnalyzer.getWrappedAnalyzer(indexLanguage);
+            Analyzer contentsLanguageAnalyzer = localeAwareAnalyzer.getWrappedAnalyzer(contentsLanguage);
+
+            Map<String, Analyzer> analyzerPerField = new HashMap<>();
+            analyzerPerField.put("headword" + indexLanguage, indexLanguageAnalyzer);
+            analyzerPerField.put("article_" + indexLanguage, indexLanguageAnalyzer);
+            analyzerPerField.put("article_" + contentsLanguage, contentsLanguageAnalyzer);
+
+            PerFieldAnalyzerWrapper perFieldAnalyzerWrapper = new PerFieldAnalyzerWrapper(contentsLanguageAnalyzer, analyzerPerField);
+
+            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(perFieldAnalyzerWrapper);
+            IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);
+            indexWriter.deleteAll();
 
             int size = elexDictionary.getSize();
             int counter = 0;
 
             String key = elexDictionary.first();
-            String article = elexDictionary.readArticle(key);
-            addDoc(w, key, stripTags(article));
-            ++counter;
-            int percent = counter * 100 / size;
+            int percent = 0;
 
             while (key != null) {
-                key = elexDictionary.next(key);
-                if (key != null) {
-                    article = elexDictionary.readArticle(key);
-                    addDoc(w, key, stripTags(article));
-                    ++counter;
-                    int newPercent = counter * 100 / size;
-                    if (newPercent != percent) {
-                        percent = newPercent;
-                        task.setProgress(percent);
-                    }
+                String article = elexDictionary.readArticle(key);
+                addDoc(indexWriter, key, stripTags(article), indexLanguage, contentsLanguage);
+                ++counter;
+                int newPercent = counter * 100 / size;
+                if (newPercent != percent) {
+                    percent = newPercent;
+                    task.setProgress(percent);
                 }
-
+                key = elexDictionary.next(key);
             }
-
-            w.close();
+            indexWriter.close();
         } catch (IOException e) {
             task.setStatus(TaskStatus.FAILURE);
             task.setFinishedWhen(System.currentTimeMillis());
@@ -118,10 +132,13 @@ public class FtIndexTask implements Runnable {
     }
 
 
-    private void addDoc(IndexWriter w, String headword, String article) throws IOException {
+    private void addDoc(IndexWriter indexWriter, String headword, String article, String indexLanguage, String contentsLanguage) throws IOException {
         Document doc = new Document();
         doc.add(new StringField("headword", headword, Field.Store.YES));
-        doc.add(new TextField("article", article, Field.Store.YES));
-        w.addDocument(doc);
+        doc.add(new TextField("article_" + indexLanguage, article, Field.Store.YES));
+        if (!contentsLanguage.equals(indexLanguage)) {
+            doc.add(new TextField("article_" + contentsLanguage, article, Field.Store.YES));
+        }
+        indexWriter.addDocument(doc);
     }
 }

@@ -39,11 +39,13 @@ public class FullTextHitsUpdater {
 
                     ElexDictionary elexDictionary = dictionarySet.get(fileName);
                     Properties properties = elexDictionary.getProperties();
+                    String indexLanguage = properties.getProperty(DslProperty.INDEX_LANGUAGE.name()).toLowerCase();
+                    String contentsLanguage = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name()).toLowerCase();
                     String name = properties.getProperty(DslProperty.NAME.name());
 
                     if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
 
-                        SortedMap<Float, String[]> results = ftServer.search(fileName, search, 100);
+                        SortedMap<Float, String[]> results = ftServer.search(fileName, search, 100, indexLanguage, contentsLanguage);
 
                         for (Float score : results.keySet()) {
                             String[] value = results.get(score);
