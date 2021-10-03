@@ -23,9 +23,9 @@ public class LogViewerController {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append("<html><body>");
 //            reverse order for now to see the latest events on top
-//            for (int i = splits.length - 1; i >= 0; i--) {
-            for (String split : splits) {
-//                String split = splits[i];
+            for (int i = splits.length - 1; i >= 0; i--) {
+//            for (String split : splits) {
+                String split = splits[i];
                 stringBuffer.append("<span>");
                 stringBuffer.append(split);
                 stringBuffer.append("</span><br/>\n");
