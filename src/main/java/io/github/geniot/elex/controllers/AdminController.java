@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Collection;
+import java.util.Map;
 import java.util.SortedSet;
 
 @RestController
@@ -83,6 +84,11 @@ public class AdminController {
                         selectedDictionary.getStatus().equals(DictionaryStatus.ENABLED)) {
                     String path = selectedDictionary.getDataPath() + selectedDictionary.getFileName();
                     asynchronousService.reindex(new ElexDictionary(path, "r"));
+                } else if (adminModel.getAction().equals(Action.REINDEX_ALL)) {
+                    Map<String, ElexDictionary> dictionaryMap = dictionariesPool.getDictionaries();
+                    for (ElexDictionary elexDictionary : dictionaryMap.values()) {
+                        asynchronousService.reindex(new ElexDictionary(elexDictionary.getFile().getAbsolutePath(), "r"));
+                    }
                 } else if (adminModel.getAction().equals(Action.TOGGLE_DICTIONARY_STATE)) {
                     dictionariesPool.changeState(selectedDictionary);
                 }

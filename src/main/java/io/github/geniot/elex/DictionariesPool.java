@@ -46,10 +46,13 @@ public class DictionariesPool {
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
             Properties properties = elexDictionary.getProperties();
+
             String sl1 = model.getSelectedSourceLanguage();
             String tl1 = model.getSelectedTargetLanguage();
+
             String sl2 = properties.getProperty(DslProperty.INDEX_LANGUAGE.name());
             String tl2 = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name());
+
             String name = properties.getProperty(DslProperty.NAME.name());
             if (sl1.equalsIgnoreCase(sl2) &&
                     tl1.equalsIgnoreCase(tl2) &&

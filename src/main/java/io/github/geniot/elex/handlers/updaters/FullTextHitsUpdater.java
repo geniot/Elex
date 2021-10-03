@@ -51,11 +51,11 @@ public class FullTextHitsUpdater {
                             String[] value = results.get(score);
                             String headword = value[0];
                             String extract = value[1];
-                            extract = extract.replaceAll("\\{[^}]*\\}","");
+                            extract = extract.replaceAll("\\{[^}]*\\}", "");
 
                             if (!ftModel.getSearchResultsFor().equals(headword)) {
                                 FullTextHit hit = getByHeadwordOrCreate(hits, headword);
-                                hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode()& 0xfffffff));
+                                hit.setDictionaryIds(ArrayUtils.add(hit.getDictionaryIds(), fileName.hashCode() & 0xfffffff));
 
                                 hit.setScores(ArrayUtils.add(hit.getScores(), score));
 

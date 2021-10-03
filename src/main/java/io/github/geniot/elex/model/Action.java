@@ -16,6 +16,7 @@ public enum Action {
     CONTENT_LINK,
     //
     REINDEX,
+    REINDEX_ALL,
     TOGGLE_DICTIONARY_STATE,
     POOL_UPDATE
 }
