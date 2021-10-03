@@ -54,8 +54,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public TaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(1);
+        executor.setMaxPoolSize(1);
         executor.setKeepAliveSeconds(1);
         executor.setThreadNamePrefix(TASK_THREAD_NAME_PREFIX);
         executor.initialize();
