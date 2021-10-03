@@ -29,7 +29,7 @@ public class FullTextHitsUpdater {
     public void updateFullTextHits(Model model, FtModel ftModel) {
         if (!model.getAction().equals(Action.FT_LINK)) {
             try {
-                String search = model.getUserInput();
+                String search = model.getUserInput().trim();
                 ftModel.setSearchResultsFor(search);
 
                 SortedSet<FullTextHit> hits = new TreeSet<>();
