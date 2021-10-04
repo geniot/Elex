@@ -1,5 +1,7 @@
 package io.github.geniot.elex.tools.convert;
 
+import org.apache.lucene.analysis.Analyzer;
+
 import java.util.*;
 
 import static io.github.geniot.elex.tools.convert.DslUtils.*;
@@ -53,13 +55,18 @@ public class DslLine {
         return mValue;
     }
 
-    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, Properties dicProperties) {
+    public String toHtml(String baseApiUrl,
+                         String dicId,
+                         boolean shouldHighlight,
+                         String searchWord,
+                         Properties dicProperties,
+                         List<Analyzer> analyzerList) {
         StringBuilder stringBuilder = new StringBuilder();
         if (mValue > 1) {
             stringBuilder.append("<span class=\"m" + mValue + "\">");
         }
         for (TextElement textElement : textElementList) {
-            stringBuilder.append(textElement.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord, dicProperties));
+            stringBuilder.append(textElement.toHtml(baseApiUrl, dicId, shouldHighlight, searchWord, dicProperties, analyzerList));
         }
         if (mValue > 1) {
             stringBuilder.append("</span>");

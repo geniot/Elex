@@ -53,13 +53,41 @@ public class FtServer extends FileAlterationListenerAdaptor {
         Directory directory = getIndexByDictionaryFileName(FilenameUtils.removeExtension(fileName));
         if (directory != null) {
             SortedMap<Float, String[]> result = searcher.search(directory, query, hitsPerPage, indexLanguage);
+
             if (!contentsLanguage.equals(indexLanguage)) {
-                result.putAll(searcher.search(directory, query, hitsPerPage, contentsLanguage));
+                Map<String, Object[]> headwordToFragmentMap = getHeadwordToFragmentMap(result);
+                SortedMap<Float, String[]> result2 = searcher.search(directory, query, hitsPerPage, contentsLanguage);
+                //some merging
+                for (Float f : result2.keySet()) {
+                    String[] val = result2.get(f);
+                    String hwd = val[0];
+                    String fragment = val[1];
+                    if (!headwordToFragmentMap.containsKey(hwd)) {
+                        result.put(f, val);
+                    } else {
+//                        Object[] scoreAndFragment = headwordToFragmentMap.get(hwd);
+//                        Float firstScore = (Float) scoreAndFragment[0];
+//                        String firstFragment = (String) scoreAndFragment[1];
+//                        if (!firstFragment.equals(fragment)) {
+//                            String mergedFragment = firstFragment + "... " + fragment;
+//                            result.put(firstScore, new String[]{hwd, mergedFragment});
+//                        }
+                    }
+                }
             }
             return result;
         } else {
             return new TreeMap<>();
         }
+    }
+
+    private Map<String, Object[]> getHeadwordToFragmentMap(SortedMap<Float, String[]> result) {
+        Map<String, Object[]> map = new HashMap<>();
+        for (Float f : result.keySet()) {
+            String[] val = result.get(f);
+            map.put(val[0], new Object[]{f, val[1]});
+        }
+        return map;
     }
 
     public long getDirectorySize(String fileName) throws IOException {

@@ -1,6 +1,8 @@
 package io.github.geniot.elex.tools.convert;
 
 
+import org.apache.lucene.analysis.Analyzer;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -28,7 +30,12 @@ public class TextElement {
         tags.add(t);
     }
 
-    public String toHtml(String baseApiUrl, String dicId, boolean shouldHighlight, String searchWord, Properties dicProps) {
+    public String toHtml(String baseApiUrl,
+                         String dicId,
+                         boolean shouldHighlight,
+                         String searchWord,
+                         Properties dicProps,
+                         List<Analyzer> analyzerList) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < tags.size(); i++) {
             Tag tag = tags.get(i);
@@ -36,7 +43,7 @@ public class TextElement {
         }
 
         if (shouldHighlight) {
-            text = HtmlUtils.highlight(searchWord, text, preTag, postTag);
+            text = HtmlUtils.highlight(searchWord, text, preTag, postTag, analyzerList);
         }
         stringBuilder.append(text);
 

@@ -8,6 +8,9 @@ import lombok.Setter;
 public class Entry {
     private String dicId;
     private String dicName;
+    private String dicIndexLanguage;
+    private String dicContentsLanguage;
+
     private String headword;
     private String body;
 }

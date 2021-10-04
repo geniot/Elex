@@ -3,10 +3,12 @@ package io.github.geniot.elex.handlers.updaters;
 import io.github.geniot.elex.DictionariesPool;
 import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.ftindexer.FtServer;
+import io.github.geniot.elex.ftindexer.LocaleAwareAnalyzer;
 import io.github.geniot.elex.model.*;
 import io.github.geniot.elex.tools.convert.DslProperty;
 import io.github.geniot.elex.tools.convert.HtmlUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class FullTextHitsUpdater {
     DictionariesPool dictionariesPool;
     @Autowired
     FtServer ftServer;
+    @Autowired
+    LocaleAwareAnalyzer localeAwareAnalyzer;
 
     String preTag = "<B>";
     String postTag = "</B>";
@@ -41,6 +45,11 @@ public class FullTextHitsUpdater {
                     Properties properties = elexDictionary.getProperties();
                     String indexLanguage = properties.getProperty(DslProperty.INDEX_LANGUAGE.name()).toLowerCase();
                     String contentsLanguage = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name()).toLowerCase();
+                    List<Analyzer> analyzerList = new ArrayList<>();
+                    analyzerList.add(localeAwareAnalyzer.getWrappedAnalyzer(indexLanguage));
+                    if (!indexLanguage.equals(contentsLanguage)) {
+                        analyzerList.add(localeAwareAnalyzer.getWrappedAnalyzer(contentsLanguage));
+                    }
                     String name = properties.getProperty(DslProperty.NAME.name());
 
                     if (model.isDictionarySelected(name) && model.isDictionaryCurrent(name)) {
@@ -60,7 +69,7 @@ public class FullTextHitsUpdater {
                                 hit.setScores(ArrayUtils.add(hit.getScores(), score));
 
                                 Headword hwd = new Headword(headword);
-                                String nameHighlighted = HtmlUtils.highlight(ftModel.getSearchResultsFor(), headword, preTag, postTag);
+                                String nameHighlighted = HtmlUtils.highlight(ftModel.getSearchResultsFor(), headword, preTag, postTag, analyzerList);
                                 hwd.setNameHighlighted(nameHighlighted);
                                 hit.setHeadword(hwd);
                                 if (extract.startsWith(nameHighlighted)) {

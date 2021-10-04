@@ -1,10 +1,12 @@
 package io.github.geniot.elex.handlers.updaters;
 
 import io.github.geniot.elex.DictionariesPool;
+import io.github.geniot.elex.ftindexer.LocaleAwareAnalyzer;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Entry;
 import io.github.geniot.elex.model.Model;
 import io.github.geniot.elex.tools.convert.HtmlUtils;
+import org.apache.lucene.analysis.Analyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ public class EntriesUpdater {
 
     @Autowired
     DictionariesPool dictionariesPool;
+    @Autowired
+    LocaleAwareAnalyzer localeAwareAnalyzer;
 
     public void updateEntries(Model model) throws Exception {
         List<Entry> entries = new ArrayList<>();
@@ -33,10 +37,32 @@ public class EntriesUpdater {
                 article = article.replaceAll("\\n\\t\\\\\\s+\\n", "\n");
 
                 boolean shouldHighlight = model.getAction().equals(Action.FT_LINK);
+                List<Analyzer> analyzerList = new ArrayList<>();
+                if (shouldHighlight) {
+                    analyzerList.add(localeAwareAnalyzer.getWrappedAnalyzer(entry.getDicContentsLanguage()));
+                    if (!entry.getDicContentsLanguage().equals(entry.getDicIndexLanguage())) {
+                        analyzerList.add(localeAwareAnalyzer.getWrappedAnalyzer(entry.getDicIndexLanguage()));
+                    }
+                }
                 String searchWord = model.getSearchResultsFor();
-                String headword = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, entry.getHeadword(), dictionariesPool.getProperties(entry.getDicId()));
+                String headword = HtmlUtils.toHtml(
+                        model.getBaseApiUrl(),
+                        entry.getDicId(),
+                        shouldHighlight,
+                        searchWord,
+                        entry.getHeadword(),
+                        dictionariesPool.getProperties(entry.getDicId()),
+                        analyzerList);
                 entry.setHeadword(headword);
-                article = HtmlUtils.toHtml(model.getBaseApiUrl(), entry.getDicId(), shouldHighlight, searchWord, article, dictionariesPool.getProperties(entry.getDicId()));
+
+                article = HtmlUtils.toHtml(
+                        model.getBaseApiUrl(),
+                        entry.getDicId(),
+                        shouldHighlight,
+                        searchWord,
+                        article,
+                        dictionariesPool.getProperties(entry.getDicId()),
+                        analyzerList);
 
 //                article = StringEscapeUtils.escapeHtml4(article);
                 entry.setBody(article);
