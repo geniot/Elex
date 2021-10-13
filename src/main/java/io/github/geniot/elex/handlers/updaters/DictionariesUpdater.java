@@ -7,19 +7,29 @@ import org.springframework.stereotype.Component;
 
 import java.util.SortedSet;
 
+import static io.github.geniot.elex.model.Constants.ANY;
+
 @Component
 public class DictionariesUpdater {
-    public void updateDictionaries(Model model, SortedSet<Dictionary> dictionaryList) throws Exception {
+    public void updateDictionaries(Model model, SortedSet<Dictionary> dictionaryList) {
         for (Dictionary dictionary : dictionaryList) {
             if (model.getAction().equals(Action.INIT)) {
                 dictionary.setSelected(true);
             }
-            if (dictionary.getIndexLanguageCode().equals(model.getSelectedSourceLanguage())
-                    && dictionary.getContentsLanguageCode().equals(model.getSelectedTargetLanguage())) {
+
+            String sl1 = model.getSelectedSourceLanguage();
+            String tl1 = model.getSelectedTargetLanguage();
+
+            String sl2 = dictionary.getIndexLanguageCode();
+            String tl2 = dictionary.getContentsLanguageCode();
+
+            dictionary.setCurrent(false);
+            if ((sl1.equalsIgnoreCase(sl2) || sl1.equals(ANY)) &&
+                    (tl1.equalsIgnoreCase(tl2) || tl1.equals(ANY))
+            ) {
                 dictionary.setCurrent(true);
-            } else {
-                dictionary.setCurrent(false);
             }
+
         }
         Dictionary[] dictionariesArray = dictionaryList.toArray(new Dictionary[dictionaryList.size()]);
         model.setDictionaries(dictionariesArray);

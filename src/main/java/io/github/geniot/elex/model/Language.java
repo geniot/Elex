@@ -12,8 +12,9 @@ public class Language implements Comparable<Language> {
     private boolean selected = false;
     private TreeSet<Language> targetLanguages = new TreeSet<>();
 
-    public Language(String sc) {
+    public Language(String sc, boolean s) {
         this.sourceCode = sc;
+        this.selected = s;
     }
 
     @Override

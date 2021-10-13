@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
 
+import static io.github.geniot.elex.model.Constants.ANY;
 import static io.github.geniot.elex.tools.convert.DslUtils.getArticleStart;
 
 @Component
@@ -54,8 +55,8 @@ public class DictionariesPool {
             String tl2 = properties.getProperty(DslProperty.CONTENTS_LANGUAGE.name());
 
             String name = properties.getProperty(DslProperty.NAME.name());
-            if (sl1.equalsIgnoreCase(sl2) &&
-                    tl1.equalsIgnoreCase(tl2) &&
+            if ((sl1.equalsIgnoreCase(sl2) || sl1.equals(ANY)) &&
+                    (tl1.equalsIgnoreCase(tl2) || tl1.equals(ANY)) &&
                     model.isDictionarySelected(name)
             ) {
                 result.put(fileName, elexDictionary);
