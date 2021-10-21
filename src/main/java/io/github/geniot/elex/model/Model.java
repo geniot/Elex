@@ -13,11 +13,13 @@ public class Model {
     private Language[] sourceLanguages = new Language[]{};
     private Dictionary[] dictionaries = new Dictionary[]{};
     private Headword[] headwords = new Headword[]{};
+    private HistoryItem[] historyItems = new HistoryItem[]{};
     private Entry[] entries = new Entry[]{};
 
     private Map<String, String> selectedHeadwords = new HashMap<>();
     private Map<String, String> userInputs = new HashMap<>();
     private String ftLink;
+    private HistoryItem historyLink;
 
     private int visibleSize = 0;
     private int selectedIndex = 0;

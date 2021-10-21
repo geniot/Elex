@@ -73,6 +73,17 @@ public class HeadwordSelector {
                         "\" not found in the current index, displaying \"" +
                         selectedHeadword + "\" instead");
             }
+        }else if (model.getAction().equals(Action.HISTORY_LINK)) {
+            String exact = exact(forwardIteratorsWrapper, backwardIteratorsWrapper, model.getHistoryLink().getHeadword());
+            if (exact != null) {
+                selectedHeadword = exact;
+                model.setExactMatch(true);
+            } else {
+                model.setExactMatch(false);
+                logger.info("\"" + model.getHistoryLink().getHeadword() +
+                        "\" not found in the current index, displaying \"" +
+                        selectedHeadword + "\" instead");
+            }
         }
         return selectedHeadword;
     }

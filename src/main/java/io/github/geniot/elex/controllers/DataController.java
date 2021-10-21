@@ -2,10 +2,7 @@ package io.github.geniot.elex.controllers;
 
 import com.google.gson.Gson;
 import io.github.geniot.elex.DictionariesPool;
-import io.github.geniot.elex.handlers.updaters.DictionariesUpdater;
-import io.github.geniot.elex.handlers.updaters.EntriesUpdater;
-import io.github.geniot.elex.handlers.updaters.HeadwordsUpdater;
-import io.github.geniot.elex.handlers.updaters.LanguagesUpdater;
+import io.github.geniot.elex.handlers.updaters.*;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.Model;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -34,6 +31,8 @@ public class DataController {
     HeadwordsUpdater headwordsUpdater;
     @Autowired
     EntriesUpdater entriesUpdater;
+    @Autowired
+    HistoryItemsUpdater historyItemsUpdater;
 
     @PostMapping("/data")
     public String handle(@RequestBody String payload) {
@@ -52,6 +51,7 @@ public class DataController {
             headwordsUpdater.updateHeadwords(model);
             long t4 = System.currentTimeMillis();
             entriesUpdater.updateEntries(model);
+            historyItemsUpdater.updateHistoryItems(model);
 
             String res = gson.toJson(model);
             long t5 = System.currentTimeMillis();
