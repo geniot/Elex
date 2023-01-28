@@ -214,22 +214,22 @@ public class DslDictionary implements Serializable {
      * @param value
      * @return
      */
-    static public SortedMap<String, String> getVariants(String k, String value, boolean isAbbreviations) {
+    protected static SortedMap<String, String> getVariants(String k, String value, boolean isAbbreviations) {
         SortedMap<String, String> result = new TreeMap<>();
 
         String[] keys = k.split("\n");
-//        if (keys.length > 1) {
-//            System.out.println("stop");
-//        }
         String firstKey = null;
         for (String key : keys) {
-            key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "\\}", "");
+            key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "}", "");
 //            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
             key = key.replaceAll(noEscape + "\\(", "");
             key = key.replaceAll(noEscape + "\\)", "");
             key = key.replaceAll("\\s+", " ");
             key = key.replaceAll(noEscape + "\\\\", "");
             key = key.trim();
+            if (StringUtils.isEmpty(key)) {
+                continue;
+            }
 
             if (key.contains("{")
                     || key.contains("}")
@@ -246,7 +246,8 @@ public class DslDictionary implements Serializable {
                         firstKey = key;
                         result.put(key, k + "\n" + value);
                     } else {
-                        result.put(key, "[ref]" + firstKey + "[/ref]");
+                        String val = key + "\n\t" + "[ref]" + firstKey + "[/ref]\n";
+                        result.put(key, val);
                     }
                 }
             }
