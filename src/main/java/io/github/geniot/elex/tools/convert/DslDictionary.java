@@ -2,6 +2,7 @@ package io.github.geniot.elex.tools.convert;
 
 import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 import static io.github.geniot.elex.tools.convert.DslUtils.getArticleStart;
@@ -42,7 +45,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(File dslFile, Charset charset) {
         try {
             List<String> lines = FileUtils.readLines(dslFile, charset);
-            read(lines, true);
+            read(lines, true, true, true);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -51,7 +54,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String abrDsl) {
         try {
             List<String> lines = Arrays.asList(abrDsl.split("\n"));
-            read(lines, true);
+            read(lines, true, true, true);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -60,9 +63,35 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String dsl, String annotation, byte[] icon) {
         try {
             List<String> lines = Arrays.asList(dsl.split("\n"));
-            read(lines, false);
+            read(lines, false, true, true);
             this.annotation = annotation;
             this.icon = icon;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+    }
+
+    public DslDictionary(File repPath) {
+        try {
+            Collection<File> dslFiles = FileUtils.listFiles(new File(repPath.getAbsolutePath() + File.separator + "data"), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+            List<String> lines = new ArrayList<>();
+            for (File dslFile : dslFiles) {
+                lines.addAll(FileUtils.readLines(dslFile, StandardCharsets.UTF_8));
+            }
+            read(lines, false, false, false);
+
+            File propertiesFile = new File(repPath.getAbsolutePath() + File.separator + "properties.xml");
+            properties = new Properties();
+            properties.loadFromXML(Files.newInputStream(propertiesFile.toPath()));
+
+            annotation = FileUtils.readFileToString(new File(repPath.getAbsolutePath() + File.separator + "annotation.txt"), StandardCharsets.UTF_8);
+
+            icon = FileUtils.readFileToByteArray(new File(repPath.getAbsolutePath() + File.separator + "icon.png"));
+            File abbreviationsFile = new File(repPath.getAbsolutePath() + File.separator + "abbreviations.xml");
+            if (abbreviationsFile.exists()) {
+                abbreviations = new Properties();
+                abbreviations.loadFromXML(Files.newInputStream(abbreviationsFile.toPath()));
+            }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -71,7 +100,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String dslPath, String annotationPath, String iconPath, String abbreviationsPath, Charset charset) {
         try {
             List<String> lines = FileUtils.readLines(new File(dslPath), charset);
-            read(lines, false);
+            read(lines, false, true, true);
             annotation = FileUtils.readFileToString(new File(annotationPath), charset);
             icon = FileUtils.readFileToByteArray(new File(iconPath));
 
@@ -122,26 +151,29 @@ public class DslDictionary implements Serializable {
         return stringBuffer.toString();
     }
 
-    private void read(List<String> lines, boolean isAbbreviations) {
+    private void read(List<String> lines, boolean isAbbreviations, boolean splitToVariants, boolean readHeaders) {
         Iterator<String> iterator = lines.iterator();
         entries = new TreeMap<>(new CaseInsensitiveComparatorV4());
         String line = null;
-        headersList = new ArrayList<>();
-        //collecting header
-        while (iterator.hasNext()) {
+        if (readHeaders) {
+            headersList = new ArrayList<>();
+            //collecting header
+            while (iterator.hasNext()) {
+                line = iterator.next();
+                if (line.startsWith("#")) {
+                    headersList.add(line.replaceFirst("#", ""));
+                    continue;
+                }
+                if (StringUtils.isEmpty(line)) {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+            properties = parseHeaders(headersList);
+        } else {
             line = iterator.next();
-            if (line.startsWith("#")) {
-                headersList.add(line.replaceFirst("#", ""));
-                continue;
-            }
-            if (StringUtils.isEmpty(line)) {
-                continue;
-            } else {
-                break;
-            }
         }
-        properties = parseHeaders(headersList);
-
         while (iterator.hasNext()) {
             //collecting headwords
             StringBuffer headwordsStringBuffer = new StringBuffer(line);
@@ -159,23 +191,23 @@ public class DslDictionary implements Serializable {
             }
 
             //collecting entry
-            StringBuffer entryStringBuffer = new StringBuffer(line);
+            StringBuilder entryString = new StringBuilder(line);
             while (iterator.hasNext()) {
                 line = iterator.next();
                 if (StringUtils.isEmpty(line)) {
                     continue;
                 }
                 if (line.startsWith("\t") || line.startsWith(" ")) {
-                    entryStringBuffer.append("\n");
-                    entryStringBuffer.append(line);
-//                    entryStringBuffer.append("\n");
+                    entryString.append("\n");
+                    entryString.append(line);
+//                    entryString.append("\n");
                 } else {
                     break;
                 }
             }
 
             String key = headwordsStringBuffer.toString();
-            String value = entryStringBuffer.toString();
+            String value = entryString.toString();
 //                    .replaceAll("^\\t", "")
 //                    .replaceAll("^\\s+", "")
 //                    .replaceAll("\\n\\t", "\n")
@@ -184,20 +216,43 @@ public class DslDictionary implements Serializable {
 //                    .replaceAll("\\n$", "");
 
 
-            Map<String, String> variants = getVariants(key, value, isAbbreviations);
-            if (variants.isEmpty()) {
-                throw new RuntimeException("Empty result: " + key);
-            }
+            if (splitToVariants) {
+                Map<String, String> variants = getVariants(key, value, isAbbreviations);
+                if (variants.isEmpty()) {
+                    throw new RuntimeException("Empty result: " + key);
+                }
 
-            for (String k : variants.keySet()) {
-                String v = variants.get(k);
-                if (entries.containsKey(k)) {
-                    throw new RuntimeException("Duplicate headword found: " + k);
+                for (String k : variants.keySet()) {
+                    String v = variants.get(k);
+                    if (entries.containsKey(k)) {
+                        throw new RuntimeException("Duplicate headword found: " + k);
+                    } else {
+                        entries.put(k, v);
+                    }
+                }
+            } else {
+                if (entries.containsKey(key)) {
+                    throw new RuntimeException("Duplicate headword found: " + key);
                 } else {
-                    entries.put(k, v);
+                    String trueKey = fixKey(key);
+                    if (key.contains("\n")) {
+                        trueKey = key.split("\n")[0].trim();
+                    }
+                    entries.put(trueKey, key + "\n\t" + value);
                 }
             }
         }
+    }
+
+    static String fixKey(String key) {
+        key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "}", "");
+//            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
+        key = key.replaceAll(noEscape + "\\(", "");
+        key = key.replaceAll(noEscape + "\\)", "");
+        key = key.replaceAll("\\s+", " ");
+        key = key.replaceAll(noEscape + "\\\\", "");
+        key = key.trim();
+        return key;
     }
 
     /**
@@ -220,13 +275,7 @@ public class DslDictionary implements Serializable {
         String[] keys = k.split("\n");
         String firstKey = null;
         for (String key : keys) {
-            key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "}", "");
-//            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
-            key = key.replaceAll(noEscape + "\\(", "");
-            key = key.replaceAll(noEscape + "\\)", "");
-            key = key.replaceAll("\\s+", " ");
-            key = key.replaceAll(noEscape + "\\\\", "");
-            key = key.trim();
+            key = fixKey(key);
             if (StringUtils.isEmpty(key)) {
                 continue;
             }
