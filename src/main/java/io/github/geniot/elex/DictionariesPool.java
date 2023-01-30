@@ -21,7 +21,6 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import static io.github.geniot.elex.model.Constants.ANY;
-import static io.github.geniot.elex.tools.convert.DslUtils.getArticleStart;
 
 @Component
 @Getter
@@ -197,23 +196,16 @@ public class DictionariesPool {
                 String article = elexDictionary.readArticle(model.getSelectedHeadword());
                 if (article != null) {
                     String header = model.getSelectedHeadword();
-                    String content = article;
-                    int indexOfArticle = getArticleStart(article);
-                    if (indexOfArticle > 0) {
-                        header = article.substring(0, indexOfArticle).trim();
-                        content = article.substring(indexOfArticle).trim();
-                    } else {
-                        if (content.startsWith("[ref]") && content.endsWith("[/ref]")) {
-                            String ref = content.substring("[ref]".length(), content.length() - "[/ref]".length());
-                            article = elexDictionary.readArticle(ref);
-                            if (article != null) {
-                                indexOfArticle = getArticleStart(article);
-                                if (indexOfArticle > 0) {
-                                    header = article.substring(0, indexOfArticle).trim();
-                                    content = article.substring(indexOfArticle).trim();
-                                }
-                            }
+                    String trimmedArticle = article.trim();
+                    if (trimmedArticle.startsWith("[ref]") && trimmedArticle.endsWith("[/ref]")) {
+                        String ref = trimmedArticle.substring("[ref]".length(), trimmedArticle.length() - "[/ref]".length());
+                        article = elexDictionary.readArticle(ref);
+                        if (article != null) {
+                            trimmedArticle = article.trim();
                         }
+                    }
+                    if (!trimmedArticle.startsWith("[h]")) {
+                        article = "\t[h]" + header + "[/h]\n" + article;
                     }
 
                     Entry entry = new Entry();
@@ -222,7 +214,7 @@ public class DictionariesPool {
                     entry.setDicIndexLanguage(indexLanguage);
                     entry.setDicContentsLanguage(contentsLanguage);
                     entry.setHeadword(header);
-                    entry.setBody(content);
+                    entry.setBody(article);
                     entries.add(entry);
                 }
             }

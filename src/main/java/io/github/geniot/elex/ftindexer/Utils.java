@@ -60,6 +60,7 @@ public class Utils {
     }
 
     public static String stripTags(String entry) {
+        entry = entry.replaceAll("\\[h\\][^]]+\\[/h\\]", "");
         entry = entry.replaceAll("\\[s\\][^]]+\\[/s\\]", "");
         entry = entry.replaceAll(anyTag, "");
         entry = entry.replaceAll("\\{\\{[^}]+\\}\\}", "");
