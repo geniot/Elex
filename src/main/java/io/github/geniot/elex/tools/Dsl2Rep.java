@@ -17,9 +17,12 @@ public class Dsl2Rep {
 
     public static void main(String[] args) {
         try {
-            String dsl = FileUtils.readFileToString(new File("data/LingvoUniversalEnRu.dsl"), StandardCharsets.UTF_8);
-            String ann = FileUtils.readFileToString(new File("data/LingvoUniversalEnRu.ann"), StandardCharsets.UTF_8);
-            byte[] icon = FileUtils.readFileToByteArray(new File("data/LingvoUniversalEnRu.png"));
+            String base = "C:\\dictionaries\\en\\ru\\LingvoUniversalEnRu";
+
+            String dsl = FileUtils.readFileToString(new File(base + "/source/LingvoUniversalEnRu.dsl"), StandardCharsets.UTF_8);
+            String ann = FileUtils.readFileToString(new File(base + "/annotation.txt"), StandardCharsets.UTF_8);
+            byte[] icon = FileUtils.readFileToByteArray(new File(base + "/icon.png"));
+
             DslDictionary dslDictionary = new DslDictionary(dsl, ann, icon);
 
             int total = dslDictionary.getEntries().size();
@@ -36,7 +39,10 @@ public class Dsl2Rep {
                 if (counter % 1000 == 0) {
                     logger.info(String.valueOf(counter));
                 }
+                content.append(key);
+                content.append("\n");
                 content.append(dslDictionary.getEntries().get(key));
+                content.append("\n");
 
                 if (counter % 100 == 0 || counter == total) {
                     StringBuilder path = new StringBuilder();
@@ -55,8 +61,7 @@ public class Dsl2Rep {
                             .replaceAll("\r\n", "\n")
                             .replaceAll("\r", "\n")
                             .replaceAll("\n+", "\n")
-                            .replaceAll("\n", "\r\n")
-                            ;
+                            .replaceAll("\n", "\r\n");
                     FileUtils.writeByteArrayToFile(new File(filePath), out.getBytes(StandardCharsets.UTF_8));
 
                     content = new StringBuilder();

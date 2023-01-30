@@ -45,7 +45,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(File dslFile, Charset charset) {
         try {
             List<String> lines = FileUtils.readLines(dslFile, charset);
-            read(lines, true, true, true);
+            read(lines, true, true);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -54,7 +54,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String abrDsl) {
         try {
             List<String> lines = Arrays.asList(abrDsl.split("\n"));
-            read(lines, true, true, true);
+            read(lines, true, true);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -63,7 +63,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String dsl, String annotation, byte[] icon) {
         try {
             List<String> lines = Arrays.asList(dsl.split("\n"));
-            read(lines, false, true, true);
+            read(lines, false, true);
             this.annotation = annotation;
             this.icon = icon;
         } catch (Exception ex) {
@@ -78,7 +78,7 @@ public class DslDictionary implements Serializable {
             for (File dslFile : dslFiles) {
                 lines.addAll(FileUtils.readLines(dslFile, StandardCharsets.UTF_8));
             }
-            read(lines, false, false, false);
+            read(lines, false, false);
 
             File propertiesFile = new File(repPath.getAbsolutePath() + File.separator + "properties.xml");
             properties = new Properties();
@@ -100,7 +100,7 @@ public class DslDictionary implements Serializable {
     public DslDictionary(String dslPath, String annotationPath, String iconPath, String abbreviationsPath, Charset charset) {
         try {
             List<String> lines = FileUtils.readLines(new File(dslPath), charset);
-            read(lines, false, true, true);
+            read(lines, false, true);
             annotation = FileUtils.readFileToString(new File(annotationPath), charset);
             icon = FileUtils.readFileToByteArray(new File(iconPath));
 
@@ -151,7 +151,7 @@ public class DslDictionary implements Serializable {
         return stringBuffer.toString();
     }
 
-    private void read(List<String> lines, boolean isAbbreviations, boolean splitToVariants, boolean readHeaders) {
+    private void read(List<String> lines, boolean isAbbreviations, boolean readHeaders) {
         Iterator<String> iterator = lines.iterator();
         entries = new TreeMap<>(new CaseInsensitiveComparatorV4());
         String line = null;
@@ -176,7 +176,7 @@ public class DslDictionary implements Serializable {
         }
         while (iterator.hasNext()) {
             //collecting headwords
-            StringBuffer headwordsStringBuffer = new StringBuffer(line);
+            StringBuilder headwordsStringBuffer = new StringBuilder(line);
             while (iterator.hasNext()) {
                 line = iterator.next();
                 if (StringUtils.isEmpty(line)) {
@@ -198,9 +198,11 @@ public class DslDictionary implements Serializable {
                     continue;
                 }
                 if (line.startsWith("\t") || line.startsWith(" ")) {
-                    entryString.append("\n");
-                    entryString.append(line);
+                    if (!line.contains("© 2014 ABBYY")) {
+                        entryString.append("\n");
+                        entryString.append(line);
 //                    entryString.append("\n");
+                    }
                 } else {
                     break;
                 }
@@ -216,43 +218,51 @@ public class DslDictionary implements Serializable {
 //                    .replaceAll("\\n$", "");
 
 
-            if (splitToVariants) {
-                Map<String, String> variants = getVariants(key, value, isAbbreviations);
-                if (variants.isEmpty()) {
-                    throw new RuntimeException("Empty result: " + key);
-                }
+            Map<String, String> variants = getVariants(key, value);
+            if (variants.isEmpty()) {
+                throw new RuntimeException("Empty result: " + key);
+            }
 
-                for (String k : variants.keySet()) {
-                    String v = variants.get(k);
-                    if (entries.containsKey(k)) {
-                        throw new RuntimeException("Duplicate headword found: " + k);
-                    } else {
-                        entries.put(k, v);
-                    }
-                }
-            } else {
-                if (entries.containsKey(key)) {
-                    throw new RuntimeException("Duplicate headword found: " + key);
+            for (String k : variants.keySet()) {
+                String v = variants.get(k);
+                if (entries.containsKey(k)) {
+                    throw new RuntimeException("Duplicate headword found: " + k);
                 } else {
-                    String trueKey = fixKey(key);
-                    if (key.contains("\n")) {
-                        trueKey = key.split("\n")[0].trim();
-                    }
-                    entries.put(trueKey, key + "\n\t" + value);
+                    entries.put(k, v);
                 }
             }
         }
     }
 
-    static String fixKey(String key) {
-        key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "}", "");
-//            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
-        key = key.replaceAll(noEscape + "\\(", "");
-        key = key.replaceAll(noEscape + "\\)", "");
-        key = key.replaceAll("\\s+", " ");
-        key = key.replaceAll(noEscape + "\\\\", "");
-        key = key.trim();
-        return key;
+    protected static String getTitleKey(String key) {
+        String indexKey = getIndexKey(key);
+        String[] keys = key.split("\n");
+        StringBuilder titleKeyBuilder = new StringBuilder();
+        for (String k : keys) {
+            String titleKey = k
+                    .replaceAll(noEscape + "\\{", "")
+                    .replaceAll(noEscape + "}", "")
+                    .replaceAll("\\s+", " ")
+                    .trim();
+            if (keys.length != 1 || !titleKey.equals(indexKey)) {
+                titleKeyBuilder.append("\t[h]");
+                titleKeyBuilder.append(titleKey);
+                titleKeyBuilder.append("[/h]\n");
+            } else {
+                titleKeyBuilder.append(titleKey);
+            }
+        }
+
+        return titleKeyBuilder.toString().trim();
+    }
+
+    protected static String getIndexKey(String key) {
+        return key
+                .replaceAll(noEscape + "\\{[^}]+" + noEscape + "}", "")
+                .replaceAll(noEscape + "\\(", "")
+                .replaceAll(noEscape + "\\)", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     /**
@@ -269,38 +279,61 @@ public class DslDictionary implements Serializable {
      * @param value
      * @return
      */
-    protected static SortedMap<String, String> getVariants(String k, String value, boolean isAbbreviations) {
+    protected static SortedMap<String, String> getVariants(String k, String value) {
         SortedMap<String, String> result = new TreeMap<>();
-
+        String titleKey = getTitleKey(k);
         String[] keys = k.split("\n");
-        String firstKey = null;
-        for (String key : keys) {
-            key = fixKey(key);
-            if (StringUtils.isEmpty(key)) {
-                continue;
-            }
-
-            if (key.contains("{")
-                    || key.contains("}")
-                    || key.contains("\\")) {
-                throw new RuntimeException(key);
-            }
-            if (result.containsKey(key)) {
-                throw new RuntimeException("Duplicate key: " + key);
-            } else {
-                if (isAbbreviations) {
-                    result.put(key, k + "\n" + value);
-                } else {
-                    if (firstKey == null) {
-                        firstKey = key;
-                        result.put(key, k + "\n" + value);
-                    } else {
-                        String val = key + "\n\t" + "[ref]" + firstKey + "[/ref]\n";
-                        result.put(key, val);
-                    }
+        String firstIndexKey = k;
+        for (int i = 0; i < keys.length; i++) {
+            String indexKey = getIndexKey(keys[i]);
+            String updatedValue = value;
+            if (i == 0) {
+                firstIndexKey = indexKey;
+                if (!indexKey.equals(titleKey)) {
+                    updatedValue = "\t" + titleKey + "\n" + updatedValue;
                 }
+            } else {
+                updatedValue = "\t[ref]" + firstIndexKey + "[/ref]";
             }
+            result.put(indexKey, updatedValue);
         }
+
+
+//        String[] keys = k.split("\n");
+//        String firstKey = null;
+//        for (String key : keys) {
+//            result.put(key, value);
+
+
+//            key = key.replaceAll(noEscape + "\\{[^}]+" + noEscape + "}", "");
+////            key = key.replaceAll(noEscape + "\\([^)]+" + noEscape + "\\)", "");
+//            key = key.replaceAll(noEscape + "\\(", "");
+//            key = key.replaceAll(noEscape + "\\)", "");
+//            key = key.replaceAll("\\s+", " ");
+//            key = key.replaceAll(noEscape + "\\\\", "");
+//            key = key.trim();
+//
+//            if (StringUtils.isEmpty(key)) {
+//                continue;
+//            }
+//
+//            if (key.contains("{")
+//                    || key.contains("}")
+//                    || key.contains("\\")) {
+//                throw new RuntimeException(key);
+//            }
+//            if (result.containsKey(key)) {
+//                throw new RuntimeException("Duplicate key: " + key);
+//            } else {
+//                if (firstKey == null) {
+//                    firstKey = key;
+//                    result.put(key, value);
+//                } else {
+//                    String val = "[ref]" + firstKey + "[/ref]";
+//                    result.put(key, val);
+//                }
+//            }
+//        }
         return result;
     }
 
