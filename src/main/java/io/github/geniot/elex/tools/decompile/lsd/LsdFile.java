@@ -324,7 +324,7 @@ public class LsdFile {
         this.read_headings();
 
         if (this.headings.appended != this.header.entries_count) {
-            throw new RuntimeException("Decoded not all " + this.headings.appended + " != " + this.header.entries_count);
+            System.out.println("Decoded not all " + this.headings.appended + " != " + this.header.entries_count);
         }
 
         // merge multititle headings
@@ -487,12 +487,14 @@ public class LsdFile {
 
     public static void main(String... args) {
         try {
+            args = new String[]{"C:\\ProgramData\\ABBYY\\Lingvo\\16.0\\Dic\\System\\LingvoUniversalEnRu.lsd"};
             long t1 = System.currentTimeMillis();
             LsdFile m = new LsdFile(args[0], false);
             m.parse();
             if (m.verbose) {
                 m.dump();
             }
+//            m.read_article();
             m.write("out");
             long t2 = System.currentTimeMillis() - t1;
             System.out.println("Converted " + args[0] + " in " + t2 + " ms.");

@@ -52,8 +52,8 @@ public class Dsl2Ezp {
 
     public static void main(String[] args) {
         try {
-            File outputFile = new File("en_ru-LingvoUniversal.ezp");
-            DslDictionary dslDictionary = new DslDictionary(new File("C:\\dictionaries\\en\\ru\\LingvoUniversalEnRu"));
+            File outputFile = new File("en_ru-Transport.ezp");
+            DslDictionary dslDictionary = new DslDictionary(new File("C:\\dictionaries\\en\\ru\\Transport"));
             //compile
             byte[] ezpBbs = new Packager().pack(dslDictionary);
 

@@ -14,7 +14,7 @@ import java.util.TreeMap;
 public class Ezp2Dsl {
     public static void main(String[] args) {
         try {
-            File file = new File("data/en_ru-LingvoUniversal.ezp");
+            File file = new File("data/en_ru-Transport.ezp");
             System.out.println("Reading " + file.getName());
             ElexDictionary elexDictionary = new ElexDictionary(file, "r");
             Properties properties = elexDictionary.getProperties();
@@ -29,15 +29,15 @@ public class Ezp2Dsl {
 
             String annotation = elexDictionary.getAnnotation();
             byte[] icon = elexDictionary.getIcon();
-//            String entriesStr = collect(entries);
+            String entriesStr = collect(entries);
 
 
             FileUtils.writeByteArrayToFile(new File("data2/" + file.getName() + ".png"), icon);
-//            FileUtils.writeByteArrayToFile(new File("data2/" + file.getName()), entriesStr.getBytes(StandardCharsets.UTF_8));
+            FileUtils.writeByteArrayToFile(new File("data2/" + file.getName()), entriesStr.getBytes(StandardCharsets.UTF_8));
             FileUtils.writeByteArrayToFile(new File("data2/" + file.getName() + ".annotation.txt"), annotation.getBytes(StandardCharsets.UTF_8));
 
             properties.storeToXML(Files.newOutputStream(new File("data2/" + file.getName() + ".props.xml").toPath()),null);
-            abbreviations.storeToXML(Files.newOutputStream(new File("data2/" + file.getName() + ".abbreviations.xml").toPath()),null);
+            abbreviations.store(Files.newOutputStream(new File("data2/" + file.getName() + ".abbreviations.txt").toPath()),null);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

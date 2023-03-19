@@ -17,9 +17,9 @@ public class Dsl2Rep {
 
     public static void main(String[] args) {
         try {
-            String base = "C:\\dictionaries\\en\\ru\\LingvoUniversalEnRu";
+            String base = "C:\\dictionaries\\en\\ru\\Transport";
 
-            String dsl = FileUtils.readFileToString(new File(base + "/source/LingvoUniversalEnRu.dsl"), StandardCharsets.UTF_8);
+            String dsl = FileUtils.readFileToString(new File(base + "/source/TransportEnRu.dsl"), StandardCharsets.UTF_8);
             String ann = FileUtils.readFileToString(new File(base + "/annotation.txt"), StandardCharsets.UTF_8);
             byte[] icon = FileUtils.readFileToByteArray(new File(base + "/icon.png"));
 
