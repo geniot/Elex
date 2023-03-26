@@ -22,6 +22,6 @@ public class FullTextHit implements Comparable<FullTextHit> {
 
     @Override
     public int compareTo(FullTextHit o) {
-        return new Float(o.getScores()[0]).compareTo(this.scores[0]);
+        return Float.compare(o.getScores()[0], this.scores[0]);
     }
 }

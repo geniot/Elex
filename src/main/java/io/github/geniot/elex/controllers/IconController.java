@@ -1,6 +1,7 @@
 package io.github.geniot.elex.controllers;
 
 import io.github.geniot.elex.DictionariesPool;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
+
 
 @RestController
 public class IconController {
@@ -25,7 +27,7 @@ public class IconController {
     private byte[] getDefaultIcon() {
         try {
             if (defaultIcon == null) {
-                defaultIcon = IOUtils.toByteArray(Thread.currentThread().getContextClassLoader().getResourceAsStream("images/user.png"));
+                defaultIcon = IOUtils.toByteArray(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream("images/user.png")));
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

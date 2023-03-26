@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -26,16 +27,16 @@ public class DictionariesPoolUpdateTask implements Runnable {
     @Value("${path.data}")
     private String pathToData;
     @Autowired
-    private DictionariesPool dictionariesPool;
-    @Autowired
-    private ServerSettingsManager serverSettingsManager;
-    @Autowired
-    private AsynchronousService asynchronousService;
+    private ApplicationContext applicationContext;
     private Task task;
 
     @Override
     public void run() {
         try {
+            DictionariesPool dictionariesPool = applicationContext.getBean(DictionariesPool.class);
+            ServerSettingsManager serverSettingsManager = applicationContext.getBean(ServerSettingsManager.class);
+            AsynchronousService asynchronousService = applicationContext.getBean(AsynchronousService.class);
+
             task.setStatus(TaskStatus.RUNNING);
             long t1 = System.currentTimeMillis();
 //            dictionariesPool.getDictionaries().clear();

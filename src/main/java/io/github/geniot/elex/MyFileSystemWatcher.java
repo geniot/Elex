@@ -1,6 +1,8 @@
 package io.github.geniot.elex;
 
 import io.github.geniot.elex.tasks.AsynchronousService;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.boot.devtools.filewatch.FileChangeListener;
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -40,6 +41,12 @@ public class MyFileSystemWatcher extends FileSystemWatcher implements FileChange
     public void init() {
         addSourceDirectory(new File(pathToData));
         addListener(this);
+        this.start();
+    }
+
+    @PreDestroy
+    public void onDestroy() {
+        this.stop();
     }
 
     @Override

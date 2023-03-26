@@ -6,6 +6,7 @@ import io.github.geniot.elex.ftindexer.FtServer;
 import io.github.geniot.elex.model.Dictionary;
 import io.github.geniot.elex.model.*;
 import io.github.geniot.elex.tools.convert.DslProperty;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -36,9 +38,9 @@ public class DictionariesPool {
     @Autowired
     private FtServer ftServer;
     @Autowired
-    private WebConfig webConfig;
-    @Autowired
     private ServerSettingsManager serverSettingsManager;
+    @Value("${path.data}")
+    private String pathToData;
 
 
     public Map<String, ElexDictionary> getElexDictionaries(Model model) throws IOException {
@@ -131,7 +133,7 @@ public class DictionariesPool {
             adminDictionary.setStatus(DictionaryStatus.ENABLED);
             adminDictionary.setId(fileName.hashCode() & 0xfffffff);
             adminDictionary.setFileName(fileName);
-            adminDictionary.setDataPath(webConfig.getPathToDataAbsolute());
+            adminDictionary.setDataPath(new File(pathToData).getAbsolutePath());
             adminDictionary.setFileSize(NumberFormat.getInstance().format(elexDictionary.length()));
             totalSize += elexDictionary.length();
             adminDictionary.setEntries(elexDictionary.getSize());
@@ -163,7 +165,7 @@ public class DictionariesPool {
             String name = serverSettingsManager.getServerSettings().getDisabledDictionariesMap().get(fileName);
             String ezpFileName = fileName + ".ezp";
             String ezrFileName = fileName + ".ezr";
-            File ezpFile = new File(webConfig.getPathToDataAbsolute() + ezpFileName);
+            File ezpFile = new File(pathToData + File.separator + ezpFileName);
             if (ezpFile.exists()) {
                 AdminDictionary adminDictionary = new AdminDictionary();
                 adminDictionary.setId(fileName.hashCode() & 0xfffffff);
@@ -171,10 +173,10 @@ public class DictionariesPool {
                 adminDictionary.setStatus(DictionaryStatus.DISABLED);
                 adminDictionary.setName(name);
                 adminDictionary.setSelected(model.isDictionarySelected(name));
-                adminDictionary.setDataPath(webConfig.getPathToDataAbsolute());
+                adminDictionary.setDataPath(new File(pathToData).getAbsolutePath());
                 adminDictionary.setFileSize(NumberFormat.getInstance().format(ezpFile.length()));
 
-                File ezrFile = new File(webConfig.getPathToDataAbsolute() + ezrFileName);
+                File ezrFile = new File(pathToData + File.separator + ezrFileName);
                 if (ezrFile.exists()) {
                     adminDictionary.setResourcesFileName(ezrFileName);
                     adminDictionary.setResourcesFileSize(NumberFormat.getInstance().format(ezrFile.length()));
@@ -275,7 +277,7 @@ public class DictionariesPool {
             }
         }
         if (path != null) {
-            path = webConfig.getPathToDataAbsolute() + path;
+            path = new File(pathToData + File.separator + path).getAbsolutePath();
         }
         return path;
     }
@@ -300,13 +302,13 @@ public class DictionariesPool {
                 serverSettingsManager.put(fileName, selectedDictionary.getName());
 
             } else {
-                File ezpFile = new File(webConfig.getPathToDataAbsolute() + ezpFileName);
+                File ezpFile = new File(pathToData + File.separator + ezpFileName);
                 if (ezpFile.exists()) {
                     dictionaries.put(ezpFile.getName(), new ElexDictionary(ezpFile.getAbsolutePath(), "r"));
                 } else {
                     logger.warn("Couldn't enable dictionary with file name: " + ezpFileName);
                 }
-                File ezrFile = new File(webConfig.getPathToDataAbsolute() + ezrFileName);
+                File ezrFile = new File(pathToData + File.separator + ezrFileName);
                 if (ezrFile.exists()) {
                     resources.put(ezrFile.getName(), new ElexDictionary(ezrFile.getAbsolutePath(), "r"));
                 }
@@ -354,5 +356,10 @@ public class DictionariesPool {
             logger.error(e.getMessage(), e);
         }
         return new Properties();
+    }
+
+    @PreDestroy
+    public void onDestroy() {
+        this.close();
     }
 }

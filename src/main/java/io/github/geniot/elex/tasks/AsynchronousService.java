@@ -4,6 +4,7 @@ import io.github.geniot.elex.ezip.model.ElexDictionary;
 import io.github.geniot.elex.model.Action;
 import io.github.geniot.elex.model.Task;
 import io.github.geniot.elex.model.TaskStatus;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -26,8 +26,6 @@ public class AsynchronousService {
 
     Logger logger = LoggerFactory.getLogger(AsynchronousService.class);
 
-    @Autowired
-    private TaskExecutor taskExecutor;
     @Autowired
     private ApplicationContext applicationContext;
     @Value("${path.data}")
@@ -41,13 +39,15 @@ public class AsynchronousService {
 
     @PostConstruct
     public void init() {
-        ftFolderPath = new File(pathToData + File.separator + ftIndexFolderName).getAbsolutePath();
+        this.ftFolderPath = new File(pathToData + File.separator + ftIndexFolderName).getAbsolutePath();
+        this.updatePool();
     }
 
     private Map<String, Task> runningTasks = new ConcurrentHashMap<>();
 
     synchronized public void updatePool() {
         DictionariesPoolUpdateTask dictionariesPoolUpdateTask = applicationContext.getBean(DictionariesPoolUpdateTask.class);
+        TaskExecutor taskExecutor = applicationContext.getBean(TaskExecutor.class);
         Task uiTask = new Task();
         uiTask.setAction(Action.POOL_UPDATE);
         dictionariesPoolUpdateTask.setTask(uiTask);
@@ -75,6 +75,7 @@ public class AsynchronousService {
             return;
         }
         FtIndexTask ftIndexTask = applicationContext.getBean(FtIndexTask.class);
+        TaskExecutor taskExecutor = applicationContext.getBean(TaskExecutor.class);
         Task uiTask = new Task();
         ftIndexTask.setElexDictionary(elexDictionary);
         ftIndexTask.setTask(uiTask);
