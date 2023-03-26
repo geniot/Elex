@@ -124,6 +124,7 @@ public class DictionariesPool {
 
     public SortedSet<AdminDictionary> getAdminDictionaries(AdminModel model) throws IOException {
         SortedSet<AdminDictionary> result = new TreeSet<>();
+        boolean isAnyDictionarySelected = false;
         for (String fileName : dictionaries.keySet()) {
             ElexDictionary elexDictionary = dictionaries.get(fileName);
 
@@ -133,7 +134,7 @@ public class DictionariesPool {
             adminDictionary.setStatus(DictionaryStatus.ENABLED);
             adminDictionary.setId(fileName.hashCode() & 0xfffffff);
             adminDictionary.setFileName(fileName);
-            adminDictionary.setDataPath(new File(pathToData).getAbsolutePath());
+            adminDictionary.setDataPath(new File(pathToData).getAbsolutePath() + File.separator);
             adminDictionary.setFileSize(NumberFormat.getInstance().format(elexDictionary.length()));
             totalSize += elexDictionary.length();
             adminDictionary.setEntries(elexDictionary.getSize());
@@ -154,11 +155,18 @@ public class DictionariesPool {
 
             String name = elexDictionary.getProperties().getProperty(DslProperty.NAME.name());
             adminDictionary.setName(name);
-            adminDictionary.setSelected(model.isDictionarySelected(name));
+            boolean isSelected = model.isDictionarySelected(name);
+            if (isSelected) {
+                adminDictionary.setSelected(isSelected);
+                isAnyDictionarySelected = true;
+            }
 
             adminDictionary.setIndexLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.INDEX_LANGUAGE.name()));
             adminDictionary.setContentsLanguageCode(elexDictionary.getProperties().getProperty(DslProperty.CONTENTS_LANGUAGE.name()));
             result.add(adminDictionary);
+        }
+        if (!isAnyDictionarySelected && result.size() > 0) {
+            result.iterator().next().setSelected(true);
         }
 
         for (String fileName : serverSettingsManager.getServerSettings().getDisabledDictionariesMap().keySet()) {
@@ -173,7 +181,7 @@ public class DictionariesPool {
                 adminDictionary.setStatus(DictionaryStatus.DISABLED);
                 adminDictionary.setName(name);
                 adminDictionary.setSelected(model.isDictionarySelected(name));
-                adminDictionary.setDataPath(new File(pathToData).getAbsolutePath());
+                adminDictionary.setDataPath(new File(pathToData).getAbsolutePath() + File.separator);
                 adminDictionary.setFileSize(NumberFormat.getInstance().format(ezpFile.length()));
 
                 File ezrFile = new File(pathToData + File.separator + ezrFileName);

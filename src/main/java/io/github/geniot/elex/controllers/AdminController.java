@@ -33,7 +33,7 @@ public class AdminController {
     @Autowired
     AsynchronousService asynchronousService;
 
-    @GetMapping("/admin/download")
+    @GetMapping("/download")
     public ResponseEntity<Resource> download(@RequestParam int id,
                                              @RequestParam String type) {
         try {
@@ -62,7 +62,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/admin/tasks")
+    @GetMapping("/tasks")
     public String tasks() {
         TaskExecutorModel taskExecutorModel = new TaskExecutorModel();
         Collection<Task> tasksList = asynchronousService.getRunningTasks().values();
@@ -71,7 +71,7 @@ public class AdminController {
         return gson.toJson(taskExecutorModel);
     }
 
-    @PostMapping("/admin/data")
+    @PostMapping("/adminData")
     public String handle(@RequestBody String payload) {
         try {
             long t1 = System.currentTimeMillis();
@@ -102,7 +102,7 @@ public class AdminController {
             long t2 = System.currentTimeMillis();
             logger.info((t2 - t1) + " ms ");
 
-            adminModel.setAction(Action.INIT);
+//            adminModel.setAction(Action.INIT);
 
             return gson.toJson(adminModel);
 

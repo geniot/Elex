@@ -19,6 +19,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,7 @@ public class FtIndexTask implements Runnable {
 
     private void index(Directory directory, ElexDictionary elexDictionary) throws Exception {
         try {
+            IOUtils.deleteFilesIgnoringExceptions(directory, directory.listAll());
             Properties properties = elexDictionary.getProperties();
 
             String indexLanguage = properties.getProperty(DslProperty.INDEX_LANGUAGE.name()).toLowerCase();
@@ -103,6 +105,7 @@ public class FtIndexTask implements Runnable {
             PerFieldAnalyzerWrapper perFieldAnalyzerWrapper = new PerFieldAnalyzerWrapper(contentsLanguageAnalyzer, analyzerPerField);
 
             IndexWriterConfig indexWriterConfig = new IndexWriterConfig(perFieldAnalyzerWrapper);
+            indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
             IndexWriter indexWriter = new IndexWriter(directory, indexWriterConfig);
             indexWriter.deleteAll();
 

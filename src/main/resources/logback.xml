@@ -5,9 +5,9 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/octavian.log</file>
+        <file>logs/elex.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/octavian-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>logs/elex-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <!-- each archived file's size will be max 10MB -->
             <maxFileSize>1MB</maxFileSize>
             <!-- 30 days to keep -->
