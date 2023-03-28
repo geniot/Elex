@@ -148,7 +148,7 @@ public class DictionariesPool {
             }
 
             long ftSize = ftServer.getDirectorySize(fileName);
-            adminDictionary.setFtIndexSize(NumberFormat.getInstance().format(ftSize));
+            adminDictionary.setFtIndexSize(NumberFormat.getInstance().format(ftSize) + " bytes");
             totalSize += ftSize;
 
             adminDictionary.setTotalSize(NumberFormat.getInstance().format(totalSize));

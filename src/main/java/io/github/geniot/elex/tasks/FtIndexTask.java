@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -123,15 +124,31 @@ public class FtIndexTask implements Runnable {
                 if (newPercent != percent) {
                     percent = newPercent;
                     task.setProgress(percent);
+                    task.setFtIndexSize(getFtIndexSize(indexWriter));
                 }
                 key = elexDictionary.next(key);
             }
             indexWriter.close();
+            task.setProgress(100);
+            task.setFtIndexSize(getFtIndexSize(indexWriter));
         } catch (IOException e) {
             task.setStatus(TaskStatus.FAILURE);
             task.setFinishedWhen(System.currentTimeMillis());
             logger.error(e.getMessage(), e);
         }
+    }
+
+    private String getFtIndexSize(IndexWriter indexWriter) {
+        long ftSize = 0;
+        try {
+            String[] files = indexWriter.getDirectory().listAll();
+            for (String file : files) {
+                ftSize += indexWriter.getDirectory().fileLength(file);
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return NumberFormat.getInstance().format(ftSize) + " bytes";
     }
 
 

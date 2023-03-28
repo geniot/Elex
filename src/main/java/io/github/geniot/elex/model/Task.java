@@ -10,5 +10,6 @@ public class Task {
     private Action action;
     private TaskStatus status = TaskStatus.RUNNING;
     private int progress;
+    private String ftIndexSize;
     private long finishedWhen;
 }

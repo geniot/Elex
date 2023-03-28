@@ -66,7 +66,7 @@ public class AdminController {
     public String tasks() {
         TaskExecutorModel taskExecutorModel = new TaskExecutorModel();
         Collection<Task> tasksList = asynchronousService.getRunningTasks().values();
-        taskExecutorModel.setTasks(tasksList.toArray(new Task[tasksList.size()]));
+        taskExecutorModel.setTasks(tasksList.toArray(new Task[0]));
         asynchronousService.cleanUp();
         return gson.toJson(taskExecutorModel);
     }
