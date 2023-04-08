@@ -41,17 +41,17 @@ public class Lsd2Ezp {
 //            FixUtils.fixArticles(dslDictionary);
 
             //compile
-            byte[] ezpBbs = new Packager().pack(dslDictionary);
-
-            //write
-            File outputFile = new File(outFileName);
-            if (outputFile.exists()) {
-                logger.warn("Output file exists, removing: " + outputFile.getAbsolutePath());
-                if (!outputFile.delete()) {
-                    logger.error("Couldn't remove old output file: " + outputFile);
-                }
-            }
-            FileUtils.writeByteArrayToFile(outputFile, ezpBbs);
+//            byte[] ezpBbs = new Packager().pack(dslDictionary);
+//
+//            //write
+//            File outputFile = new File(outFileName);
+//            if (outputFile.exists()) {
+//                logger.warn("Output file exists, removing: " + outputFile.getAbsolutePath());
+//                if (!outputFile.delete()) {
+//                    logger.error("Couldn't remove old output file: " + outputFile);
+//                }
+//            }
+//            FileUtils.writeByteArrayToFile(outputFile, ezpBbs);
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
