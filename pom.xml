@@ -146,6 +146,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>lib-elex</finalName>
                     <archive>
                         <manifest>
                             <mainClass>io.github.geniot.elex.tools.Dsl2Ezp</mainClass>
