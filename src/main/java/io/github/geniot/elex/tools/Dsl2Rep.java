@@ -17,9 +17,9 @@ public class Dsl2Rep {
 
     public static void main(String[] args) {
         try {
-            String base = "C:\\dictionaries\\en\\ru\\Transport";
+            String base = "C:\\dictionaries\\en\\en\\CollinsCobuild";
 
-            String dsl = FileUtils.readFileToString(new File(base + "/source/TransportEnRu.dsl"), StandardCharsets.UTF_8);
+            String dsl = FileUtils.readFileToString(new File("data2/en_en-CollinsCobuild.ezp"), StandardCharsets.UTF_8);
             String ann = FileUtils.readFileToString(new File(base + "/annotation.txt"), StandardCharsets.UTF_8);
             byte[] icon = FileUtils.readFileToByteArray(new File(base + "/icon.png"));
 
@@ -46,9 +46,9 @@ public class Dsl2Rep {
 
                 if (counter % 100 == 0 || counter == total) {
                     StringBuilder path = new StringBuilder();
-                    path.append("data");
+                    path.append(base);
                     path.append(File.separator);
-                    path.append("tmp");
+                    path.append("data");
                     path.append(File.separator);
                     path.append(tenThousand);
                     path.append(File.separator);
