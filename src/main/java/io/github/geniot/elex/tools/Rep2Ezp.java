@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class Dsl2Ezp {
-    static Logger logger = LoggerFactory.getLogger(Dsl2Ezp.class);
+public class Rep2Ezp {
+    static Logger logger = LoggerFactory.getLogger(Rep2Ezp.class);
 
     public static void main(String[] args) {
         try {
