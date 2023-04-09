@@ -17,9 +17,12 @@ public class Dsl2Rep {
 
     public static void main(String[] args) {
         try {
-            String base = "C:\\dictionaries\\en\\en\\CollinsCobuild";
+            String sourceLanguage = args[0];
+            String targetLanguage = args[1];
+            String dictionaryName = args[2];
+            String base = "C:\\dictionaries\\" + sourceLanguage + "\\" + targetLanguage + "\\" + dictionaryName;
 
-            String dsl = FileUtils.readFileToString(new File("data2/en_en-CollinsCobuild.ezp"), StandardCharsets.UTF_8);
+            String dsl = FileUtils.readFileToString(new File("data2/" + sourceLanguage + "_" + targetLanguage + "-" + dictionaryName + ".ezp"), StandardCharsets.UTF_8);
             String ann = FileUtils.readFileToString(new File(base + "/annotation.txt"), StandardCharsets.UTF_8);
             byte[] icon = FileUtils.readFileToByteArray(new File(base + "/icon.png"));
 

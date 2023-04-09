@@ -16,7 +16,7 @@ import java.util.TreeMap;
 public class Ezp2Dsl {
     public static void main(String[] args) {
         try {
-            File file = new File("data/en_en-CollinsCobuild.ezp");
+            File file = new File(args[0]);
             System.out.println("Reading " + file.getName());
             ElexDictionary elexDictionary = new ElexDictionary(file, "r");
             Properties properties = elexDictionary.getProperties();

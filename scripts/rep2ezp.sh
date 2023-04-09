@@ -1,7 +1,7 @@
 #!/bin/bash
 
-repArr=("ru/LingvoUniversal" "ru/Transport" "en/CollinsCobuild")
-arr=( "en_ru-LingvoUniversal" "en_ru-Transport" "en_en-CollinsCobuild" )
+repArr=("ru/LingvoUniversal" "ru/Transport" "en/CollinsCobuild" "en/Longman_DOCE5")
+arr=( "en_ru-LingvoUniversal" "en_ru-Transport" "en_en-CollinsCobuild" "en_en-Longman_DOCE5" )
 
 echo "Compiling dictionaries from sources."
 for i in "${!arr[@]}"; do
