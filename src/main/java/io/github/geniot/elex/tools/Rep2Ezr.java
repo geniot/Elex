@@ -4,35 +4,46 @@ import io.github.geniot.elex.CaseInsensitiveComparatorV4;
 import io.github.geniot.elex.tools.compile.ByteArrayProvider;
 import io.github.geniot.elex.tools.compile.ResourcesPackager;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-public class Res2Ezr {
-    static Logger logger = LoggerFactory.getLogger(Res2Ezr.class);
+public class Rep2Ezr {
+    static Logger logger = LoggerFactory.getLogger(Rep2Ezr.class);
 
     public static void main(String[] args) {
         try {
-            String inputFolder = "D:\\torrents\\elex\\LingvoUniversalRuEn\\SoundRu.converted\\";
-            String outputPath = "C:\\development\\elex\\data\\LingvoUniversalRuEn.ezr";
+            String inputFolder = args[0];
+            String outputPath = args[1];
 
             SortedMap<String, ByteArrayProvider> resourcesMap = new TreeMap<>(new CaseInsensitiveComparatorV4());
             File[] files = new File(inputFolder).listFiles();
+            int counter = 0;
             for (File file : files) {
-                if (file.isDirectory()) {
-                    File[] ffs = file.listFiles();
-                    for (File f : ffs) {
-                        resourcesMap.put(f.getName(), new ByteArrayProvider(f));
+                ZipFile zipFile = new ZipFile(file.getAbsolutePath());
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    ++counter;
+                    if (counter % 1000 == 0) {
+                        System.out.println(counter);
                     }
-                } else {
-                    resourcesMap.put(file.getName(), new ByteArrayProvider(file));
+                    ZipEntry entry = entries.nextElement();
+                    InputStream stream = zipFile.getInputStream(entry);
+                    byte[] bytes = IOUtils.toByteArray(stream);
+                    resourcesMap.put(entry.getName(), new ByteArrayProvider(bytes));
+                    stream.close();
                 }
+                zipFile.close();
             }
-
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ResourcesPackager resourcesPackager = new ResourcesPackager();
