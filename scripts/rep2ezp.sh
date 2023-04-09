@@ -7,11 +7,6 @@ for i in "${!arr[@]}"; do
   java -cp /var/lib/jenkins/workspace/Elex-test/target/lib-elex-jar-with-dependencies.jar io.github.geniot.elex.tools.Rep2Ezp "${repArr[$i]}" "/tmp/${arr[$i]}.ezp"
 done
 
-for dictionaryName in "${arr[@]}"
-do
-   java -cp /var/lib/jenkins/workspace/Elex-test/target/lib-elex-jar-with-dependencies.jar io.github.geniot.elex.tools.Rep2Ezp ru/$dictionaryName /tmp/$dictionaryName.ezp
-done
-
 sudo systemctl stop elex.service
 for dictionaryName in "${arr[@]}"
 do
