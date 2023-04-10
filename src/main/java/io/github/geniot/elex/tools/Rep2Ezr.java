@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.SortedMap;
@@ -45,11 +46,11 @@ public class Rep2Ezr {
                 zipFile.close();
             }
 
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            FileOutputStream fileOutputStream = new FileOutputStream(outputPath);
             ResourcesPackager resourcesPackager = new ResourcesPackager();
-            resourcesPackager.pack(resourcesMap, byteArrayOutputStream);
+            resourcesPackager.pack(resourcesMap, fileOutputStream);
+            fileOutputStream.close();
 
-            FileUtils.writeByteArrayToFile(new File(outputPath), byteArrayOutputStream.toByteArray());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
