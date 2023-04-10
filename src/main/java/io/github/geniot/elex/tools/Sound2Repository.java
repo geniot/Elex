@@ -24,13 +24,13 @@ public class Sound2Repository {
     public static void main(String[] args) {
         try {
             String pathToWavFiles = "C:\\Temp\\SoundEn\\SoundEn.extracted";
-            String pathToMp3Files = "C:\\Temp\\SoundEn\\SoundEn.converted";
-            String pathToRepository = "C:\\dictionaries\\SoundEn\\data";
+            String pathToMp3Files = "C:\\Temp\\longman\\en_en-Longman_DOCE5";
+            String pathToRepository = "C:\\dictionaries\\MediaLongman\\data";
 
             System.out.println("Converting");
 
-            FileUtils.forceMkdir(new File(pathToMp3Files));
-            wav2mp3(pathToWavFiles, pathToMp3Files);
+//            FileUtils.forceMkdir(new File(pathToMp3Files));
+//            wav2mp3(pathToWavFiles, pathToMp3Files);
             executor.shutdown();
 
             System.out.println("Zipping");

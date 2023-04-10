@@ -1,8 +1,13 @@
 #!/bin/bash
-arr=( "en_ru-LingvoUniversal" )
+
+IFS=' '
+read -a arr <<< "$1"
+
+echo "Compiling dictionaries from sources."
+
 for dictionaryName in "${arr[@]}"
 do
-   java -Xmx2048m -cp /var/lib/jenkins/workspace/Elex-test/target/lib-elex-jar-with-dependencies.jar io.github.geniot.elex.tools.Rep2Ezr data /tmp/$dictionaryName.ezr
+   java -Xmx4096m -cp /var/lib/jenkins/workspace/Elex-test/target/lib-elex-jar-with-dependencies.jar io.github.geniot.elex.tools.Rep2Ezr data /tmp/$dictionaryName.ezr
 done
 
 sudo systemctl stop elex.service
