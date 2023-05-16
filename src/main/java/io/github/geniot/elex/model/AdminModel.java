@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdminModel extends Model {
-    private AdminDictionary[] adminDictionaries = new AdminDictionary[]{};
+    private AdminDictionary[] adminDictionaries = new AdminDictionary[] {};
 
     public AdminDictionary getSelectedDictionary() {
         for (AdminDictionary d : adminDictionaries) {
@@ -28,12 +28,10 @@ public class AdminModel extends Model {
         return false;
     }
 
-    public void selectOneDictionary() {
-        AdminDictionary selectedDictionary = getSelectedDictionary();
+    public void selectOneDictionary(AdminDictionary updatedDictionary) {
+        AdminDictionary selectedDictionary = updatedDictionary == null ? getSelectedDictionary() : updatedDictionary;
         for (AdminDictionary dictionary : adminDictionaries) {
-            if (!dictionary.equals(selectedDictionary)) {
-                dictionary.setSelected(false);
-            }
+            dictionary.setSelected(dictionary.getFileName().equals(selectedDictionary.getFileName()));
         }
     }
 }
